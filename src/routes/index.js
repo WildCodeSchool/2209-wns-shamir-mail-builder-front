@@ -36,6 +36,16 @@ export default function Router() {
         },
       ],
     },
+    {
+      path: '/auth',
+      element: <PublicLayout />,
+      children: [
+        {
+          path: 'login',
+          element: <Login />,
+        },
+      ],
+    },
     // User Routes
     {
       path: '/user',
@@ -47,6 +57,18 @@ export default function Router() {
         },
       ],
     },
+
+    // App MailBuilder
+    {
+      path: '/app',
+      element: <PublicLayout />,
+      children: [
+        {
+          path: 'home',
+          element: <HomeBuilder />,
+        },
+      ],
+    },
   ]);
 }
 
@@ -55,12 +77,27 @@ export default function Router() {
  * Améliore les performances de l'application en ne chargeant que les pages nécessaires
  */
 
+/**
+ * Public Routes  (Routes publiques)
+ */
 const HomePage = Loadable(lazy(() => import('../Pages/HomePage')));
 const Subscription = Loadable(lazy(() => import('../Pages/Subscription')));
 const Documentation = Loadable(lazy(() => import('../Pages/Documentation')));
+
+/**
+ * Auth Routes  (Routes de l'espace authentification)
+ */
+
+const Login = Loadable(lazy(() => import('../Pages/Auth/Login')));
 
 /**
  * User Routes  (Routes de l'espace utilisateur)
  */
 
 const UserAccount = Loadable(lazy(() => import('../Pages/User/Account')));
+
+/**
+ * App MailBuilder  - Routes de l'application MailBuilder
+ */
+
+const HomeBuilder = Loadable(lazy(() => import('../Pages/App/HomeBuilder')));

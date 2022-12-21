@@ -24,6 +24,13 @@ export const PATH_USER = {
   account: path(ROOTS_USER, '/account'),
 };
 
+// PATH APP ============================================================= //
+
+export const PATH_APP = {
+  root: '/app',
+  app: path('/app', '/home'),
+};
+
 // PATH PUBLIC ========================================================== //
 
 export const PATH_PUBLIC = {

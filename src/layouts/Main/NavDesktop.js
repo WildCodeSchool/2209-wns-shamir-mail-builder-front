@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 
 import Iconify from '../../Components/Iconify';
+import { PATH_AUTH } from '../../routes/paths';
 
 const LinkStyle = styled(Link)(({ theme }) => ({
   ...theme.typography.subtitle2,
@@ -78,11 +79,17 @@ export default function NavDesktop({ isLoggedIn, isOffset, isHome, navConfig }) 
         />
       ))}
       {isLoggedIn ? (
-        <Button variant="contained" sx={{ ml: 2 }}>
+        <Button variant="contained" sx={{ ml: 2 }} component={RouterLink} to="/logout">
           Se déconnecter
         </Button>
       ) : (
-        <Button variant="contained" sx={{ ml: 2 }}>
+        <Button
+          variant="contained"
+          sx={{ ml: 2 }}
+          component={RouterLink}
+          to={PATH_AUTH.login}
+          color="primary"
+        >
           Connexion
         </Button>
       )}

@@ -4,7 +4,8 @@
 /.pnp
 .pnp.js
 
-.prettierignore
+/package-lock.json
+
 
 # production
 /build
