@@ -1,0 +1,25 @@
+{
+  "short_name": "Mail Builder",
+  "name": "WCS - Mail Builder Project",
+  "icons": [
+    {
+      "src": "Logo.png",
+      "type": "image/png",
+      "sizes": "64x64 32x32 24x24 16x16"
+    },
+    {
+      "src": "Logo_color.jpg",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "Logo_color.jpg",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
