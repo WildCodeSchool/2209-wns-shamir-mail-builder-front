@@ -50,7 +50,7 @@ export default function HomePage() {
           position: 'absolute',
           top: 0,
           right: 0,
-          width: '80%',
+          width: { xs: '100%', sm: '100%', md: '80%' },
           height: '100%',
           backgroundImage: 'url(./static/social_bg.png)',
           backgroundRepeat: 'no-repeat',

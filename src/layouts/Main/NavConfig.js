@@ -1,6 +1,6 @@
 import Iconify from '../../Components/Iconify';
 
-import { PATH_PUBLIC, PATH_USER } from '../../routes/paths';
+import { PATH_APP, PATH_PUBLIC, PATH_USER } from '../../routes/paths';
 
 const getIcon = (name) => <Iconify icon={name} width={22} height={22} />;
 const ICONS = {
@@ -35,7 +35,7 @@ const NavConfig = [
       {
         title: 'Mes informations',
         subheader: 'Mon Compte Pro',
-        items: [{ title: 'Mes informations', path: PATH_PUBLIC.root }],
+        items: [{ title: 'Mes informations', path: PATH_USER.account, icon: ICONS.account }],
       },
       {
         title: 'Mes abonnements',
@@ -44,7 +44,7 @@ const NavConfig = [
           {
             title: 'MailBuilder',
             subheader: 'Application de création de mail',
-            path: PATH_PUBLIC.root,
+            path: PATH_APP.app,
             icon: ICONS.account,
           },
         ],
