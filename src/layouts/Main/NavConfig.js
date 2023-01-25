@@ -12,7 +12,7 @@ const ICONS = {
 
 const NavConfig = [
   {
-    title: 'Acceuil',
+    title: 'Accueil',
     icon: ICONS.home,
     path: '/',
   },

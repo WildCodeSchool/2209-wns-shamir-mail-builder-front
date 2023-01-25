@@ -69,6 +69,21 @@ export default function Router() {
         },
       ],
     },
+    // Subscription routes
+    {
+      path: '/sub',
+      element: <PublicLayout />,
+      children: [
+        {
+          path: 'success',
+          element: <StripeSuccess />,
+        },
+        {
+          path: 'cancel',
+          element: <StripeCancel />,
+        },
+      ],
+    },
   ]);
 }
 
@@ -101,3 +116,10 @@ const UserAccount = Loadable(lazy(() => import('../Pages/User/Account')));
  */
 
 const HomeBuilder = Loadable(lazy(() => import('../Pages/App/HomeBuilder')));
+
+/**
+ * Subscription Routes (Routes succès ou abandon d'abonnement)
+ */
+
+const StripeSuccess = Loadable(lazy(() => import('../Pages/StripeSubscription/StripeSuccess/StripeSuccess')));
+const StripeCancel = Loadable(lazy(() => import('../Pages/StripeSubscription/StripeCancel/StripeCancel')));
