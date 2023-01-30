@@ -1,5 +1,5 @@
 import { gql, useLazyQuery } from '@apollo/client';
-import { Container, Typography } from '@mui/material';
+import { Container, Typography, Button } from '@mui/material';
 import { ContentStyle } from '../layouts/Main/UserLayoutConfig';
 
 export const SUBSCRIBE = gql`
@@ -28,7 +28,13 @@ export default function Subscription() {
       <Container maxWidth="lg">
         <Typography variant="h4" component="h1" gutterBottom>
           <p>Vous n&#39;êtes pas abonné</p>
-          <button type="button" onClick={() => startSubscribe()}>M&#39;abonner</button>
+          <Button
+            variant="contained"
+            type="button"
+            onClick={() => startSubscribe()}
+          >
+            M&#39;abonner
+          </Button>
         </Typography>
       </Container>
     </ContentStyle>

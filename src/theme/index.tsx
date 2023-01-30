@@ -1,3 +1,4 @@
+// @ts-nocheck
 import PropTypes from 'prop-types';
 import { useMemo } from 'react';
 import { CssBaseline } from '@mui/material';
