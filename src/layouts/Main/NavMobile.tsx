@@ -1,3 +1,4 @@
+// @ts-nocheck
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { NavLink as RouterLink, useLocation } from 'react-router-dom';
@@ -28,89 +29,6 @@ const ListItemStyle = styled(ListItemButton)(({ theme }) => ({
   textTransform: 'capitalize',
   color: theme.palette.text.secondary,
 }));
-
-export default function NavMobile({ isLoggedIn, isOffset, isHome, navConfig }) {
-  console.log('IsLoggedIn: ', isLoggedIn);
-  const { pathname } = useLocation();
-
-  const [open, setOpen] = useState(false);
-
-  const [drawerOpen, setDrawerOpen] = useState(false);
-
-  const handleDrawerClose = () => {
-    setDrawerOpen(false);
-  };
-
-  const handleOpen = () => {
-    setOpen(!open);
-  };
-
-  const handleDrawerOpen = () => {
-    setDrawerOpen(true);
-  };
-
-  useEffect(() => {
-    if (drawerOpen) {
-      handleDrawerClose();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
-
-  return (
-    <>
-      <MenuIcon
-        onClick={handleDrawerOpen}
-        sx={{
-          ml: 1,
-          cursor: 'pointer',
-          ...(isHome && { color: 'common.black' }),
-          ...(isOffset && { color: 'text.primary' }),
-        }}
-      />
-
-      <Drawer
-        open={drawerOpen}
-        onClose={handleDrawerClose}
-        ModalProps={{ keepMounted: true }}
-        PaperProps={{ sx: { pb: 5, width: 260 } }}
-      >
-        <Scrollbar>
-          <Logo sx={{ mx: 6, my: 3 }} />
-
-          <List disablePadding>
-            {navConfig.map((link) => (
-              <NavMobileItem key={link.title} item={link} isOpen={open} onOpen={handleOpen} />
-            ))}
-            <Box sx={{ mt: 4, textAlign: 'center', maxWidth: 120, mx: 'auto' }}>
-              {isLoggedIn ? (
-                <Button variant="outlined" to="/dashboard">
-                  Se déconnecter
-                </Button>
-              ) : (
-                <Button variant="outlined" to="/login">
-                  Connexion
-                </Button>
-              )}
-            </Box>
-          </List>
-        </Scrollbar>
-      </Drawer>
-    </>
-  );
-}
-NavMobile.propTypes = {
-  isOffset: PropTypes.bool,
-  isHome: PropTypes.bool,
-  navConfig: PropTypes.arrayOf(
-    PropTypes.shape({
-      title: PropTypes.string,
-      path: PropTypes.string,
-      icon: PropTypes.node,
-      children: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
-    }),
-  ),
-  isLoggedIn: PropTypes.bool,
-};
 
 // ---------------------------------------------------------------------- //
 
@@ -198,3 +116,86 @@ function NavMobileItem({ item, isOpen, onOpen }) {
     </ListItemStyle>
   );
 }
+
+export default function NavMobile({ isLoggedIn, isOffset, isHome, navConfig }) {
+  // console.log('IsLoggedIn: ', isLoggedIn);
+  const { pathname } = useLocation();
+
+  const [open, setOpen] = useState(false);
+
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const handleDrawerClose = () => {
+    setDrawerOpen(false);
+  };
+
+  const handleOpen = () => {
+    setOpen(!open);
+  };
+
+  const handleDrawerOpen = () => {
+    setDrawerOpen(true);
+  };
+
+  useEffect(() => {
+    if (drawerOpen) {
+      handleDrawerClose();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
+
+  return (
+    <>
+      <MenuIcon
+        onClick={handleDrawerOpen}
+        sx={{
+          ml: 1,
+          cursor: 'pointer',
+          ...(isHome && { color: 'common.black' }),
+          ...(isOffset && { color: 'text.primary' }),
+        }}
+      />
+
+      <Drawer
+        open={drawerOpen}
+        onClose={handleDrawerClose}
+        ModalProps={{ keepMounted: true }}
+        PaperProps={{ sx: { pb: 5, width: 260 } }}
+      >
+        <Scrollbar>
+          <Logo sx={{ mx: 6, my: 3 }} />
+
+          <List disablePadding>
+            {navConfig.map((link) => (
+              <NavMobileItem key={link.title} item={link} isOpen={open} onOpen={handleOpen} />
+            ))}
+            <Box sx={{ mt: 4, textAlign: 'center', maxWidth: 120, mx: 'auto' }}>
+              {isLoggedIn ? (
+                <Button variant="outlined" to="/dashboard">
+                  Se déconnecter
+                </Button>
+              ) : (
+                <Button variant="outlined" to="/login">
+                  Connexion
+                </Button>
+              )}
+            </Box>
+          </List>
+        </Scrollbar>
+      </Drawer>
+    </>
+  );
+}
+NavMobile.propTypes = {
+  isOffset: PropTypes.bool,
+  isHome: PropTypes.bool,
+  navConfig: PropTypes.arrayOf(
+    PropTypes.shape({
+      title: PropTypes.string,
+      path: PropTypes.string,
+      icon: PropTypes.node,
+      children: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
+    }),
+  ),
+  isLoggedIn: PropTypes.bool,
+};

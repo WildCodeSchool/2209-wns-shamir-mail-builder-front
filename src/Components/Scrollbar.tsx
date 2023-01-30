@@ -32,7 +32,7 @@ const SimpleBarStyle = styled(SimpleBarReact)(({ theme }) => ({
   },
 }));
 
-export default function Scrollbar({ children, sx, ...other }) {
+export default function Scrollbar({ children, sx, ...other }: any) {
   const userAgent = typeof navigator === 'undefined' ? 'SSR' : navigator.userAgent;
 
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
