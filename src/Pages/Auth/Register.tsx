@@ -1,13 +1,16 @@
 import { Container, Typography } from '@mui/material';
+import { gql, useMutation } from '@apollo/client';
 import { ContentStyle } from '../../layouts/Main/UserLayoutConfig';
+import RegisterForm from '../../Components/RegisterForm/RegisterForm';
 
-export default function Login() {
+export default function Register() {
   return (
     <ContentStyle>
       <Container maxWidth="lg">
         <Typography variant="h4" component="h1" gutterBottom>
-          Login.js
+          Création de compte
         </Typography>
+        <RegisterForm />
       </Container>
     </ContentStyle>
   );

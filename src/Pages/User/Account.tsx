@@ -1,7 +1,7 @@
 import { Container, Typography } from '@mui/material';
 import { ContentStyle } from '../../layouts/Main/UserLayoutConfig';
 
-export default function Account() {
+export default function UserAccount() {
   return (
     <ContentStyle>
       <Container maxWidth="lg">

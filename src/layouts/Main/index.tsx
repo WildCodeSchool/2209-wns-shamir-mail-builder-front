@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useLocation, Outlet } from 'react-router-dom';
 
 import { Box, Container, Stack, Typography } from '@mui/material';

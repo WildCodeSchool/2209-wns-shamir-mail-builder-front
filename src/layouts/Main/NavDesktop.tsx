@@ -1,3 +1,4 @@
+// @ts-nocheck
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { NavLink as RouterLink, useLocation } from 'react-router-dom';
@@ -42,66 +43,6 @@ const ListItemStyle = styled(ListItem)(({ theme }) => ({
     color: theme.palette.text.primary,
   },
 }));
-
-// ----------------------------------------------------------------------
-
-export default function NavDesktop({ isLoggedIn, isOffset, isHome, navConfig }) {
-  console.log('IsLoggedIn: ', isLoggedIn);
-  const { pathname } = useLocation();
-  const [open, setOpen] = useState(false);
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  useEffect(() => {
-    if (open) {
-      handleClose();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
-
-  return (
-    <Stack direction="row" alignItems="center">
-      {navConfig.map((link) => (
-        <NavDesktopItem
-          key={link.title}
-          item={link}
-          isOpen={open}
-          onOpen={handleOpen}
-          onClose={handleClose}
-          isOffset={isOffset}
-          isHome={isHome}
-        />
-      ))}
-      {isLoggedIn ? (
-        <Button variant="contained" sx={{ ml: 2 }} component={RouterLink} to="/logout">
-          Se déconnecter
-        </Button>
-      ) : (
-        <Button
-          variant="contained"
-          sx={{ ml: 2 }}
-          component={RouterLink}
-          to={PATH_AUTH.login}
-          color="primary"
-        >
-          Connexion
-        </Button>
-      )}
-    </Stack>
-  );
-}
-NavDesktop.propTypes = {
-  isHome: PropTypes.bool,
-  isOffset: PropTypes.bool,
-  isLoggedIn: PropTypes.bool,
-  navConfig: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
-};
 
 // ----------------------------------------------------------------------
 
@@ -252,3 +193,63 @@ NavDesktopItem.propTypes = {
 };
 
 NavDesktopItem.defaultProps = { isHome: false, isOffset: false };
+
+// ----------------------------------------------------------------------
+
+export default function NavDesktop({ isLoggedIn, isOffset, isHome, navConfig }) {
+  // console.log('IsLoggedIn: ', isLoggedIn);
+  const { pathname } = useLocation();
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  useEffect(() => {
+    if (open) {
+      handleClose();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
+
+  return (
+    <Stack direction="row" alignItems="center">
+      {navConfig.map((link) => (
+        <NavDesktopItem
+          key={link.title}
+          item={link}
+          isOpen={open}
+          onOpen={handleOpen}
+          onClose={handleClose}
+          isOffset={isOffset}
+          isHome={isHome}
+        />
+      ))}
+      {isLoggedIn ? (
+        <Button variant="contained" sx={{ ml: 2 }} component={RouterLink} to="/logout">
+          Se déconnecter
+        </Button>
+      ) : (
+        <Button
+          variant="contained"
+          sx={{ ml: 2 }}
+          component={RouterLink}
+          to={PATH_AUTH.login}
+          color="primary"
+        >
+          Connexion
+        </Button>
+      )}
+    </Stack>
+  );
+}
+NavDesktop.propTypes = {
+  isHome: PropTypes.bool,
+  isOffset: PropTypes.bool,
+  isLoggedIn: PropTypes.bool,
+  navConfig: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
+};

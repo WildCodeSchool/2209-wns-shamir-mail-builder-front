@@ -1,8 +1,9 @@
+// @ts-nocheck
 import Iconify from '../../Components/Iconify';
 
 import { PATH_APP, PATH_PUBLIC, PATH_USER } from '../../routes/paths';
 
-const getIcon = (name) => <Iconify icon={name} width={22} height={22} />;
+const getIcon = (name: string) => <Iconify icon={name} width={22} height={22} />;
 const ICONS = {
   home: getIcon('line-md:home-twotone'),
   documentation: getIcon('ic:baseline-apps'),
