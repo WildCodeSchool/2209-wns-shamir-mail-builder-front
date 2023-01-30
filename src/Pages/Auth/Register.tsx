@@ -1,5 +1,4 @@
 import { Container, Typography } from '@mui/material';
-import { gql, useMutation } from '@apollo/client';
 import { ContentStyle } from '../../layouts/Main/UserLayoutConfig';
 import RegisterForm from '../../Components/RegisterForm/RegisterForm';
 

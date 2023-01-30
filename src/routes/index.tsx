@@ -4,6 +4,7 @@ import { useRoutes, useLocation } from 'react-router-dom';
 
 import { Typography } from '@mui/material';
 import PublicLayout from '../layouts/Main';
+import DashboardLayout from '../layouts/Dashboard';
 
 const Loadable = (Component: any) => (props: any) => {
   // eslint-disable-next-line
@@ -50,8 +51,12 @@ const HomeBuilder = Loadable(lazy(() => import('../Pages/App/HomeBuilder')));
  * Subscription Routes (Routes succès ou abandon d'abonnement)
  */
 
-const StripeSuccess = Loadable(lazy(() => import('../Pages/StripeSubscription/StripeSuccess/StripeSuccess')));
-const StripeCancel = Loadable(lazy(() => import('../Pages/StripeSubscription/StripeCancel/StripeCancel')));
+const StripeSuccess = Loadable(
+  lazy(() => import('../Pages/StripeSubscription/StripeSuccess/StripeSuccess')),
+);
+const StripeCancel = Loadable(
+  lazy(() => import('../Pages/StripeSubscription/StripeCancel/StripeCancel')),
+);
 
 export default function Router() {
   return useRoutes([
@@ -103,7 +108,7 @@ export default function Router() {
     // App MailBuilder
     {
       path: '/app',
-      element: <PublicLayout />,
+      element: <DashboardLayout />,
       children: [
         {
           path: 'home',
