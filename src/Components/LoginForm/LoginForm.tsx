@@ -8,8 +8,13 @@ interface LoginFormComponentProps {
   handleLogin: HandleLogin,
 }
 
+interface LoginData {
+  email: string
+  password: string
+}
+
 export default function LoginForm({ handleLogin }: LoginFormComponentProps) {
-  const [state, setState] = useState({
+  const [state, setState] = useState<LoginData>({
     email: '',
     password: '',
   });
