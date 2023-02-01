@@ -1,8 +1,21 @@
 import { useState } from 'react';
 import { Box, TextField, Button } from '@mui/material';
 
-export default function RegisterForm() {
-  const [state, setState] = useState<Object>({
+type HandleSignUp = (username: string, password: string, email: string, phone: string) => void;
+
+interface IRegisterFormProps {
+  handleSignUp: HandleSignUp;
+}
+
+interface FormData {
+  username: string
+  email: string
+  password: string
+  phone: string
+}
+
+export default function RegisterForm({ handleSignUp }: IRegisterFormProps) {
+  const [state, setState] = useState<FormData>({
     username: '',
     email: '',
     password: '',
@@ -15,6 +28,11 @@ export default function RegisterForm() {
       ...state,
       [e.target.name]: value,
     });
+  };
+
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    handleSignUp(state.username, state.password, state.email, state.phone);
   };
 
   return (
@@ -71,7 +89,12 @@ export default function RegisterForm() {
         name="phone"
         onChange={handleChange}
       />
-      <Button variant="contained">Valider</Button>
+      <Button
+        variant="contained"
+        onClick={(e) => handleSubmit(e)}
+      >
+        Valider
+      </Button>
     </Box>
   );
 }

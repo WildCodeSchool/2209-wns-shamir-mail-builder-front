@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { Container, Typography, CircularProgress } from '@mui/material';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Container, Typography } from '@mui/material';
 import { gql, useMutation } from '@apollo/client';
 import { ContentStyle } from '../../layouts/Main/UserLayoutConfig';
 import LoginForm from '../../Components/LoginForm/LoginForm';
@@ -10,31 +11,18 @@ mutation GetToken($email: String!, $password: String!){
 }`;
 
 export default function Login() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [loggingIn, { loading, error }] = useMutation(GET_TOKEN, {
+  const navigate = useNavigate();
+  const [loadToken] = useMutation(GET_TOKEN, {
     onCompleted: (data) => {
-      if (data.getToken) {
-        setIsLoggedIn(!isLoggedIn);
-      }
+      localStorage.setItem('token', data.getToken);
+      navigate('/app/home');
     },
   });
-  if (loading) return <CircularProgress color="secondary" />;
-  if (error) {
-    return (
-      <Typography>
-        Error!
-        `
-        $
-        {error.message}
-        `
-      </Typography>
-    );
-  }
 
   const handleLogin = (email: string, password: string) => {
-    loggingIn({ variables: { email, password } });
+    loadToken({ variables: { email, password } });
   };
-  console.log(isLoggedIn);
+
   return (
     <ContentStyle>
       <Container maxWidth="lg">
