@@ -4,7 +4,7 @@ export const PATH_USER_LOGIN = '/user/login';
 // API
 // ----------------------------------------------------------------------
 
-export const HOST_API = process.env.REACT_APP_HOST_API_KEY || 'localhost:8000';
+export const HOST_API = process.env.REACT_APP_HOST_API || 'localhost:5001';
 
 // LAYOUT
 // ----------------------------------------------------------------------

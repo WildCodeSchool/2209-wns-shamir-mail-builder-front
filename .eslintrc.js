@@ -29,6 +29,7 @@ module.exports = {
       },
     ],
     'react/jsx-props-no-spreading': 0,
+    'linebreak-style': 0,
 
     semi: ['error', 'always'],
     quotes: ['error', 'single'],

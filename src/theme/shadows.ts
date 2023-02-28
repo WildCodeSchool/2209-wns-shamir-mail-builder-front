@@ -3,10 +3,11 @@ import palette from './palette';
 
 const LIGHT_MODE = palette.grey[500];
 
-const createShadow = (color) => {
+const createShadow = (color: string) => {
   const transparent1 = alpha(color, 0.2);
   const transparent2 = alpha(color, 0.14);
   const transparent3 = alpha(color, 0.12);
+
   return [
     'none',
     `0px 2px 1px -1px ${transparent1},0px 1px 1px 0px ${transparent2},0px 1px 3px 0px ${transparent3}`,
@@ -35,8 +36,22 @@ const createShadow = (color) => {
     `0px 11px 15px -7px ${transparent1},0px 24px 38px 3px ${transparent2},0px 9px 46px 8px ${transparent3}`,
   ];
 };
+interface Shadow {
+  z1: string;
+  z8: string;
+  z12: string;
+  z16: string;
+  z20: string;
+  z24: string;
+  primary: string;
+  secondary: string;
+  info: string;
+  success: string;
+  warning: string;
+  error: string;
+}
 
-const createCustomShadow = (color) => {
+const createCustomShadow = (color: string): Shadow => {
   const transparent = alpha(color, 0.24);
 
   return {
@@ -55,7 +70,7 @@ const createCustomShadow = (color) => {
   };
 };
 
-export const customShadows = createCustomShadow(LIGHT_MODE);
+export const customShadows: Shadow = createCustomShadow(LIGHT_MODE);
 
 const shadows = createShadow(LIGHT_MODE);
 

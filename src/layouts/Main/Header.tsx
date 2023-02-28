@@ -17,7 +17,7 @@ import NavMobile from './NavMobile';
 import navConfig from './NavConfig';
 import { AuthContext } from '../../AuthContext/Authcontext';
 
-const ToolbarStyle = styled(Toolbar)(({ theme }) => ({
+const ToolbarStyle: any = styled(Toolbar)(({ theme }) => ({
   height: HEADER.MOBILE_HEIGHT,
   transition: theme.transitions.create(['height', 'background-color'], {
     easing: theme.transitions.easing.easeInOut,

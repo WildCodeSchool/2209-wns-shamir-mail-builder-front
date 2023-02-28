@@ -1,10 +1,25 @@
-import { alpha } from '@mui/material/styles';
-
-function createGradient(color1, color2) {
-  return `linear-gradient(to bottom, ${color1}, ${color2})`;
+interface Color {
+  lighter: string;
+  light: string;
+  main: string;
+  dark: string;
+  darker: string;
+  contrastText: string;
 }
 
-const GREY = {
+interface Gradients {
+  [key: string]: string;
+}
+
+interface ChartColors {
+  violet: string[];
+  blue: string[];
+  gold: string[];
+  yellow: string[];
+  red: string[];
+}
+
+const GREY: Record<number, string> = {
   0: '#FFFFFF',
   100: '#F9FAFB',
   200: '#F4F6F8',
@@ -15,17 +30,9 @@ const GREY = {
   700: '#454F5B',
   800: '#212B36',
   900: '#161C24',
-  500_8: alpha('#919EAB', 0.08),
-  500_12: alpha('#919EAB', 0.12),
-  500_16: alpha('#919EAB', 0.16),
-  500_24: alpha('#919EAB', 0.24),
-  500_32: alpha('#919EAB', 0.32),
-  500_48: alpha('#919EAB', 0.48),
-  500_56: alpha('#919EAB', 0.56),
-  500_80: alpha('#919EAB', 0.8),
 };
 
-const PRIMARY = {
+const PRIMARY: Color = {
   lighter: '#c39d63',
   light: '#c39d63',
   main: '#c39d63',
@@ -33,7 +40,7 @@ const PRIMARY = {
   darker: '#c39d63',
   contrastText: '#e1e1e1',
 };
-const SECONDARY = {
+const SECONDARY: Color = {
   lighter: '#fff8f0',
   light: '#f2d0b3',
   main: '#cb6834',
@@ -41,7 +48,7 @@ const SECONDARY = {
   darker: '#330f05',
   contrastText: '#d98b5b',
 };
-const INFO = {
+const INFO: Color = {
   lighter: '#C8FACD',
   light: '#5BE584',
   main: '#724E3B',
@@ -50,7 +57,7 @@ const INFO = {
   contrastText: '#fff',
 };
 
-const SUCCESS = {
+const SUCCESS: Color = {
   lighter: '#f9fff0',
   light: '#e3ffbf',
   main: '#abf067',
@@ -58,7 +65,8 @@ const SUCCESS = {
   darker: '#32700d',
   contrastText: '#1e4a08',
 };
-const WARNING = {
+
+const WARNING: Color = {
   lighter: '#fff9a3',
   light: '#ffe852',
   main: '#f7c600',
@@ -66,7 +74,7 @@ const WARNING = {
   darker: '#5e3f00',
   contrastText: GREY[800],
 };
-const ERROR = {
+const ERROR: Color = {
   lighter: '#ffa7a6',
   light: '#eb4d55',
   main: '#d0021b',
@@ -75,7 +83,11 @@ const ERROR = {
   contrastText: '#ffe7e6',
 };
 
-const GRADIENTS = {
+function createGradient(color1: string, color2: string): string {
+  return `linear-gradient(to bottom, ${color1}, ${color2})`;
+}
+
+const GRADIENTS: Gradients = {
   primary: createGradient(PRIMARY.light, PRIMARY.main),
   info: createGradient(INFO.light, INFO.main),
   success: createGradient(SUCCESS.light, SUCCESS.main),
@@ -83,7 +95,7 @@ const GRADIENTS = {
   error: createGradient(ERROR.light, ERROR.main),
 };
 
-const CHART_COLORS = {
+const CHART_COLORS: ChartColors = {
   violet: ['#826AF9', '#9E86FF', '#D0AEFF', '#F7D2FF'],
   blue: ['#2D99FF', '#83CFFF', '#A5F3FF', '#CCFAFF'],
   gold: ['#ffb74d', '#ffb74d', '#ffb74d', '#ffb74d'], // green
@@ -91,7 +103,7 @@ const CHART_COLORS = {
   red: ['#FF6C40', '#FF8F6D', '#FFBD98', '#FFF2D4'],
 };
 
-const palette = {
+const palette: any = {
   common: { black: '#000', white: '#fff' },
   primary: { ...PRIMARY },
   secondary: { ...SECONDARY },
@@ -104,7 +116,7 @@ const palette = {
   chart: CHART_COLORS,
   divider: GREY[500_24],
   text: { primary: GREY[800], secondary: GREY[600], disabled: GREY[500] },
-  background: { paper: '#fff', default: '#fff', neutral: GREY[200] },
+  background: { paper: '#fff', default: '#fff', neutral: GREY[200], purple: '#F9E5EB' },
   action: {
     active: GREY[600],
     hover: GREY[500_8],
@@ -116,5 +128,4 @@ const palette = {
     disabledOpacity: 0.48,
   },
 };
-
 export default palette;
