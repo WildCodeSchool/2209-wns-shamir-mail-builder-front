@@ -1,6 +1,6 @@
 // @ts-nocheck
 import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { NavLink as RouterLink, useLocation } from 'react-router-dom';
 
 import { styled } from '@mui/material/styles';
@@ -18,6 +18,7 @@ import {
 
 import Iconify from '../../Components/Iconify';
 import { PATH_AUTH } from '../../routes/paths';
+import { AuthContext } from '../../AuthContext/Authcontext';
 
 const LinkStyle = styled(Link)(({ theme }) => ({
   ...theme.typography.subtitle2,
@@ -198,6 +199,7 @@ NavDesktopItem.defaultProps = { isHome: false, isOffset: false };
 
 export default function NavDesktop({ isLoggedIn, isOffset, isHome, navConfig }) {
   // console.log('IsLoggedIn: ', isLoggedIn);
+  const { logout } = useContext(AuthContext);
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
 
@@ -230,7 +232,7 @@ export default function NavDesktop({ isLoggedIn, isOffset, isHome, navConfig }) 
         />
       ))}
       {isLoggedIn ? (
-        <Button variant="contained" sx={{ ml: 2 }} component={RouterLink} to="/logout">
+        <Button variant="contained" sx={{ ml: 2 }} component={RouterLink} to="/auth/login" onClick={logout}>
           Se déconnecter
         </Button>
       ) : (
