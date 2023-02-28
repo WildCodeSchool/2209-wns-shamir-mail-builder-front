@@ -1,18 +1,30 @@
+import { useContext, useState, useEffect } from 'react';
 import { gql, useLazyQuery } from '@apollo/client';
 import { Container, Typography, Button } from '@mui/material';
 import { ContentStyle } from '../layouts/Main/UserLayoutConfig';
+import { AuthContext } from '../AuthContext/Authcontext';
 
 export const SUBSCRIBE = gql`
 query Query{
   createSubscriptionSession
 }`;
 
+export const GET_USER_SUBSTATUS = gql`
+query Query($email: String!) {
+  getUserWithSubStatus(email: $email) {
+    email
+    subscriptionId {
+      subscriptionStatus
+    }
+  }
+}`;
+
 export default function Subscription() {
-  const [startSubscribe, { loading, error, data }] = useLazyQuery(SUBSCRIBE, {
+  const [isSubbed, setIsSubbed] = useState<boolean>(false);
+  const { user } = useContext(AuthContext);
+  const [startSubscribe, { loading, error }] = useLazyQuery(SUBSCRIBE, {
     onCompleted: (queryData) => {
-      console.log(queryData, data);
       const subData = JSON.parse(queryData.createSubscriptionSession);
-      console.log(subData);
       const subscribeUrl = subData.url;
       window.location.assign(subscribeUrl);
     },
@@ -23,18 +35,38 @@ export default function Subscription() {
     return (`${error}`);
   }
 
+  const [getUserWithStatus] = useLazyQuery(GET_USER_SUBSTATUS, {
+    onCompleted: (data) => {
+      if (data.getUserWithSubStatus.subscriptionId.subscriptionStatus === 'active') {
+        setIsSubbed(true);
+      } else setIsSubbed(false);
+    },
+  });
+
+  useEffect(() => {
+    if (user !== null) {
+      getUserWithStatus({ variables: { email: user.email } });
+    }
+  }, [user]);
+
   return (
     <ContentStyle>
       <Container maxWidth="lg">
         <Typography variant="h4" component="h1" gutterBottom>
-          <p>Vous n&#39;êtes pas abonné</p>
-          <Button
-            variant="contained"
-            type="button"
-            onClick={() => startSubscribe()}
-          >
-            M&#39;abonner
-          </Button>
+          {!isSubbed
+            ? (
+              <>
+                <p>Vous n&#39;êtes pas abonné</p>
+                <Button
+                  variant="contained"
+                  type="button"
+                  onClick={() => startSubscribe()}
+                >
+                  M&#39;abonner
+                </Button>
+              </>
+            )
+            : null}
         </Typography>
       </Container>
     </ContentStyle>

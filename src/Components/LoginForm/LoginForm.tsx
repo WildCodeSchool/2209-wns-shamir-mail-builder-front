@@ -1,19 +1,21 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Box, TextField, Typography, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../../AuthContext/Authcontext';
 
-type HandleLogin = (email: string, password: string) => void;
+// type HandleLogin = (email: string, password: string) => void;
 
-interface LoginFormComponentProps {
-  handleLogin: HandleLogin,
-}
+// interface LoginFormComponentProps {
+//   handleLogin: HandleLogin,
+// }
 
 interface LoginData {
   email: string
   password: string
 }
 
-export default function LoginForm({ handleLogin }: LoginFormComponentProps) {
+export default function LoginForm() {
+  const { login } = useContext(AuthContext);
   const [state, setState] = useState<LoginData>({
     email: '',
     password: '',
@@ -29,7 +31,7 @@ export default function LoginForm({ handleLogin }: LoginFormComponentProps) {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    handleLogin(state.email, state.password);
+    login(state.email, state.password);
   };
 
   return (
