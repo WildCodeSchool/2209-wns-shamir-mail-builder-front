@@ -2,6 +2,7 @@ import ReactDOM from 'react-dom/client';
 import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { BrowserRouter } from 'react-router-dom';
+import { AuthProvider } from './AuthContext/Authcontext';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
@@ -28,9 +29,11 @@ const client = new ApolloClient({
 const root: any = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
   <ApolloProvider client={client}>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </AuthProvider>
   </ApolloProvider>,
 );
 

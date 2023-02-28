@@ -1,6 +1,6 @@
 // @ts-nocheck
 import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { NavLink as RouterLink, useLocation } from 'react-router-dom';
 
 import { alpha, styled } from '@mui/material/styles';
@@ -22,6 +22,7 @@ import { NAVBAR } from '../../config/Config';
 import Iconify from '../../Components/Iconify';
 import Scrollbar from '../../Components/Scrollbar';
 import Logo from '../../Components/Logo';
+import { AuthContext } from '../../AuthContext/Authcontext';
 
 const ListItemStyle = styled(ListItemButton)(({ theme }) => ({
   ...theme.typography.body2,
@@ -119,6 +120,7 @@ function NavMobileItem({ item, isOpen, onOpen }) {
 
 export default function NavMobile({ isLoggedIn, isOffset, isHome, navConfig }) {
   // console.log('IsLoggedIn: ', isLoggedIn);
+  const { logout } = useContext(AuthContext);
   const { pathname } = useLocation();
 
   const [open, setOpen] = useState(false);
@@ -171,7 +173,7 @@ export default function NavMobile({ isLoggedIn, isOffset, isHome, navConfig }) {
             ))}
             <Box sx={{ mt: 4, textAlign: 'center', maxWidth: 120, mx: 'auto' }}>
               {isLoggedIn ? (
-                <Button variant="outlined" to="/dashboard">
+                <Button variant="outlined" to="/dashboard" onClick={logout}>
                   Se déconnecter
                 </Button>
               ) : (

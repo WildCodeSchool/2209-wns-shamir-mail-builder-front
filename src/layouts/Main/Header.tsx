@@ -1,5 +1,6 @@
 // @ts-nocheck
-import { useLocation } from 'react-router-dom';
+import { useContext, useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { styled } from '@mui/material/styles';
 import { Box, AppBar, Toolbar, Container } from '@mui/material';
@@ -14,6 +15,7 @@ import Logo from '../../Components/Logo';
 import NavDesktop from './NavDesktop';
 import NavMobile from './NavMobile';
 import navConfig from './NavConfig';
+import { AuthContext } from '../../AuthContext/Authcontext';
 
 const ToolbarStyle: any = styled(Toolbar)(({ theme }) => ({
   height: HEADER.MOBILE_HEIGHT,
@@ -40,9 +42,20 @@ const ToolbarShadowStyle = styled('div')(({ theme }) => ({
 }));
 
 export default function Header() {
+  const { user } = useContext(AuthContext);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const isOffset = useOffSetTop(HEADER.MAIN_DESKTOP_HEIGHT);
+  const navigate = useNavigate();
 
-  const isLoggedIn = false;
+  useEffect(() => {
+    if (user !== null) {
+      setIsLoggedIn(true);
+      navigate('/app/home');
+    } else {
+      setIsLoggedIn(false);
+      navigate('/auth/login');
+    }
+  }, [user]);
 
   const { pathname } = useLocation();
 
