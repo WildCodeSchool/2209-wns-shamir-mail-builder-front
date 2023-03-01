@@ -33,7 +33,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }: Dash
 
   return (
     <Drawer
-      open={isDesktop ? true : isOpenSidebar}
+      open={isDesktop ? false : isOpenSidebar}
       onClose={onCloseSidebar}
       variant="persistent"
       PaperProps={{

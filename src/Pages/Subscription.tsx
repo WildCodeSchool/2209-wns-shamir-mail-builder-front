@@ -3,6 +3,7 @@ import { gql, useLazyQuery } from '@apollo/client';
 import { Container, Typography, Button } from '@mui/material';
 import { ContentStyle } from '../layouts/Main/UserLayoutConfig';
 import { AuthContext } from '../AuthContext/Authcontext';
+import SubscriptionDetails from '../Components/SubscriptionDetails/SubscriptionDetails';
 
 export const SUBSCRIBE = gql`
 query Query{
@@ -66,7 +67,7 @@ export default function Subscription() {
                 </Button>
               </>
             )
-            : null}
+            : <SubscriptionDetails />}
         </Typography>
       </Container>
     </ContentStyle>
