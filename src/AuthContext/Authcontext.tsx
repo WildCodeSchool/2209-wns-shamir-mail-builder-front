@@ -6,6 +6,11 @@ const initialState = {
   user: null,
 };
 
+export const GET_TOKEN = gql`
+mutation GetToken($email: String!, $password: String!) {
+  getToken(email: $email, password: $password)
+}`;
+
 export type AuthContextType = {
   user: any;
   login: (email: string, password: string) => void;
@@ -46,11 +51,6 @@ function authReducer(state: any, action: any) {
       return state;
   }
 }
-
-export const GET_TOKEN = gql`
-mutation GetToken($email: String!, $password: String!) {
-  getToken(email: $email, password: $password)
-}`;
 
 const AuthProvider = ({ children }: any) => {
   const [state, dispatch] = useReducer(authReducer, initialState);

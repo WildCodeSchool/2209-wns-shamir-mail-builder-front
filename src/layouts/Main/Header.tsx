@@ -43,15 +43,15 @@ const ToolbarShadowStyle = styled('div')(({ theme }) => ({
 
 export default function Header() {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const isOffset = useOffSetTop(HEADER.MAIN_DESKTOP_HEIGHT);
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (user !== null) {
       setIsLoggedIn(true);
-      navigate('/app/home');
-    } else {
+    }
+    if (user === null) {
       setIsLoggedIn(false);
       navigate('/auth/login');
     }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { styled } from '@mui/material/styles';
-import { ListItemText, Collapse, Box, List, Typography } from '@mui/material';
+import { ListItemText, Collapse, List, Typography } from '@mui/material';
 import ListItemButton from '@mui/material/ListItemButton';
 
 const ListItemStyle = styled(ListItemButton)(({ theme }) => ({
@@ -62,8 +62,7 @@ function NavItem({ items }: NavItemProps) {
 
               return (
                 <ListItemStyle>
-                  <Box />
-                  <ListItemText primary={component} secondary={usageComponent} />
+                  <ListItemText key={item} primary={component} secondary={usageComponent} />
                 </ListItemStyle>
               );
             })}
@@ -85,7 +84,7 @@ interface NavSectionProps {
 }
 
 export default function NavSection({ sidebarConfig }: NavSectionProps) {
-  console.log(sidebarConfig);
+  console.log('s', sidebarConfig);
 
   return (
     <div>
