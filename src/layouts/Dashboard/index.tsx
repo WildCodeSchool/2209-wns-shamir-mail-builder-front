@@ -17,10 +17,9 @@ const RootStyle = styled('div')({
 
 const MainStyle = styled('div')(({ theme }) => ({
   flexGrow: 1,
-  overflow: 'auto',
-  minHeight: '100%',
+  maxHeight: 'calc(100vh)',
   paddingTop: APP_BAR_DESKTOP + 24,
-  paddingBottom: theme.spacing(10),
+  paddingBottom: theme.spacing(0),
   [theme.breakpoints.down('md')]: {
     paddingTop: APP_BAR_MOBILE + 50,
     paddingLeft: theme.spacing(2),
@@ -39,9 +38,7 @@ interface DashboardLayoutProps {
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = () => (
   <RootStyle>
-    {/* <DashboardNavbar onOpenSidebar={() => setOpen(true)} /> */}
     <Header />
-    {/* <DashboardSidebar isOpenSidebar={open} onCloseSidebar={() => setOpen(false)} /> */}
     <MainStyle>
       <Outlet />
     </MainStyle>
