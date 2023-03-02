@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './AuthContext/Authcontext';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import './index.css';
 
 const httpLink = createHttpLink({
   uri: 'http://localhost:5000/graphql',

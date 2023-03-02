@@ -5,7 +5,8 @@
 .pnp.js
 
 /package-lock.json
-
+/.vscode
+/.idea
 
 # production
 /build
