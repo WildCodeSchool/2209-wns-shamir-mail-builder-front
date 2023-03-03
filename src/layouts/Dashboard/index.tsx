@@ -1,9 +1,5 @@
-// import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
-// import DashboardNavbar from './DashboardNavbar';
-import Header from '../Main/Header';
-// import DashboardSidebar from './DashboardSidebar';
 
 const APP_BAR_MOBILE = 64;
 const APP_BAR_DESKTOP = 92;
@@ -39,9 +35,6 @@ interface DashboardLayoutProps {
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = () => (
   <RootStyle>
-    {/* <DashboardNavbar onOpenSidebar={() => setOpen(true)} /> */}
-    <Header />
-    {/* <DashboardSidebar isOpenSidebar={open} onCloseSidebar={() => setOpen(false)} /> */}
     <MainStyle>
       <Outlet />
     </MainStyle>

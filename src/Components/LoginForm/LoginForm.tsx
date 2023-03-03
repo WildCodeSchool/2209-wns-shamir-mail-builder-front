@@ -3,12 +3,6 @@ import { Box, TextField, Typography, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../../AuthContext/Authcontext';
 
-// type HandleLogin = (email: string, password: string) => void;
-
-// interface LoginFormComponentProps {
-//   handleLogin: HandleLogin,
-// }
-
 interface LoginData {
   email: string
   password: string
