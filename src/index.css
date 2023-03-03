@@ -1,0 +1,22 @@
+* {
+    outline-offset: -1px;
+}
+
+.layout-wrapper::-webkit-scrollbar {
+    width: 2px;
+}
+
+/* Track */
+.layout-wrapper::-webkit-scrollbar-track {
+    background: rgba(26, 154, 239, 0.17);
+}
+
+/* Handle */
+.layout-wrapper::-webkit-scrollbar-thumb {
+    background: #1a9aef;
+}
+
+/* Handle on hover */
+.layout-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #1a9aef;
+}
