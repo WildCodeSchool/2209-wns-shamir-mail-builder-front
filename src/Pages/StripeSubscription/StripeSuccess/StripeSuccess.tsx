@@ -19,7 +19,7 @@ type ISubscription = {
   subscriptionStatus: string;
 };
 
-const SAVE_USER_SUB = gql`
+export const SAVE_USER_SUB = gql`
 mutation SaveUserSub($email: String!, $subscription: SubscriptionInput!) {
   saveUserSub(email: $email, subscription: $subscription) {
     username

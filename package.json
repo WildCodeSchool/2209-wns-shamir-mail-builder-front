@@ -5,6 +5,7 @@
   "dependencies": {
     "@apollo/client": "^3.7.3",
     "@apollo/react-hooks": "^4.0.0",
+    "@apollo/react-testing": "^4.0.0",
     "@ckeditor/ckeditor5-react": "^5.1.0",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
