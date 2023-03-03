@@ -30,11 +30,11 @@ const client = new ApolloClient({
 const root: any = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
   <ApolloProvider client={client}>
-    <AuthProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <AuthProvider>
         <App />
-      </BrowserRouter>
-    </AuthProvider>
+      </AuthProvider>
+    </BrowserRouter>
   </ApolloProvider>,
 );
 

@@ -6,7 +6,7 @@ import StripeCancel from './StripeCancel';
 describe('StripeCancel view', () => {
   it('should detect Link and correct text', () => {
     render(<StripeCancel />, { wrapper: BrowserRouter });
-    expect(screen.getByText(/Next time/i)).toBeInTheDocument();
+    expect(screen.getByText(/prochaine fois/i)).toBeInTheDocument();
     expect(screen.findByRole(Link)).toBeTruthy();
   });
 });

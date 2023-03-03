@@ -1,8 +1,9 @@
-import { useContext, useState, useEffect } from 'react';
-import { gql, useLazyQuery } from '@apollo/client';
-import { Container, Typography, Button } from '@mui/material';
+import { useContext, useState } from 'react';
+import { gql, useQuery, useLazyQuery } from '@apollo/client';
+import { Container, Typography, Button, Box, CircularProgress } from '@mui/material';
 import { ContentStyle } from '../layouts/Main/UserLayoutConfig';
 import { AuthContext } from '../AuthContext/Authcontext';
+// eslint-disable-next-line import/no-cycle
 import SubscriptionDetails from '../Components/SubscriptionDetails/SubscriptionDetails';
 
 export const SUBSCRIBE = gql`
@@ -15,13 +16,27 @@ query Query($email: String!) {
   getUserWithSubStatus(email: $email) {
     email
     subscriptionId {
+      name
+      info
+      price
+      subscriptionStart
+      subscriptionEnd
       subscriptionStatus
     }
   }
 }`;
 
+export type SubDetails = {
+  info: string;
+  price: number;
+  subscriptionStart: Date;
+  subscriptionEnd: Date;
+  subscriptionStatus: string;
+};
+
 export default function Subscription() {
   const [isSubbed, setIsSubbed] = useState<boolean>(false);
+  const [subDetails, setSubDetails] = useState<SubDetails | null>(null);
   const { user } = useContext(AuthContext);
   const [startSubscribe, { loading, error }] = useLazyQuery(SUBSCRIBE, {
     onCompleted: (queryData) => {
@@ -31,43 +46,53 @@ export default function Subscription() {
     },
   });
 
-  if (loading) return <p>Loading...</p>;
+  const { loading: getUserSubStatusLoading,
+    error: getUserSubStatusError } = useQuery(GET_USER_SUBSTATUS, {
+    variables: {
+      email: user.email,
+    },
+    onCompleted: (data) => {
+      if (data.getUserWithSubStatus.subscriptionId !== null) {
+        setIsSubbed(true);
+        setSubDetails(data.getUserWithSubStatus.subscriptionId);
+      }
+    },
+  });
+  if (loading || getUserSubStatusLoading) {
+    return (
+      <Box mt={30} ml={60} sx={{ width: '80%', height: '80%' }}>
+        <CircularProgress variant="indeterminate" size={60} />
+        Loading...
+      </Box>
+    );
+  }
+
   if (error) {
     return (`${error}`);
   }
-
-  const [getUserWithStatus] = useLazyQuery(GET_USER_SUBSTATUS, {
-    onCompleted: (data) => {
-      if (data.getUserWithSubStatus.subscriptionId.subscriptionStatus === 'active') {
-        setIsSubbed(true);
-      } else setIsSubbed(false);
-    },
-  });
-
-  useEffect(() => {
-    if (user !== null) {
-      getUserWithStatus({ variables: { email: user.email } });
-    }
-  }, [user]);
+  if (getUserSubStatusError) {
+    return (`${getUserSubStatusError.message}`);
+  }
 
   return (
     <ContentStyle>
       <Container maxWidth="lg">
         <Typography variant="h4" component="h1" gutterBottom>
+          {isSubbed && subDetails
+          && <SubscriptionDetails subDetails={subDetails} /> }
           {!isSubbed
-            ? (
-              <>
-                <p>Vous n&#39;êtes pas abonné</p>
-                <Button
-                  variant="contained"
-                  type="button"
-                  onClick={() => startSubscribe()}
-                >
-                  M&#39;abonner
-                </Button>
-              </>
-            )
-            : <SubscriptionDetails />}
+          && (
+            <>
+              <p>Vous n&#39;êtes pas abonné</p>
+              <Button
+                variant="contained"
+                type="button"
+                onClick={() => startSubscribe()}
+              >
+                M&#39;abonner
+              </Button>
+            </>
+          )}
         </Typography>
       </Container>
     </ContentStyle>

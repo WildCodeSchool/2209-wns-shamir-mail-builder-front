@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useContext, useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 import { styled } from '@mui/material/styles';
 import { Box, AppBar, Toolbar, Container } from '@mui/material';
@@ -43,7 +43,6 @@ const ToolbarShadowStyle = styled('div')(({ theme }) => ({
 
 export default function Header() {
   const { user } = useContext(AuthContext);
-  const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const isOffset = useOffSetTop(HEADER.MAIN_DESKTOP_HEIGHT);
 
@@ -53,7 +52,6 @@ export default function Header() {
     }
     if (user === null) {
       setIsLoggedIn(false);
-      navigate('/auth/login');
     }
   }, [user]);
 
