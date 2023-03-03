@@ -6,7 +6,7 @@ import StripeSuccess from './StripeSuccess';
 describe('StripeSuccess view', () => {
   it('should detect Link and correct text', () => {
     render(<StripeSuccess />, { wrapper: BrowserRouter });
-    expect(screen.getByText(/enjoy our tool/i)).toBeInTheDocument();
+    expect(screen.getByText(/Merci/i)).toBeInTheDocument();
     expect(screen.findByRole(Link)).toBeTruthy();
   });
 });
