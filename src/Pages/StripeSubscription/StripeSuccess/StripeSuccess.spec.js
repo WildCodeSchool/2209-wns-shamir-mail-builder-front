@@ -18,7 +18,7 @@ const newSubscription = {
 const mocks = [
   {
     request: {
-      mutation: SAVE_USER_SUB,
+      query: SAVE_USER_SUB,
       variables: {
         email: 'joel.miller@gmail.com',
         subscription: newSubscription,
