@@ -34,7 +34,7 @@ const mocks = [
 
 describe('StripeSuccess view', () => {
   it('should detect Link and correct text', () => {
-    render(<MockedProvider mocks={mocks}><StripeSuccess /></MockedProvider>, { wrapper: BrowserRouter });
+    render(<MockedProvider mocks={mocks} addTypename={false}><StripeSuccess /></MockedProvider>, { wrapper: BrowserRouter });
     expect(screen.getByText(/Merci/i)).toBeInTheDocument();
     expect(screen.findByRole(Link)).toBeTruthy();
   });
