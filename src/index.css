@@ -2,21 +2,60 @@
     outline-offset: -1px;
 }
 
-.layout-wrapper::-webkit-scrollbar {
+.layout-wrapper p {
+    margin: 0 !important;
+}
+
+::-webkit-scrollbar {
     width: 2px;
 }
 
 /* Track */
-.layout-wrapper::-webkit-scrollbar-track {
-    background: rgba(26, 154, 239, 0.17);
+
+::-webkit-scrollbar-track {
+    background: transparent;
 }
 
 /* Handle */
-.layout-wrapper::-webkit-scrollbar-thumb {
-    background: #1a9aef;
+
+::-webkit-scrollbar-thumb {
+    background: #ebb644;
 }
 
 /* Handle on hover */
-.layout-wrapper::-webkit-scrollbar-thumb:hover {
-    background: #1a9aef;
+
+::-webkit-scrollbar-thumb:hover {
+    background: #ebb64433;
+}
+
+
+.ck.ck-editor__editable_inline {
+    padding: 0 !important;
+}
+
+.ck.ck-editor__editable_inline>:last-child {
+    margin-bottom: 0 !important;
+}
+
+.ck.ck-editor__editable_inline>:first-child {
+ margin-top: 0 !important;
+}
+
+.draggable-column {
+    transition: flex-basis 0.3s ease-out;
+}
+
+@media screen and (max-width: 600px) {
+    .draggable-column {
+        flex-basis: 100%;
+    }
+    table {
+        width: 100%;
+    }
+}
+
+table {
+    position: relative;
+    border-collapse: collapse;
+    border-spacing: 0;
 }

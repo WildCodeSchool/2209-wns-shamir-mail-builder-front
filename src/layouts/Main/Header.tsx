@@ -64,7 +64,7 @@ export default function Header() {
   const isHome = pathname === '/';
 
   return (
-    <AppBar sx={{ boxShadow: 3, bgcolor: isOffset ? 'background.paper' : 'transparent' }}>
+    <AppBar sx={{ boxShadow: 3, bgcolor: 'background.paper' }}>
       <ToolbarStyle
         disableGutters
         sx={{
