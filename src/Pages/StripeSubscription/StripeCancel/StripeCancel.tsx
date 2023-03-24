@@ -6,7 +6,9 @@ export default function StripeCancel() {
   return (
     <ContentStyle>
       <Container>
-        <Typography>Next time, subscribe for a full access to our tool!</Typography>
+        <Typography>
+          La prochaine fois, abonnez-vous pour profiter au maximum de notre outil!
+        </Typography>
         <Link to="/">Back to Home page</Link>
       </Container>
     </ContentStyle>

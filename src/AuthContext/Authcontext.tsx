@@ -1,5 +1,6 @@
 import React, { useReducer, createContext } from 'react';
 import { gql, useMutation } from '@apollo/client';
+import { useNavigate } from 'react-router-dom';
 import jwt_decode from 'jwt-decode';
 
 const initialState = {
@@ -31,7 +32,7 @@ if (token !== null) {
 const AuthContext = createContext<AuthContextType>({
   user: null,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  login: (email, password) => {},
+  login: (userData) => {},
   logout: () => {},
 });
 
@@ -54,18 +55,23 @@ function authReducer(state: any, action: any) {
 
 const AuthProvider = ({ children }: any) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
+  const navigate = useNavigate();
 
-  const [loadToken] = useMutation(GET_TOKEN, {
+  const [loadToken, { loading, error }] = useMutation(GET_TOKEN, {
     onCompleted: (data) => {
       localStorage.setItem('token', data.getToken);
+      navigate('/app/home');
     },
   });
+
+  if (loading) return <>Chargement...</>;
+  if (error) return <p>{error.message}</p>;
 
   const login = (email: string, password: string) => {
     loadToken({ variables: { email, password } });
     dispatch({
       type: 'LOGIN',
-      payload: { email, password },
+      payload: { email },
     });
   };
 
