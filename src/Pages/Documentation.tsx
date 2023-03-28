@@ -6,7 +6,7 @@ export default function Documentation() {
     <ContentStyle>
       <Container maxWidth="lg">
         <Typography variant="h4" component="h1" gutterBottom>
-          Documentation.js
+          En développement !
         </Typography>
       </Container>
     </ContentStyle>

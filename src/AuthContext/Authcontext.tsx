@@ -1,7 +1,9 @@
 import React, { useReducer, createContext } from 'react';
 import { gql, useMutation } from '@apollo/client';
+import { Alert } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import jwt_decode from 'jwt-decode';
+import Loader from '../layouts/Main/Loader';
 
 const initialState = {
   user: null,
@@ -64,8 +66,8 @@ const AuthProvider = ({ children }: any) => {
     },
   });
 
-  if (loading) return <>Chargement...</>;
-  if (error) return <p>{error.message}</p>;
+  if (loading) return <Loader />;
+  if (error) return <Alert severity="error">{error.message}</Alert>;
 
   const login = (email: string, password: string) => {
     loadToken({ variables: { email, password } });

@@ -1,10 +1,11 @@
 import { useContext, useState } from 'react';
 import { gql, useQuery, useLazyQuery } from '@apollo/client';
-import { Container, Typography, Button, Box, CircularProgress } from '@mui/material';
+import { Container, Typography, Button } from '@mui/material';
 import { ContentStyle } from '../layouts/Main/UserLayoutConfig';
 import { AuthContext } from '../AuthContext/Authcontext';
 // eslint-disable-next-line import/no-cycle
 import SubscriptionDetails from '../Components/SubscriptionDetails/SubscriptionDetails';
+import Loader from '../layouts/Main/Loader';
 
 export const SUBSCRIBE = gql`
 query Query{
@@ -46,32 +47,31 @@ export default function Subscription() {
     },
   });
 
-  const { loading: getUserSubStatusLoading,
-    error: getUserSubStatusError } = useQuery(GET_USER_SUBSTATUS, {
-    variables: {
-      email: user.email,
-    },
-    onCompleted: (data) => {
-      if (data.getUserWithSubStatus.subscriptionId !== null) {
-        setIsSubbed(true);
-        setSubDetails(data.getUserWithSubStatus.subscriptionId);
-      }
-    },
-  });
-  if (loading || getUserSubStatusLoading) {
-    return (
-      <Box mt={30} ml={60} sx={{ width: '80%', height: '80%' }}>
-        <CircularProgress variant="indeterminate" size={60} />
-        Loading...
-      </Box>
-    );
-  }
+  if (user !== null) {
+    const { loading: getUserSubStatusLoading,
+      error: getUserSubStatusError } = useQuery(GET_USER_SUBSTATUS, {
+      variables: {
+        email: user.email,
+      },
+      onCompleted: (data) => {
+        if (data.getUserWithSubStatus.subscriptionId !== null) {
+          setIsSubbed(true);
+          setSubDetails(data.getUserWithSubStatus.subscriptionId);
+        }
+      },
+    });
+    if (loading || getUserSubStatusLoading) {
+      return (
+        <Loader />
+      );
+    }
 
-  if (error) {
-    return (`${error}`);
-  }
-  if (getUserSubStatusError) {
-    return (`${getUserSubStatusError.message}`);
+    if (error) {
+      return (`${error}`);
+    }
+    if (getUserSubStatusError) {
+      return (`${getUserSubStatusError.message}`);
+    }
   }
 
   return (
