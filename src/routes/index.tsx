@@ -1,7 +1,8 @@
 // @ts-nocheck
-import { Suspense, lazy } from 'react';
-import { useRoutes, useLocation } from 'react-router-dom';
+import { Suspense, lazy, useContext, useEffect } from 'react';
+import { useRoutes, useLocation, useNavigate } from 'react-router-dom';
 import { Typography } from '@mui/material';
+import { AuthContext } from '../AuthContext/Authcontext';
 import PublicLayout from '../layouts/Main';
 import DashboardLayout from '../layouts/Dashboard';
 
@@ -58,6 +59,15 @@ const StripeCancel = Loadable(
 );
 
 export default function Router() {
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user !== null) {
+      navigate('/app/home');
+    }
+  }, [user]);
+
   return useRoutes([
     // Public Routes
     {

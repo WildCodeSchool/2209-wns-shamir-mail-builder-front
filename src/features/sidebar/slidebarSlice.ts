@@ -11,7 +11,10 @@ export const slidebarSlice = createSlice({
     resetSelectedComponent: (state) => {
       state.splice(0, 1);
     },
+    updateSelectedComponent: (state, action: PayloadAction<any>) => {
+      state[0] = action.payload;
+    },
   },
 });
-export const { setSelectedComponent, resetSelectedComponent } = slidebarSlice.actions;
+export const { setSelectedComponent, resetSelectedComponent, updateSelectedComponent } = slidebarSlice.actions;
 export default slidebarSlice.reducer;

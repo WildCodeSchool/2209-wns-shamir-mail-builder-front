@@ -1,25 +1,30 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 // eslint-disable-next-line import/no-cycle
-import { generateComponentType, generateRowComponent } from '../../helpers';
+import shortid from 'shortid';
 import {
   COLUMN,
-  CONTAINER,
-  ROW_COMPONENT,
-  SIDEBAR_IMAGE_ITEM,
-} from '../../Components/LayoutBuilder/components/DraggablesSidebar/DraggableBuilderComponentList';
+  CONTAINER, GRID2, GRID2_1_3_L, GRID2_1_3_R,
+  ROW_COMPONENT, SIDEBAR_BUTTON_ITEM,
+  SIDEBAR_IMAGE_ITEM, SIDEBAR_SOCIAL_ITEM,
+} from '../../Components/LayoutBuilder/DraggablesSidebar/DraggableBuilderComponentList';
+// eslint-disable-next-line import/no-cycle
+import { generateComponentType, generateRowComponent } from '../../helpers';
 
 export interface IComponentRenderProps {
   style?: {
     [key: string]: string | number | boolean | null;
-  }
+  },
+  text?: string,
 }
 
 export interface LayoutState {
-  type: string;
   id: string;
+  type: string;
+  typeGrid?: string;
   children: LayoutState[];
   renderProps?: IComponentRenderProps;
   renderState?: any
+  layoutId?: string;
 }
 
 const initialState: LayoutState[] = [];
@@ -39,7 +44,19 @@ export const layoutSlice = createSlice({
     moveParentComponent: (state, action: PayloadAction<any>) => {
       const layoutCopy: LayoutState[] = [...state];
       const [removed] = layoutCopy.splice(action.payload.sourceIndex, 1);
-      layoutCopy.splice(action.payload.destinationIndex, 0, removed);
+      if (action.payload.hoverPosition === 'top') {
+        if (action.payload.sourceIndex > action.payload.destinationIndex) {
+          layoutCopy.splice(action.payload.destinationIndex, 0, removed);
+        } else {
+          layoutCopy.splice(action.payload.destinationIndex - 1, 0, removed);
+        }
+      } else if (action.payload.hoverPosition === 'bottom') {
+        if (action.payload.sourceIndex > action.payload.destinationIndex) {
+          layoutCopy.splice(action.payload.destinationIndex + 1, 0, removed);
+        } else {
+          layoutCopy.splice(action.payload.destinationIndex, 0, removed);
+        }
+      }
       return layoutCopy;
     },
     // eslint-disable-next-line consistent-return
@@ -47,52 +64,13 @@ export const layoutSlice = createSlice({
       const layoutCopy: LayoutState[] = [...state];
       switch (action.payload.type) {
         case ROW_COMPONENT:
-          layoutCopy[action.payload.path].renderProps!.style = {
-            ...layoutCopy[action.payload.path].renderProps!.style,
+          layoutCopy[action.payload.path].children[0].renderProps!.style = {
+            ...layoutCopy[action.payload.path].children[0].renderProps!.style,
             ...action.payload.renderProps.style,
           };
           break;
         case COLUMN:
           const parentPath = action.payload.path.split('-')[0];
-          const newFlexBasis = Number(action.payload.renderProps.style.flexBasis.split('%')[0]);
-          const currentFlexBasis = Number(String(layoutCopy[parentPath].children[0].children[action.payload.path.split('-')[1]].renderProps!.style!.flexBasis!).split('%')[0]);
-
-          // Si on change la taille de la colonne
-          if (newFlexBasis !== currentFlexBasis) {
-            if (newFlexBasis > currentFlexBasis) { // Si on agrandit la colonne
-              if (Number(action.payload.path.split('-')[1]) !== layoutCopy[parentPath].children[0].children.length - 1) { // Si ce n'est pas la dernière colonne
-                layoutCopy[parentPath].children[0].children.forEach((child, index) => { // On parcourt les enfants
-                  if (index === (Number(action.payload.path.split('-')[1]) + 1)) { // Si on est sur l'enfant suivant
-                    const diff = (newFlexBasis - currentFlexBasis); // On calcule la différence
-                    layoutCopy[parentPath].children[0].children[index].renderProps!.style!.flexBasis = `${Number(String(child.renderProps!.style!.flexBasis!).split('%')[0]) - diff}%`; // On applique la différence à l'enfant suivant
-                  }
-                });
-              } else { // Si c'est la dernière colonne
-                layoutCopy[parentPath].children[0].children.forEach((child, index) => { // On parcourt les enfants
-                  if (index === Number(action.payload.path.split('-')[1]) - 1) { // Si on est sur l'enfant précédent
-                    const diff = (newFlexBasis - currentFlexBasis); // On calcule la différence
-                    layoutCopy[parentPath].children[0].children[index].renderProps!.style!.flexBasis = `${Number(String(child.renderProps!.style!.flexBasis!).split('%')[0]) - diff}%`; // On applique la différence à l'enfant précédent
-                  }
-                });
-              }
-            } else if (newFlexBasis < currentFlexBasis) { // Si on réduit la colonne
-              if (Number(action.payload.path.split('-')[1]) !== layoutCopy[parentPath].children[0].children.length - 1) {
-                layoutCopy[parentPath].children[0].children.forEach((child, index) => {
-                  if (index === (Number(action.payload.path.split('-')[1]) + 1)) {
-                    const diff = (currentFlexBasis - newFlexBasis);
-                    layoutCopy[parentPath].children[0].children[index].renderProps!.style!.flexBasis = `${Number(String(child.renderProps!.style!.flexBasis!).split('%')[0]) + diff}%`;
-                  }
-                });
-              } else {
-                layoutCopy[parentPath].children[0].children.forEach((child, index) => {
-                  if (index === Number(action.payload.path.split('-')[1]) - 1) {
-                    const diff = (currentFlexBasis - newFlexBasis);
-                    layoutCopy[parentPath].children[0].children[index].renderProps!.style!.flexBasis = `${Number(String(child.renderProps!.style!.flexBasis!).split('%')[0]) + diff}%`;
-                  }
-                });
-              }
-            }
-          }
 
           layoutCopy[parentPath].children[0].children[action.payload.path.split('-')[1]].renderProps!.style = { // On applique les nouvelles propriétés a la colonne concernée
             ...layoutCopy[parentPath].children[0].children[action.payload.path.split('-')[1]].renderProps!.style,
@@ -120,6 +98,24 @@ export const layoutSlice = createSlice({
             ...action.payload.renderProps.style,
           };
           break;
+        case SIDEBAR_SOCIAL_ITEM:
+          if (action.payload.changeType === 'children') { // Si on modifie les propriétés d'un social Item et non du wrapper des socials items
+            layoutCopy[action.payload.path.split('-')[0]].children[0].children[action.payload.path.split('-')[1]].children[action.payload.path.split('-')[2]].children[action.payload.itemPath].renderProps!.style = {
+              ...layoutCopy[action.payload.path.split('-')[0]].children[0].children[action.payload.path.split('-')[1]].children[action.payload.path.split('-')[2]].children[action.payload.itemPath].renderProps!.style,
+              ...action.payload.renderProps.style,
+            };
+          }
+          layoutCopy[action.payload.path.split('-')[0]].children[0].children[action.payload.path.split('-')[1]].children[action.payload.path.split('-')[2]].renderProps!.style = {
+            ...layoutCopy[action.payload.path.split('-')[0]].children[0].children[action.payload.path.split('-')[1]].children[action.payload.path.split('-')[2]].renderProps!.style,
+            ...action.payload.renderProps.style,
+          };
+          break;
+        case SIDEBAR_BUTTON_ITEM:
+          layoutCopy[action.payload.path.split('-')[0]].children[0].children[action.payload.path.split('-')[1]].children[action.payload.path.split('-')[2]].renderProps!.style = {
+            ...layoutCopy[action.payload.path.split('-')[0]].children[0].children[action.payload.path.split('-')[1]].children[action.payload.path.split('-')[2]].renderProps!.style,
+            ...action.payload.renderProps.style,
+          };
+          break;
         default:
           return layoutCopy;
       }
@@ -128,8 +124,11 @@ export const layoutSlice = createSlice({
       const layoutCopy: LayoutState[] = [...state];
       const newComponent = generateComponentType(action.payload.item);
       const parentPath = action.payload.path.split('-')[0];
-      if (action.payload.hoverPosition === 'top') layoutCopy[parentPath].children[0].children[action.payload.path.split('-')[1]].children.splice(0, 0, newComponent);
-      else if (action.payload.hoverPosition === 'bottom') layoutCopy[parentPath].children[0].children[action.payload.path.split('-')[1]].children.splice(layoutCopy[parentPath].children[0].children[action.payload.path.split('-')[1]].children.length, 0, newComponent);
+      if (action.payload.hoverPosition === 'top') { // @ts-ignore
+        layoutCopy[parentPath].children[0].children[action.payload.path.split('-')[1]].children.splice(0, 0, newComponent);
+      } else if (action.payload.hoverPosition === 'bottom') { // @ts-ignore
+        layoutCopy[parentPath].children[0].children[action.payload.path.split('-')[1]].children.splice(layoutCopy[parentPath].children[0].children[action.payload.path.split('-')[1]].children.length, 0, newComponent);
+      }
     },
     changeColumnHeight: (state, action: PayloadAction<any>) => {
       const layoutCopy = [...state];
@@ -156,22 +155,47 @@ export const layoutSlice = createSlice({
     },
     moveExistColumnInSameParent: (state, action: PayloadAction<any>) => {
       const layoutCopy: LayoutState[] = [...state];
-      const dragElement = action.payload.item;
-      const dragElementPath = dragElement.path.split('-');
-      const dragElementCopy = layoutCopy[dragElement.path.split('-')[0]].children[0].children[Number(dragElement.path.split('-')[1])];
-      const { path } = action.payload;
+      const { path, hoverPosition, item, initialType } = action.payload;
+      const sourcePath = item.path.split('-')[1];
+      const targetPath = path.split('-')[1];
 
-      if (action.payload.hoverPosition === 'left') {
-        layoutCopy[dragElementPath[0]].children[0].children.splice(Number(dragElementPath[1]), 1); // remove from old position
-        layoutCopy[path.split('-')[0]].children[0].children.splice(path.split('-')[1], 0, dragElementCopy); // add to new position
-        if (layoutCopy[dragElementPath[0]].children[0].children.length < 1) { // remove parent component if no more children
-          layoutCopy.splice(Number(dragElementPath[0]), 1);
+      if (sourcePath === targetPath) return;
+
+      let dragElement = layoutCopy[path.split('-')[0]].children[0].children[sourcePath];
+
+      if (hoverPosition === 'left') {
+        if (sourcePath > targetPath) {
+          if (initialType === GRID2_1_3_L || initialType === GRID2_1_3_R) {
+            if (dragElement.renderProps!.style!.flexBasis === 200) {
+              dragElement = { ...dragElement, renderProps: { ...dragElement.renderProps, style: { ...dragElement.renderProps!.style, flexBasis: dragElement.renderProps!.style!.flexBasis = 400 } } };
+              layoutCopy[path.split('-')[0]].children[0].children[targetPath].renderProps!.style!.flexBasis = 200;
+            } else if (dragElement.renderProps!.style!.flexBasis === 400) {
+              dragElement = { ...dragElement, renderProps: { ...dragElement.renderProps, style: { ...dragElement.renderProps!.style, flexBasis: dragElement.renderProps!.style!.flexBasis = 200 } } };
+              layoutCopy[path.split('-')[0]].children[0].children[targetPath].renderProps!.style!.flexBasis = 400;
+            }
+          }
+          layoutCopy[path.split('-')[0]].children[0].children.splice(sourcePath, 1);
+          layoutCopy[path.split('-')[0]].children[0].children.splice(targetPath, 0, dragElement);
+        } else {
+          layoutCopy[path.split('-')[0]].children[0].children.splice(sourcePath, 1);
+          layoutCopy[path.split('-')[0]].children[0].children.splice(targetPath - 1, 0, dragElement);
         }
-      } else if (action.payload.hoverPosition === 'right') {
-        layoutCopy[dragElementPath[0]].children[0].children.splice(Number(dragElementPath[1]), 1); // remove from old position
-        layoutCopy[path.split('-')[0]].children[0].children.splice(Number(path.split('-')[1]) + 1, 0, dragElementCopy); // add to new position
-        if (layoutCopy[dragElementPath[0]].children[0].children.length < 1) { // remove parent component if no more children
-          layoutCopy.splice(Number(dragElementPath[0]), 1);
+      } else if (hoverPosition === 'right') {
+        if (sourcePath > targetPath) {
+          layoutCopy[path.split('-')[0]].children[0].children.splice(sourcePath, 1);
+          layoutCopy[path.split('-')[0]].children[0].children.splice(targetPath + 1, 0, dragElement);
+        } else {
+          if (initialType === GRID2_1_3_L || initialType === GRID2_1_3_R) {
+            if (dragElement.renderProps!.style!.flexBasis === 200) {
+              layoutCopy[path.split('-')[0]].children[0].children[targetPath].renderProps!.style!.flexBasis = 200;
+              dragElement.renderProps!.style!.flexBasis = 400;
+            } else if (dragElement.renderProps!.style!.flexBasis === 400) {
+              layoutCopy[path.split('-')[0]].children[0].children[targetPath].renderProps!.style!.flexBasis = 400;
+              dragElement.renderProps!.style!.flexBasis = 200;
+            }
+          }
+          layoutCopy[path.split('-')[0]].children[0].children.splice(sourcePath, 1);
+          layoutCopy[path.split('-')[0]].children[0].children.splice(targetPath, 0, dragElement);
         }
       }
     },
@@ -183,10 +207,71 @@ export const layoutSlice = createSlice({
         ...action.payload.renderProps,
       };
     },
-    resetLayout: () => initialState,
+    resetLayout: () => ([]),
+    setLayout: (state, action: PayloadAction<any>) =>
+      (action.payload.layout.map((el: any) => ({ ...el, layoutId: action.payload.layoutId }))),
+    deleteRowComponent: (state, action: PayloadAction<any>) => {
+      const { path } = action.payload;
+      state.splice(path, 1);
+    },
+    duplicateRowComponent: (state, action: PayloadAction<any>) => {
+      const { data, path } = action.payload;
+      const newId = shortid.generate();
+      state.splice(path + 1, 0, {
+        ...data,
+        id: newId,
+      });
+    },
+    changeGridInRowComponent: (state, action: PayloadAction<any>) => {
+      const { path, typeGrid, columnCount } = action.payload;
+      if (columnCount === 2) {
+        state[path].children[0].children.forEach((el: any, index: number) => {
+          if (typeGrid === GRID2_1_3_L) {
+            state[path].children[0].typeGrid = GRID2_1_3_L;
+            el.preview = '/static/dragPreview/grid-1-3-2-3.png';
+            if (index === 0) {
+              el.renderProps.style.flexBasis = 600 / 3;
+            } else if (index === 1) {
+              el.renderProps.style.flexBasis = 600 - (600 / 3);
+            }
+          } else if (typeGrid === GRID2_1_3_R) {
+            state[path].children[0].typeGrid = GRID2_1_3_R;
+            el.preview = '/static/dragPreview/grid-2-3-1-3.png';
+            if (index === 0) {
+              el.renderProps.style.flexBasis = 600 - (600 / 3);
+            } else if (index === 1) {
+              el.renderProps.style.flexBasis = 600 / 3;
+            }
+          } else if (typeGrid === GRID2) {
+            state[path].children[0].typeGrid = GRID2;
+            el.preview = '/static/dragPreview/grid-2.png';
+            el.renderProps.style.flexBasis = 600 / 2;
+          }
+        });
+      }
+    },
+    clearColumn: (state, action: PayloadAction<any>) => {
+      const { path } = action.payload;
+      state[path.split('-')[0]].children[0].children[path.split('-')[1]].children = [];
+    },
+    removeSocialItem: (state, action: PayloadAction<any>) => {
+      const { itemPath, path } = action.payload;
+      state[path.split('-')[0]].children[0].children[path.split('-')[1]].children[path.split('-')[2]].children.splice(itemPath, 1);
+    },
+    addSocialItem: (state, action: PayloadAction<any>) => {
+      const { socialItem, path } = action.payload;
+      state[path.split('-')[0]].children[0].children[path.split('-')[1]].children[path.split('-')[2]].children.push(socialItem);
+    },
+    updateTextValueButton: (state, action: PayloadAction<any>) => {
+      const { path, value } = action.payload;
+      state[path.split('-')[0]].children[0].children[path.split('-')[1]].children[path.split('-')[2]].renderProps!.text = value;
+    },
+    deleteComponent: (state, action: PayloadAction<any>) => {
+      const { path } = action.payload;
+      state[path.split('-')[0]].children[0].children[path.split('-')[1]].children.splice(path.split('-')[2], 1);
+    },
   },
 });
-
 export const {
   addParentComponent,
   moveParentComponent,
@@ -196,5 +281,14 @@ export const {
   moveExistColumnInSameParent,
   handleStateComponentChange,
   resetLayout,
+  setLayout,
+  deleteRowComponent,
+  duplicateRowComponent,
+  changeGridInRowComponent,
+  clearColumn,
+  removeSocialItem,
+  addSocialItem,
+  updateTextValueButton,
+  deleteComponent,
 } = layoutSlice.actions;
 export default layoutSlice.reducer;

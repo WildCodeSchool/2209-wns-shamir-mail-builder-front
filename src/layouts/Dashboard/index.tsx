@@ -28,18 +28,17 @@ const MainStyle = styled('div')(({ theme }) => ({
     paddingRight: theme.spacing(2),
   },
 }));
+import DashboardProvider from './DashboardProvider';
+import Dashboard from './Dashboard'
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = () => (
-  <RootStyle>
-    <Header />
-    <MainStyle>
-      <Outlet />
-    </MainStyle>
-  </RootStyle>
+  <DashboardProvider>
+    <Dashboard />
+  </DashboardProvider>
 );
 
 export default DashboardLayout;
