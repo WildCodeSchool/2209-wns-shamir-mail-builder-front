@@ -30,12 +30,6 @@ export default function StripeSuccess() {
   const { user } = useContext(AuthContext);
   const [subInfos, setSubInfos] = useState<ISubInfos | null>(null);
 
-  const [saveSub] = useMutation(SAVE_USER_SUB, {
-    onCompleted: (data) => {
-      setSubInfos(data.saveUserSub);
-    },
-  });
-
   const nextMonth = new Date().getMonth() + 1;
 
   const newSubscription: ISubscription = {
@@ -47,8 +41,18 @@ export default function StripeSuccess() {
     subscriptionStatus: 'actif',
   };
 
+  const [saveSub] = useMutation(SAVE_USER_SUB, {
+    variables: {
+      email: user?.email,
+      subscription: newSubscription,
+    },
+    onCompleted: (data) => {
+      setSubInfos(data.saveUserSub);
+    },
+  });
+
   useEffect(() => {
-    saveSub({ variables: { email: user.email, subscription: newSubscription } });
+    saveSub();
   }, []);
 
   return (

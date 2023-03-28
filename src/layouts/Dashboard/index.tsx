@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
+import Header from '../Main/Header';
 
 const APP_BAR_MOBILE = 64;
 const APP_BAR_DESKTOP = 92;
