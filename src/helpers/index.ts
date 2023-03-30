@@ -8,6 +8,7 @@ import {
   PARENT_COMPONENT,
   ROW_COMPONENT, SIDEBAR_BUTTON_ITEM, SIDEBAR_IMAGE_ITEM, SIDEBAR_SOCIAL_ITEM, SIDEBAR_TEXT_ITEM,
 } from '../Components/LayoutBuilder/DraggablesSidebar/DraggableBuilderComponentList';
+import regex from './Regex/regex';
 
 export function generateGridChildren(dragElement: any) {
   const numberOfColumns = (dragElement.type === GRID2 || dragElement.type === GRID2_1_3_R || dragElement.type === GRID2_1_3_L) ? 2 : dragElement.type === GRID3 ? 3 : 1;
@@ -412,4 +413,28 @@ export const generateSocialItem = (socialName: string) => {
       },
     },
   };
+};
+
+export function formatPhoneNumber(phone: string) {
+  const phoneInArray = [];
+  for (let i = 0; i < phone.length; i += 1) {
+    if (i % 2 !== 0) {
+      phoneInArray.push(phone.substring(i - 1, i + 1));
+    }
+  }
+  return phoneInArray.join('.');
+}
+
+export const isEmailInValid = (email: string) => {
+  if (email !== '' && !regex.REGEX_MAIL.test(email)) {
+    return true;
+  }
+  return false;
+};
+
+export const isPhoneNumberInValid = (phone: string) => {
+  if (phone.length > 10 || !regex.REGEX_PHONE.test(phone)) {
+    return true;
+  }
+  return false;
 };

@@ -1,6 +1,7 @@
 import { useState, useContext } from 'react';
 import { Box, TextField, Typography, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { isEmailInValid } from '../../helpers';
 import { AuthContext } from '../../AuthContext/Authcontext';
 
 interface LoginData {
@@ -48,6 +49,8 @@ export default function LoginForm() {
           shrink: true,
         }}
         name="email"
+        error={isEmailInValid(state.email)}
+        helperText={isEmailInValid(state.email) ? 'Adresse mail invalide' : ''}
         onChange={(e) => handleChange(e)}
       />
       <TextField

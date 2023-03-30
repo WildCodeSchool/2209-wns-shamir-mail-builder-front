@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography, Divider, Stack, Card, CardHeader, CardContent, Button } from '@mui/material';
 // eslint-disable-next-line import/no-cycle
-import { SubDetails } from '../../Pages/Subscription';
+import { SubDetails } from '../../typeDefs/TypeDefs';
 
 type SubscriptionDetailsProps = {
   subDetails: SubDetails;
