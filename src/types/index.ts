@@ -57,6 +57,10 @@ export interface IButtonComponentRenderProps {
     paddingBottom: number
     paddingLeft: number
     paddingRight: number
+    innerPaddingTop: number
+    innerPaddingBottom: number
+    innerPaddingLeft: number
+    innerPaddingRight: number
     borderWidth: number
     borderStyle: 'solid' | 'dashed' | 'dotted' | 'none'
     borderColor: string

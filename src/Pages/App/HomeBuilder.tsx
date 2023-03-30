@@ -1,4 +1,4 @@
-import { Box, Button, Stack, Typography } from '@mui/material';
+import { Backdrop, Box, Button, Fade, Grid, Modal, Stack, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -14,6 +14,7 @@ import {
   MjmlText,
 } from '@faire/mjml-react';
 import { useSelector } from 'react-redux';
+import { useState } from 'react';
 import Iconify from '../../Components/Iconify';
 import DraggablesComponentList
   from '../../Components/LayoutBuilder/DraggablesSidebar/DraggablesComponentList';
@@ -24,6 +25,7 @@ import {
   SIDEBAR_IMAGE_ITEM, SIDEBAR_SOCIAL_ITEM,
   SIDEBAR_TEXT_ITEM,
 } from '../../Components/LayoutBuilder/DraggablesSidebar/DraggableBuilderComponentList';
+import { ISocialItem } from '../../types';
 
 const AppWrapper = styled('div')({
   display: 'flex',
@@ -51,8 +53,26 @@ const AppWrapper = styled('div')({
     maxWidth: '300px',
   },
 });
+
+const style = {
+  position: 'absolute' as 'absolute',
+  top: 0,
+  left: 0,
+  width: '100%',
+  height: '100%',
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+
 export default function HomeBuilder() {
   const layout = useSelector((state: any) => state.layout);
+  const [openPreview, setOpenPreview] = useState<boolean>(false);
+  const [previewHtml, setPreviewHtml] = useState<string>('');
+  const handleOpen = () => setOpenPreview(true);
+  const handleClose = () => setOpenPreview(false);
+
   return (
     <Box
       component={'div'}
@@ -113,16 +133,16 @@ export default function HomeBuilder() {
                 <Button
                   variant="contained"
                   color="primary"
-                  startIcon={<Iconify icon="fa-solid:save" />}
+                  startIcon={<Iconify icon="mdi:responsive" />}
                   onClick={() => {
+                    // @ts-ignore
                     const { html } = renderReactToMjml(
                       <Mjml>
                         <MjmlHead>
                           <MjmlStyle>
                             {`
                               p {
-                                margin-left: 0 !important;
-                                margin-right: 0 !important;
+                                margin: 0 !important;
                               }
                               @media screen and (max-width: 600px) {
                                 .fluidOnMobile table,
@@ -132,11 +152,30 @@ export default function HomeBuilder() {
                                   max-width: 100% !important;
                                   height: auto !important;
                                 }
+                                p {
+                                  margin-top: 1rem !important;
+                                  margin-bottom: 1rem !important;
+                                }
+                              }
+                              ::-webkit-scrollbar {
+                                  width: 2px;
+                              }
+                              /* Track */
+                              ::-webkit-scrollbar-track {
+                                  background: transparent;
+                              }
+                              /* Handle */
+                              ::-webkit-scrollbar-thumb {
+                                  background: #ebb644;
+                              }
+                              /* Handle on hover */
+                              ::-webkit-scrollbar-thumb:hover {
+                                  background: #ebb64433;
                               }
                             `}
                           </MjmlStyle>
                         </MjmlHead>
-                        <MjmlBody>
+                        <MjmlBody width={600 + 20}>
                           {
                             layout.map((row: any) => (
                               <MjmlSection
@@ -145,11 +184,7 @@ export default function HomeBuilder() {
                                 paddingLeft={`${row.children[0].renderProps.style.paddingLeft}px`}
                                 paddingRight={`${row.children[0].renderProps.style.paddingRight}px`}
                                 backgroundColor={row.children[0].renderProps.style.backgroundColor}
-                                backgroundUrl={row.children[0].renderProps.style.backgroundUrl}
-                                backgroundRepeat={row.children[0].renderProps.style.backgroundRepeat}
-                                backgroundSize={row.children[0].renderProps.style.backgroundSize}
-                                backgroundPosition={row.children[0].renderProps.style.backgroundPosition}
-                                fullWidth={row.children[0].renderProps.style.fullWidth}
+                                {...row.children[0].renderProps.style.fullWidth && { fullWidth: true }}
                               >
                                 {
                                   row.children[0].children.map((col: any) => (
@@ -169,17 +204,19 @@ export default function HomeBuilder() {
                                               return (
                                                 <MjmlText
                                                   dangerouslySetInnerHTML={{ __html: component.renderProps.render }}
-                                                  paddingLeft={component.renderProps.style.paddingLeft}
-                                                  paddingRight={component.renderProps.style.paddingRight}
-                                                  paddingTop={component.renderProps.style.paddingTop}
-                                                  paddingBottom={component.renderProps.style.paddingBottom}
+                                                  paddingLeft={0}
+                                                  paddingRight={0}
+                                                  paddingTop={'0.5rem'}
+                                                  paddingBottom={'6px'}
+                                                  lineHeight={component.renderProps.style.lineHeight || '1'}
+                                                  fontSize={component.renderProps.style.fontSize || '16px'}
                                                 />
                                               );
                                             case SIDEBAR_IMAGE_ITEM:
                                               return (
                                                 <MjmlImage
                                                   src={component.renderProps.style.backgroundUrl}
-                                                  height={component.renderProps.style.height}
+                                                  height={`${component.renderProps.style.height}px`}
                                                   paddingTop={component.renderProps.style.paddingTop}
                                                   paddingBottom={component.renderProps.style.paddingBottom}
                                                   paddingLeft={component.renderProps.style.paddingLeft}
@@ -196,18 +233,16 @@ export default function HomeBuilder() {
                                                   paddingLeft={component.renderProps.style.paddingLeft || '8px'}
                                                   paddingRight={component.renderProps.style.paddingRight || '8px'}
                                                 >
-                                                  <MjmlSocialElement
-                                                    name="facebook"
-                                                    href={component.renderProps.style.facebook}
-                                                  />
-                                                  <MjmlSocialElement
-                                                    name="twitter"
-                                                    href={component.renderProps.style.twitter}
-                                                  />
-                                                  <MjmlSocialElement
-                                                    name="instagram"
-                                                    href={component.renderProps.style.instagram}
-                                                  />
+                                                  {
+                                                    component.children.map((social: ISocialItem) => (
+                                                      <MjmlSocialElement
+                                                        key={social.id}
+                                                        href={social.renderProps.style.href}
+                                                        iconSize={`${component.renderProps.style.width}px`}
+                                                        src={social.renderProps.style.src}
+                                                      />
+                                                    ))
+                                                  }
                                                 </MjmlSocial>
                                               );
                                             case SIDEBAR_BUTTON_ITEM:
@@ -218,12 +253,14 @@ export default function HomeBuilder() {
                                                   fontFamily={`${component.renderProps.style.fontFamily}, Helvetica, Arial, sans-serif`}
                                                   fontSize={`${component.renderProps.style.fontSize}px`}
                                                   fontWeight={component.renderProps.style.fontWeight}
-                                                  lineHeight={`${component.renderProps.style.fontSize}px`}
-                                                  innerPadding={`${component.renderProps.style.paddingTop}px ${component.renderProps.style.paddingRight}px ${component.renderProps.style.paddingBottom}px ${component.renderProps.style.paddingLeft}px`}
+                                                  lineHeight={component.renderProps.style.lineHeight}
+                                                  innerPadding={`${component.renderProps.style.innerPaddingTop}px ${component.renderProps.style.innerPaddingRight}px ${component.renderProps.style.innerPaddingBottom}px ${component.renderProps.style.innerPaddingLeft}px`}
+                                                  padding={`${component.renderProps.style.paddingTop}px ${component.renderProps.style.paddingRight}px ${component.renderProps.style.paddingBottom}px ${component.renderProps.style.paddingLeft}px`}
                                                   href={component.renderProps.style.href}
-                                                  cssClass={'fluidOnMobile button'}
+                                                  cssClass={'button'}
                                                   align={component.renderProps.style.justifyContent === 'flex-start' ? 'left' : component.renderProps.style.justifyContent === 'flex-end' ? 'right' : 'center'}
                                                   borderRadius={`${component.renderProps.style.borderRadius}px`}
+                                                  textTransform={component.renderProps.style.textTransform}
                                                 >
                                                   {component.renderProps.text}
                                                 </MjmlButton>
@@ -242,10 +279,11 @@ export default function HomeBuilder() {
                         </MjmlBody>
                       </Mjml>,
                     );
-                    console.log(html);
+                    handleOpen();
+                    setPreviewHtml(html);
                   }}
                 >
-                  Preview
+                  Apercu du mail
                 </Button>
               </Box>
             </Stack>
@@ -278,6 +316,81 @@ export default function HomeBuilder() {
               <SidebarOptions />
             </Box>
           </Box>
+          {
+            openPreview && (
+              <Modal
+                aria-labelledby="transition-modal-title"
+                aria-describedby="transition-modal-description"
+                open={openPreview}
+                onClose={handleClose}
+                closeAfterTransition
+                slots={{ backdrop: Backdrop }}
+              >
+                <Fade in={openPreview}>
+                  <Box sx={style}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        width: '100%',
+                      }}
+                    >
+                      <Button
+                        variant="contained"
+                        onClick={handleClose}
+                      >
+                        Fermer
+                      </Button>
+                    </Box>
+
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={8}>
+                        <Box
+                          sx={{
+                            border: '1px solid #000',
+                          }}
+                        >
+                          <iframe
+                            srcDoc={previewHtml}
+                            title="preview"
+                            style={{
+                              width: '100%',
+                              height: '90vh',
+                              outline: 'none',
+                              border: 'none',
+                            }}
+                          />
+                        </Box>
+                      </Grid>
+
+                      <Grid item xs={12} md={4}>
+                        <Box
+                          sx={{
+                            width: '336px',
+                            height: '459px',
+                            margin: '0 auto',
+                            border: '1px solid #000',
+                          }}
+                        >
+                          <iframe
+                            srcDoc={previewHtml}
+                            title="preview"
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              outline: 'none',
+                              border: 'none',
+                            }}
+                          />
+
+                        </Box>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                </Fade>
+              </Modal>
+            )
+          }
         </AppWrapper>
       </DndProvider>
     </Box>

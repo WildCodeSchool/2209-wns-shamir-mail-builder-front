@@ -33,13 +33,7 @@
     padding: 0 !important;
 }
 
-.ck.ck-editor__editable_inline>:last-child {
-    margin-bottom: 0 !important;
-}
 
-.ck.ck-editor__editable_inline>:first-child {
- margin-top: 0 !important;
-}
 
 .draggable-column {
     transition: flex-basis 0.3s ease-out;
