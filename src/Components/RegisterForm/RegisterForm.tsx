@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Box, TextField, Button } from '@mui/material';
+import { isEmailInValid, isPhoneNumberInValid } from '../../helpers';
 
 type HandleSignUp = (username: string, password: string, email: string, phone: string) => void;
 
@@ -65,6 +66,8 @@ export default function RegisterForm({ handleSignUp }: IRegisterFormProps) {
           shrink: true,
         }}
         name="email"
+        error={isEmailInValid(state.email)}
+        helperText={isEmailInValid(state.email) ? 'Adresse mail invalide' : ''}
         onChange={handleChange}
       />
       <TextField
@@ -87,6 +90,8 @@ export default function RegisterForm({ handleSignUp }: IRegisterFormProps) {
           shrink: true,
         }}
         name="phone"
+        error={isPhoneNumberInValid(state.phone)}
+        helperText={isPhoneNumberInValid(state.phone) ? 'Numéro invalide' : ''}
         onChange={handleChange}
       />
       <Button

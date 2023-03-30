@@ -59,3 +59,12 @@ table {
     border-collapse: collapse;
     border-spacing: 0;
 }
+
+.disabled {
+    color: gray;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.tabs-container {
+    position: relative;
+}

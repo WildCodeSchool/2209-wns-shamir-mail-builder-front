@@ -3,7 +3,7 @@ import { gql, useQuery, useLazyQuery } from '@apollo/client';
 import { Container, Typography, Button } from '@mui/material';
 import { ContentStyle } from '../layouts/Main/UserLayoutConfig';
 import { AuthContext } from '../AuthContext/Authcontext';
-// eslint-disable-next-line import/no-cycle
+import { SubDetails } from '../typeDefs/TypeDefs';
 import SubscriptionDetails from '../Components/SubscriptionDetails/SubscriptionDetails';
 import Loader from '../layouts/Main/Loader';
 
@@ -26,14 +26,6 @@ query Query($email: String!) {
     }
   }
 }`;
-
-export type SubDetails = {
-  info: string;
-  price: number;
-  subscriptionStart: Date;
-  subscriptionEnd: Date;
-  subscriptionStatus: string;
-};
 
 export default function Subscription() {
   const [isSubbed, setIsSubbed] = useState<boolean>(false);
