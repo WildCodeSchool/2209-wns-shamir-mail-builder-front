@@ -16,8 +16,8 @@ export function renderReactToMjml(email: React.ReactElement): MJMLParseResults {
 }
 
 const SAVE_LAYOUT = gql`
-  mutation SaveLayout($saveLayoutId: Float!, $layout: LayoutInput!) {
-    saveLayout(id: $saveLayoutId, layout: $layout) {
+  mutation SaveLayout($saveLayoutId: Float!, $layout: LayoutInput!, $preview: String) {
+    saveLayout(id: $saveLayoutId, layout: $layout, preview: $preview) {
       name
     }
   }
@@ -28,35 +28,38 @@ const LayoutBuilder = () => {
   const selectedLayout = useSelector((state: any) => state.selectedComponent);
   const [saveLayout] = useMutation(SAVE_LAYOUT);
   const ref = useRef<HTMLTableElement>(null);
-  const downloadImage = (blob: string, fileName: string) => {
-    const fakeLink: HTMLAnchorElement = window.document.createElement('a');
-    fakeLink.setAttribute('display', 'none');
-    fakeLink.download = fileName;
 
-    fakeLink.href = `${blob}`;
-
-    document.body.appendChild(fakeLink);
-    fakeLink.click();
-    document.body.removeChild(fakeLink);
-
-    fakeLink.remove();
-  };
-  const exportAsImage = async (el: any, imageFileName: any) => {
+  const exportAsImage = async (el: any) => {
     const canvas = await html2canvas(el, {
       allowTaint: true,
       useCORS: true,
       height: el.scrollHeight,
-      width: el.offsetWidth,
+      width: el.scrollWidth,
     });
-    const image = canvas.toDataURL('image/png', 1.0);
-    downloadImage(image, imageFileName);
+    const formData = new FormData();
+    formData.append('file', canvas.toDataURL('image/png', 1.0));
+    formData.append('upload_preset', 'zqtvcfio');
+    formData.append('folder', 'layout-builder');
+    formData.append('api_key', `${process.env.REACT_APP_CLOUDINARY_API_KEY}`);
+    formData.append('timestamp', (Date.now() / 1000).toString());
+    return fetch(`https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload`, {
+      method: 'POST',
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((res) => res.secure_url);
   };
 
   useEffect(() => {
-    saveLayout({ variables: { layout: { layout }, saveLayoutId: selectedLayout.layoutId } }).then(() => {
-      // eslint-disable-next-line no-console
-      console.log('Layout auto saved successfully');
-    });
+    (async () => {
+      // const imageUrl = await exportAsImage(ref.current);
+      // const payload: { layout: { layout: any }, saveLayoutId: string, preview: string } = { layout: { layout }, saveLayoutId: selectedLayout.layoutId, preview: imageUrl };
+      const payload: { layout: { layout: any }, saveLayoutId: string, preview?: string } = { layout: { layout }, saveLayoutId: selectedLayout.layoutId };
+      saveLayout({ variables: payload }).then(() => {
+        // eslint-disable-next-line no-console
+        console.log('Layout auto saved successfully');
+      });
+    })();
   }, [layout]);
 
   return (
@@ -67,7 +70,7 @@ const LayoutBuilder = () => {
         sx={{
           display: 'none',
         }}
-        onClick={() => exportAsImage(ref.current, 'test')}
+        onClick={() => exportAsImage(ref.current)}
       >
         Save image preview
       </Button>
@@ -75,7 +78,7 @@ const LayoutBuilder = () => {
         component={'div'}
         sx={{
           maxHeight: '100%',
-          height: 'calc(100vh - 220px)',
+          height: 'calc(100vh - 250px)',
           overflowY: 'auto',
         }}
         className={'layout-wrapper'}

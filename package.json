@@ -21,6 +21,7 @@
     "@testing-library/user-event": "^13.5.0",
     "apollo-server-types": "^3.7.1",
     "ckeditor5-custom-build": "file:ckeditor",
+    "formik": "^2.2.9",
     "graphql": "^16.6.0",
     "html-to-image": "^1.11.11",
     "html2canvas": "^1.4.1",
@@ -39,7 +40,8 @@
     "react-scripts": "5.0.1",
     "shortid": "^2.2.16",
     "simplebar-react": "^2.4.3",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "yup": "^1.0.2"
   },
   "scripts": {
     "start": "react-scripts start",

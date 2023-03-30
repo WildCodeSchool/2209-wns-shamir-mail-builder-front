@@ -2282,6 +2282,93 @@ const SidebarOptions = () => {
 
                 <Grid container spacing={2}>
                   <Grid item xs={6}>
+                    <InputLabel id="innerPaddingTop">Haut</InputLabel>
+                    <Input
+                      type={'number'}
+                      id={'innerPaddingTop'}
+                      name={'innerPaddingTop'}
+                      value={renderPropsState?.style?.innerPaddingTop}
+                      onChange={handleRenderPropsChange}
+                      inputProps={{
+                        min: 0,
+                        max: 20,
+                      }}
+                      placeholder={'0'}
+                      style={{
+                        display: 'block',
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <InputLabel id="paddingBottom">Bas</InputLabel>
+                    <Input
+                      type={'number'}
+                      id={'innerPaddingBottom'}
+                      name={'innerPaddingBottom'}
+                      value={renderPropsState?.style?.innerPaddingBottom}
+                      onChange={handleRenderPropsChange}
+                      inputProps={{
+                        min: 0,
+                        max: 20,
+                      }}
+                      placeholder={'0'}
+                      style={{
+                        display: 'block',
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <InputLabel id="paddingLeft">Gauche</InputLabel>
+                    <Input
+                      type={'number'}
+                      id={'innerPaddingLeft'}
+                      name={'innerPaddingLeft'}
+                      value={renderPropsState?.style?.innerPaddingLeft}
+                      onChange={handleRenderPropsChange}
+                      inputProps={{
+                        min: 0,
+                        max: 20,
+                      }}
+                      placeholder={'0'}
+                      style={{
+                        display: 'block',
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <InputLabel id="paddingRight">Droite</InputLabel>
+                    <Input
+                      type={'number'}
+                      id={'innerPaddingRight'}
+                      name={'innerPaddingRight'}
+                      value={renderPropsState?.style?.innerPaddingRight}
+                      onChange={handleRenderPropsChange}
+                      inputProps={{
+                        min: 0,
+                        max: 20,
+                      }}
+                      placeholder={'0'}
+                      style={{
+                        display: 'block',
+                      }}
+                    />
+                  </Grid>
+                </Grid>
+              </SidebarOptionsBodyItem>
+
+              <SidebarOptionsBodyItem>
+                <Typography
+                  variant={'h6'}
+                  component={'h6'}
+                  sx={{
+                    marginBottom: '1rem',
+                  }}
+                >
+                  Rembourrage extérieur
+                </Typography>
+
+                <Grid container spacing={2}>
+                  <Grid item xs={6}>
                     <InputLabel id="paddingTop">Haut</InputLabel>
                     <Input
                       type={'number'}
@@ -2355,6 +2442,7 @@ const SidebarOptions = () => {
                   </Grid>
                 </Grid>
               </SidebarOptionsBodyItem>
+
             </SidebarOptionsBody>
           </SidebarOptionsWrapper>
         ) : undefined

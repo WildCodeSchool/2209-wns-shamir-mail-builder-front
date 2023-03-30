@@ -122,6 +122,10 @@ const Button = ({ data, path }: IButtonComponentProps) => {
         position: 'relative',
         outline: isSelected ? '2px solid #ebb644' : '0',
         opacity: isDragging ? 0.5 : 1,
+        paddingTop: `${renderPropsState.style.paddingTop}px`,
+        paddingRight: `${renderPropsState.style.paddingRight}px`,
+        paddingBottom: `${renderPropsState.style.paddingBottom}px`,
+        paddingLeft: `${renderPropsState.style.paddingLeft}px`,
       }}
       className={'component-button'}
       ref={ref}
@@ -134,10 +138,10 @@ const Button = ({ data, path }: IButtonComponentProps) => {
         title={renderPropsState?.style.title}
         style={{
           display: 'inline-block',
-          paddingTop: `${renderPropsState.style.paddingTop}px`,
-          paddingRight: `${renderPropsState.style.paddingRight}px`,
-          paddingBottom: `${renderPropsState.style.paddingBottom}px`,
-          paddingLeft: `${renderPropsState.style.paddingLeft}px`,
+          paddingTop: `${renderPropsState.style.innerPaddingTop}px`,
+          paddingRight: `${renderPropsState.style.innerPaddingRight}px`,
+          paddingBottom: `${renderPropsState.style.innerPaddingBottom}px`,
+          paddingLeft: `${renderPropsState.style.innerPaddingLeft}px`,
           backgroundColor: renderPropsState.style.backgroundColor,
           color: renderPropsState.style.color,
           borderRadius: `${renderPropsState.style.borderRadius}px`,
@@ -147,6 +151,7 @@ const Button = ({ data, path }: IButtonComponentProps) => {
           textDecoration: renderPropsState.style.textDecoration,
           textTransform: renderPropsState.style.textTransform,
           letterSpacing: `${renderPropsState.style.letterSpacing}px`,
+          lineHeight: renderPropsState.style.lineHeight,
           fontFamily: renderPropsState.style.fontFamily,
           textAlign: renderPropsState.style.textAlign,
           cursor: 'pointer',
