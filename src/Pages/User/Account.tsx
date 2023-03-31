@@ -92,9 +92,9 @@ export default function UserAccount() {
   };
 
   return (
-    <Box sx={{ width: '70%', height: '70%', typography: 'body1', mt: 12, ml: 'auto', mr: 'auto' }}>
+    <Box sx={{ width: '60%', height: '70%', typography: 'body1', mt: 12, ml: 'auto', mr: 'auto' }}>
       <TabContext value={value}>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Box>
           <TabList onChange={handleChange}>
             <Tab label="Utilisateur" value="1" />
             <Tab label="Maquettes" value="2" />
