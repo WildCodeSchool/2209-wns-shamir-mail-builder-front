@@ -115,7 +115,7 @@ const Dashboard = () => {
   const [openModalCompanies, setOpenModalCompanies] = React.useState(false);
   const [getLayout] = useLazyQuery(GET_LAYOUT, {
     onCompleted: (data: any) => {
-      setUserLayouts(data.getUserLayout.companies);
+      setUserLayouts(data.getUserLayout?.companies);
     },
   });
   const [createCompany] = useMutation(NEW_COMPANY, {
@@ -149,13 +149,11 @@ const Dashboard = () => {
   Récupération des layouts de l'utilisateur au montage du composant
    */
   useEffect(() => {
-    (async () => getLayout(
-      {
-        variables: {
-          userId: user.id,
-        },
+    (async () => getLayout({
+      variables: {
+        userId: user.id,
       },
-    ))();
+    }))();
   }, []);
 
   return (

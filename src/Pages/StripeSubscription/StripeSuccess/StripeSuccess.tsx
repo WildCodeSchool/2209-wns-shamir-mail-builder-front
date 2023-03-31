@@ -47,7 +47,7 @@ export default function StripeSuccess() {
       subscription: newSubscription,
     },
     onCompleted: (data) => {
-      setSubInfos(data.saveUserSub);
+      setSubInfos(data?.saveUserSub);
     },
   });
 
