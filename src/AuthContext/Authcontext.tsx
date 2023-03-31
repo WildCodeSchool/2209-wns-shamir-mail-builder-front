@@ -58,7 +58,6 @@ function authReducer(state: any, action: any) {
 const AuthProvider = ({ children }: any) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
   const navigate = useNavigate();
-
   const [loadToken, { loading, error }] = useMutation(GET_TOKEN, {
     onCompleted: (data) => {
       localStorage.setItem('token', data.getToken);

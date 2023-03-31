@@ -21,7 +21,7 @@ const Accordion = styled((props: AccordionProps) => (
   },
 }));
 
-const AccordionSummary = styled((props: AccordionSummaryProps) => (
+const AccordionSummary: any = styled((props: AccordionSummaryProps) => (
   <MuiAccordionSummary
     expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />}
     {...props}
@@ -50,7 +50,7 @@ type CompanyDetailsComponentProps = {
 };
 
 export default function CompanyDetails({ userCompanies }: CompanyDetailsComponentProps) {
-  const [expanded, setExpanded] = useState<string | false>('panel0');
+  const [expanded, setExpanded] = useState<string | false>('panel100');
 
   const handleChange = (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
     setExpanded(newExpanded ? panel : false);
@@ -60,7 +60,7 @@ export default function CompanyDetails({ userCompanies }: CompanyDetailsComponen
     <Box sx={{ width: '100%', height: '100%' }}>
       {userCompanies.length === 0 && <Typography>Vous n'avez pas renseigné de société.</Typography>}
       {userCompanies.map((company, index) => (
-        <Accordion expanded={expanded === `panel${index}`} onChange={handleChange('panel0')} key={company.id}>
+        <Accordion expanded={expanded === `panel${index}`} onChange={handleChange(`panel${index}`)} key={company.id}>
           <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
             <Typography>{company.name}</Typography>
           </AccordionSummary>
@@ -75,12 +75,12 @@ export default function CompanyDetails({ userCompanies }: CompanyDetailsComponen
                 title="Coordonnées"
               />
               <CardContent>
-                <Stack direction="row" spacing={1} justifyContent="space-around" alignItems="center">
+                <Stack direction="row" spacing={1} justifyContent="space-between" alignItems="center">
                   <Typography>{`Téléphone: ${company.phone}`}</Typography>
                   <Typography>{`Courriel: ${company.email}`}</Typography>
                 </Stack>
-                <Typography>{`Adresse: ${company.address}`}</Typography>
-                <Button>Modifier les coordonnées</Button>
+                <Typography sx={{ mt: 2 }}>{`Adresse: ${company.address}`}</Typography>
+                <Button variant="contained" sx={{ mt: 2 }}>Modifier les coordonnées</Button>
               </CardContent>
             </Card>
             <Divider variant="middle" />
@@ -90,13 +90,23 @@ export default function CompanyDetails({ userCompanies }: CompanyDetailsComponen
                 title="Liens divers"
               />
               <CardContent>
-                <Stack direction="column" spacing={1} justifyContent="space-around" alignItems="center">
-                  <Typography>{`Site web: ${company.website}`}</Typography>
-                  <Typography>{`Facebook: ${company.facebook}`}</Typography>
-                  <Typography>{`Instagram: ${company.instagram}`}</Typography>
-                  <Typography>{`Twitter: ${company.twitter}`}</Typography>
+                <Stack direction="row" spacing={1} justifyContent="space-between" alignItems="center">
+                  <Typography>Site web: </Typography>
+                  <Typography>{company.website}</Typography>
                 </Stack>
-                <Button>Modifier les liens</Button>
+                <Stack direction="row" spacing={1} justifyContent="space-between" alignItems="center">
+                  <Typography>Facebook:</Typography>
+                  <Typography>{company.facebook}</Typography>
+                </Stack>
+                <Stack direction="row" spacing={1} justifyContent="space-between" alignItems="center">
+                  <Typography>Instagram:</Typography>
+                  <Typography>{company.instagram}</Typography>
+                </Stack>
+                <Stack direction="row" spacing={1} justifyContent="space-between" alignItems="center">
+                  <Typography>Twitter:</Typography>
+                  <Typography>{company.twitter}</Typography>
+                </Stack>
+                <Button variant="contained" sx={{ mt: 2 }}>Modifier les liens</Button>
               </CardContent>
             </Card>
             <Divider variant="middle" />
@@ -108,7 +118,7 @@ export default function CompanyDetails({ userCompanies }: CompanyDetailsComponen
               <CardContent>
                 <Typography>{company.description}</Typography>
               </CardContent>
-              <Button>Modifier la description</Button>
+              <Button variant="contained" sx={{ mt: 2, mb: 2 }}>Modifier la description</Button>
             </Card>
           </AccordionDetails>
         </Accordion>

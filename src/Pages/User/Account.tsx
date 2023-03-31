@@ -1,8 +1,11 @@
 import { useState, useContext } from 'react';
-import { Container, Typography, Stack, Button } from '@mui/material';
+import { Typography, Box, Tab } from '@mui/material';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
 import { gql, useQuery } from '@apollo/client';
 import Loader from '../../layouts/Main/Loader';
-import { ContentStyle } from '../../layouts/Main/UserLayoutConfig';
+// import { ContentStyle } from '../../layouts/Main/UserLayoutConfig';
 import UserAccountModal from '../../Components/UserAccountModal/UserAccountModal';
 import UserDetails from '../../Components/UserDetails/UserDetails';
 import TemplateDetails from '../../Components/TemplateDetails/TemplateDetails';
@@ -52,11 +55,15 @@ query Query($email: String!) {
 
 export default function UserAccount() {
   const { user } = useContext(AuthContext);
-  const [activeTab, setActiveTab] = useState<number>(1);
   const [userInfos, setUserInfos] = useState<UserInfos | null>(null);
   const [userCompanies, setUserCompanies] = useState<Companies[] | null>(null);
   const [templates, setTemplates] = useState<Template[] | null>(null);
   const [isModalOpened, setIsModalOpened] = useState<boolean>(false);
+  const [value, setValue] = useState('1');
+
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    setValue(newValue);
+  };
   const { loading, error } = useQuery(GET_USER, {
     variables: {
       email: user.email,
@@ -85,20 +92,22 @@ export default function UserAccount() {
   };
 
   return (
-    <ContentStyle>
-      <Container maxWidth="lg">
-        <Stack direction="row" spacing={1} justifyContent="space-evenly" alignItems="center" className="tabs-container">
-          <Button onClick={() => setActiveTab(1)} className={activeTab === 1 ? '' : 'disabled'}>Utilisateur</Button>
-          <Button onClick={() => setActiveTab(2)} className={activeTab === 2 ? '' : 'disabled'}>Templates</Button>
-          <Button onClick={() => setActiveTab(3)} className={activeTab === 3 ? '' : 'disabled'}>Sociétés</Button>
-        </Stack>
-        {activeTab === 1 && userInfos && <UserDetails userInfos={userInfos} handleModifyAccount={handleModifyAccount} />}
-        {activeTab === 2 && templates && <TemplateDetails templates={templates} />}
-        {activeTab === 3 && userCompanies && <CompanyDetails userCompanies={userCompanies} />}
-        {isModalOpened
-        && userInfos
-        && <UserAccountModal userInfos={userInfos} isModalOpened={isModalOpened} handleModifyAccount={handleModifyAccount} /> }
-      </Container>
-    </ContentStyle>
+    <Box sx={{ width: '70%', height: '70%', typography: 'body1', mt: 12, ml: 'auto', mr: 'auto' }}>
+      <TabContext value={value}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <TabList onChange={handleChange}>
+            <Tab label="Utilisateur" value="1" />
+            <Tab label="Maquettes" value="2" />
+            <Tab label="Sociétés" value="3" />
+          </TabList>
+        </Box>
+        <TabPanel value="1">{userInfos && <UserDetails userInfos={userInfos} handleModifyAccount={handleModifyAccount} />}</TabPanel>
+        <TabPanel value="2">{templates && <TemplateDetails templates={templates} />}</TabPanel>
+        <TabPanel value="3">{userCompanies && <CompanyDetails userCompanies={userCompanies} />}</TabPanel>
+      </TabContext>
+      {isModalOpened
+&& userInfos
+&& <UserAccountModal userInfos={userInfos} isModalOpened={isModalOpened} handleModifyAccount={handleModifyAccount} /> }
+    </Box>
   );
 }

@@ -38,7 +38,6 @@ interface NavItemProps {
 function NavItem({ items }: NavItemProps) {
   const [open, setOpen] = useState(false);
   const { component, descriptionComponent, children } = items;
-  console.log(descriptionComponent);
 
   const handleClick = () => {
     setOpen(!open);
