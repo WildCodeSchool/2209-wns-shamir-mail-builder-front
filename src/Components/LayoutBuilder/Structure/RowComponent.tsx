@@ -1,14 +1,17 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import { DragPreviewImage, DropTargetMonitor, useDrag, useDrop } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box } from '@mui/material';
+import { gql, useMutation } from '@apollo/client';
+import html2canvas from 'html2canvas';
 import {
   GRID,
   GRID2, GRID2_1_3_L, GRID2_1_3_R,
   GRID3,
-  ROW_COMPONENT,
+  ROW_COMPONENT, SIDEBAR_MODULE_ITEM,
 } from '../DraggablesSidebar/DraggableBuilderComponentList';
 import {
+  addModuleComponent,
   addParentComponent, deleteRowComponent, duplicateRowComponent,
   moveParentComponent,
 } from '../../../features/layout/layoutSlice';
@@ -18,11 +21,23 @@ import Container from './Container';
 import DropHere from '../DropHere';
 import OverlayComponent from '../Overlay/OverlayComponent';
 import { DragItem, IContainer, IRowComponent } from '../../../types';
+import { AuthContext } from '../../../AuthContext/Authcontext';
 
 interface IRowComponentProps {
   data: IRowComponent
   path: number
 }
+
+const SAVE_MODULE_COMPONENT = gql`
+  mutation Mutation($module: ModuleInput!) {
+    createModule(module: $module) {
+      id
+      name
+      preview
+      render
+    }
+  }
+`;
 
 const RowComponent = ({ data, path }: IRowComponentProps) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -31,8 +46,10 @@ const RowComponent = ({ data, path }: IRowComponentProps) => {
   const [isSelected, setIsSelected] = React.useState<boolean>(false);
   const [over, setOver] = React.useState<boolean>(false);
   const [openRowOptions, setOpenRowOptions] = React.useState<boolean>(false);
+  const [saveModuleComponent] = useMutation(SAVE_MODULE_COMPONENT);
   const dispatch = useDispatch();
   const layout = useSelector((state: any) => state.layout);
+  const { user } = useContext(AuthContext);
 
   const [{ isDragging }, drag, connectDragPreview] = useDrag({
     canDrag: true,
@@ -49,15 +66,16 @@ const RowComponent = ({ data, path }: IRowComponentProps) => {
   });
 
   const [{ isOver }, drop] = useDrop({
-    accept: [GRID, GRID2, GRID3, GRID2_1_3_R, GRID2_1_3_L, ROW_COMPONENT],
+    accept: [GRID, GRID2, GRID3, GRID2_1_3_R, GRID2_1_3_L, ROW_COMPONENT, SIDEBAR_MODULE_ITEM],
     drop: (item: DragItem) => {
       if (!ref.current) {
         return;
       }
       const dragIndex = item.path;
       const hoverIndex = path;
-
-      if (item.type !== ROW_COMPONENT) {
+      if (item.type === SIDEBAR_MODULE_ITEM) {
+        dispatch(addModuleComponent({ item, hoverPosition, path }));
+      } else if (item.type !== ROW_COMPONENT) {
         dispatch(addParentComponent({ item, hoverPosition, path }));
       } else if (item.type === ROW_COMPONENT && dragIndex !== hoverIndex) {
         dispatch(moveParentComponent({ sourceIndex: dragIndex, destinationIndex: hoverIndex, hoverPosition }));
@@ -169,6 +187,57 @@ const RowComponent = ({ data, path }: IRowComponentProps) => {
     dispatch(duplicateRowComponent({ data, path }));
   }, [data, path]);
 
+  const createPreviewImage = useCallback(async (el: HTMLDivElement | null) => {
+    if (el) {
+      setOver(false);
+      setIsSelected(false);
+      const canvas = await html2canvas(el, {
+        allowTaint: true,
+        useCORS: true,
+        height: el.scrollHeight,
+        width: el.scrollWidth,
+      });
+      setOver(true);
+      setIsSelected(true);
+      return canvas.toDataURL('image/png');
+    }
+    return null;
+  }, [ref]);
+
+  // eslint-disable-next-line consistent-return
+  const handleSaveAsModule = useCallback(async () => {
+    // eslint-disable-next-line no-restricted-globals,no-alert
+    if (confirm('Etes vous sûr de vouloir sauvegarder cette ligne en tant que module ?')) {
+      // Save image preview
+      const image = await createPreviewImage(ref.current!.querySelector('.container'));
+      if (image) {
+        const formData = new FormData();
+        formData.append('file', image);
+        formData.append('upload_preset', 'zqtvcfio');
+        formData.append('folder', 'layout-builder');
+        formData.append('api_key', `${process.env.REACT_APP_CLOUDINARY_API_KEY}`);
+        formData.append('timestamp', (Date.now() / 1000).toString());
+        fetch(`https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload`, {
+          method: 'POST',
+          body: formData,
+        })
+          .then((res) => res.json())
+          .then(async (res) => {
+            await saveModuleComponent({
+              variables: {
+                module: {
+                  name: data.type,
+                  preview: res.secure_url,
+                  render: [data],
+                  userId: `${user.id}`,
+                },
+              },
+            });
+          });
+      }
+    }
+  }, [data, path]);
+
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
@@ -233,6 +302,7 @@ const RowComponent = ({ data, path }: IRowComponentProps) => {
               handleOpenOptions={handleOpenRowOptions}
               handleDelete={handleDeleteRow}
               handleDuplicate={handleDuplicateRow}
+              handleSaveAsModule={handleSaveAsModule}
               isOptionsOpen={openRowOptions}
               path={path}
               label={'Ligne'}
