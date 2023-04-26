@@ -14,6 +14,7 @@ export const SIDEBAR_TEXT_ITEM = 'sidebarTextItem';
 export const SIDEBAR_IMAGE_ITEM = 'sidebarImageItem';
 export const SIDEBAR_SOCIAL_ITEM = 'sidebarSocialItem';
 export const SIDEBAR_BUTTON_ITEM = 'sidebarButtonItem';
+export const SIDEBAR_MODULE_ITEM = 'sidebarModuleItem';
 export const DRAGGABLE_COMPONENTS = [
   {
     id: shortid.generate(),

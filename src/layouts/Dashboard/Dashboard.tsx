@@ -39,8 +39,8 @@ query GetUserLayout($userId: Float!) {
 `;
 
 const NEW_COMPANY = gql`
-mutation Mutation($company: CompaniesInput!) {
-  createCompany(company: $company) {
+mutation Mutation($company: CompaniesInput!, $userEmail : String!) {
+  createCompany(company: $company, userEmail: $userEmail) {
     id
     name
     layouts {
@@ -133,7 +133,10 @@ const Dashboard = () => {
 
   const handleSubmitForm = (values: CompaniesInput) => {
     createCompany({
-      variables: values,
+      variables: {
+        company: values,
+        userEmail: user.email,
+      },
     });
   };
 

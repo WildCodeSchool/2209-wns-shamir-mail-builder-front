@@ -5,7 +5,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import {
   Mjml,
   MjmlBody, MjmlButton,
-  MjmlColumn,
+  MjmlColumn, MjmlFont,
   MjmlHead,
   MjmlImage,
   MjmlSection,
@@ -14,10 +14,10 @@ import {
   MjmlText,
 } from '@faire/mjml-react';
 import { useSelector } from 'react-redux';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { gql, useLazyQuery } from '@apollo/client';
 import Iconify from '../../Components/Iconify';
-import DraggablesComponentList
-  from '../../Components/LayoutBuilder/DraggablesSidebar/DraggablesComponentList';
+import DraggablesComponentList from '../../Components/LayoutBuilder/DraggablesSidebar/DraggablesComponentList';
 import LayoutBuilder, { renderReactToMjml } from '../../Components/LayoutBuilder/LayoutBuilder';
 import SidebarOptions from '../../Components/LayoutBuilder/SidebarOptions/SidebarOptions';
 import {
@@ -26,6 +26,7 @@ import {
   SIDEBAR_TEXT_ITEM,
 } from '../../Components/LayoutBuilder/DraggablesSidebar/DraggableBuilderComponentList';
 import { ISocialItem } from '../../types';
+import Module from '../../Components/LayoutBuilder/Module';
 
 const AppWrapper = styled('div')({
   display: 'flex',
@@ -66,12 +67,35 @@ const style = {
   p: 4,
 };
 
+export const GET_MODULES = gql`
+  query GetAllModules {
+    getAllModules {
+      id
+      name
+      preview
+      render
+    }
+  } 
+`;
+
 export default function HomeBuilder() {
   const layout = useSelector((state: any) => state.layout);
   const [openPreview, setOpenPreview] = useState<boolean>(false);
   const [previewHtml, setPreviewHtml] = useState<string>('');
+
   const handleOpen = () => setOpenPreview(true);
   const handleClose = () => setOpenPreview(false);
+
+  const [modules, setModules] = useState<any>([]);
+  const [getModules] = useLazyQuery(GET_MODULES, {
+    onCompleted: (data) => {
+      setModules(data.getAllModules);
+    },
+  });
+
+  useEffect(() => {
+    (async () => getModules())();
+  }, []);
 
   return (
     <Box
@@ -81,7 +105,9 @@ export default function HomeBuilder() {
     >
       <DndProvider backend={HTML5Backend}>
         <AppWrapper>
-          <Box className="builder-sidebar">
+          <Box
+            className="builder-sidebar"
+          >
             <Typography
               variant="h6"
               component="h6"
@@ -95,14 +121,64 @@ export default function HomeBuilder() {
               Liste des composants
             </Typography>
             <Box
-              sx={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '0 10px',
+              component={'div'}
+              style={{
+                width: '100%',
+                overflowY: 'auto',
+                height: 'calc(100vh - 200px)',
+                paddingRight: '.5rem',
               }}
               mt={4}
             >
               <DraggablesComponentList />
+
+              <Typography
+                variant={'h6'}
+                sx={{
+                  marginBottom: '1rem',
+                }}
+              >
+                Mes modules
+                {
+                  modules?.length > 0 && (
+                    <Typography
+                      sx={{
+                        display: 'inline-block',
+                        ml: '.5rem',
+                      }}
+                    >
+                      (
+                      {modules?.length}
+                      {' '}
+                      module
+                      {
+                        modules?.length > 1 ? 's' : ''
+                      }
+                      )
+                    </Typography>
+                  )
+                }
+              </Typography>
+
+              <Box
+                key={module.id}
+                style={{
+                  width: '100%',
+                  flex: 'none',
+                }}
+              >
+                {
+                  modules.length > 0 ? modules.map((module: any) => (
+                    <Module key={module.id} data={module} />
+                  )) : (
+                    <Typography
+                      variant={'body1'}
+                    >
+                      Aucun module
+                    </Typography>
+                  )
+                }
+              </Box>
             </Box>
           </Box>
           <Box
@@ -139,10 +215,16 @@ export default function HomeBuilder() {
                     const { html } = renderReactToMjml(
                       <Mjml>
                         <MjmlHead>
+                          <MjmlFont
+                            name="Roboto"
+                            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700"
+                          />
                           <MjmlStyle>
                             {`
                               p {
-                                margin: 0 !important;
+                              margin: 0 !important;
+                              }
+                              .button table td p {
                               }
                               @media screen and (max-width: 600px) {
                                 .fluidOnMobile table,
@@ -151,10 +233,6 @@ export default function HomeBuilder() {
                                   width: 100% !important;
                                   max-width: 100% !important;
                                   height: auto !important;
-                                }
-                                p {
-                                  margin-top: 1rem !important;
-                                  margin-bottom: 1rem !important;
                                 }
                               }
                               ::-webkit-scrollbar {
@@ -179,16 +257,22 @@ export default function HomeBuilder() {
                           {
                             layout.map((row: any) => (
                               <MjmlSection
+                                key={row.id}
                                 paddingTop={`${row.children[0].renderProps.style.paddingTop}px`}
                                 paddingBottom={`${row.children[0].renderProps.style.paddingBottom}px`}
                                 paddingLeft={`${row.children[0].renderProps.style.paddingLeft}px`}
                                 paddingRight={`${row.children[0].renderProps.style.paddingRight}px`}
                                 backgroundColor={row.children[0].renderProps.style.backgroundColor}
                                 {...row.children[0].renderProps.style.fullWidth && { fullWidth: true }}
+                                backgroundUrl={row.children[0].renderProps.style.backgroundUrl}
+                                backgroundRepeat={row.children[0].renderProps.style.backgroundRepeat}
+                                backgroundSize={row.children[0].renderProps.style.backgroundSize}
+                                backgroundPosition={row.children[0].renderProps.style.backgroundPosition}
                               >
                                 {
                                   row.children[0].children.map((col: any) => (
                                     <MjmlColumn
+                                      key={col.id}
                                       paddingTop={col.renderProps.style.paddingTop || '0px'}
                                       paddingBottom={col.renderProps.style.paddingBottom || '0px'}
                                       paddingLeft={col.renderProps.style.paddingLeft || '4px'}
@@ -203,18 +287,20 @@ export default function HomeBuilder() {
                                             case SIDEBAR_TEXT_ITEM:
                                               return (
                                                 <MjmlText
+                                                  key={component.id}
                                                   dangerouslySetInnerHTML={{ __html: component.renderProps.render }}
                                                   paddingLeft={0}
                                                   paddingRight={0}
                                                   paddingTop={'0.5rem'}
                                                   paddingBottom={'6px'}
-                                                  lineHeight={component.renderProps.style.lineHeight || '1'}
+                                                  lineHeight={component.renderProps.style.lineHeight || '1.5'}
                                                   fontSize={component.renderProps.style.fontSize || '16px'}
                                                 />
                                               );
                                             case SIDEBAR_IMAGE_ITEM:
                                               return (
                                                 <MjmlImage
+                                                  key={component.id}
                                                   src={component.renderProps.style.backgroundUrl}
                                                   height={`${component.renderProps.style.height}px`}
                                                   paddingTop={component.renderProps.style.paddingTop}
@@ -227,6 +313,7 @@ export default function HomeBuilder() {
                                             case SIDEBAR_SOCIAL_ITEM:
                                               return (
                                                 <MjmlSocial
+                                                  key={component.id}
                                                   mode="horizontal"
                                                   paddingTop={component.renderProps.style.paddingTop || '0px'}
                                                   paddingBottom={component.renderProps.style.paddingBottom || '0px'}
@@ -248,12 +335,13 @@ export default function HomeBuilder() {
                                             case SIDEBAR_BUTTON_ITEM:
                                               return (
                                                 <MjmlButton
+                                                  key={component.id}
                                                   backgroundColor={component.renderProps.style.backgroundColor}
                                                   color={component.renderProps.style.color}
-                                                  fontFamily={`${component.renderProps.style.fontFamily}, Helvetica, Arial, sans-serif`}
+                                                  fontFamily={`${component.renderProps.style.fontFamily}, sans-serif`}
                                                   fontSize={`${component.renderProps.style.fontSize}px`}
                                                   fontWeight={component.renderProps.style.fontWeight}
-                                                  lineHeight={component.renderProps.style.lineHeight}
+                                                  lineHeight={'16px'}
                                                   innerPadding={`${component.renderProps.style.innerPaddingTop}px ${component.renderProps.style.innerPaddingRight}px ${component.renderProps.style.innerPaddingBottom}px ${component.renderProps.style.innerPaddingLeft}px`}
                                                   padding={`${component.renderProps.style.paddingTop}px ${component.renderProps.style.paddingRight}px ${component.renderProps.style.paddingBottom}px ${component.renderProps.style.paddingLeft}px`}
                                                   href={component.renderProps.style.href}

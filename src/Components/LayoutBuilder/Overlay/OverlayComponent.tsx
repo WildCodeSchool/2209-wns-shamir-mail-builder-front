@@ -9,11 +9,12 @@ interface IOverlayComponentProps {
   handleOpenOptions: (value: boolean) => void
   handleDelete: () => void
   handleDuplicate?: () => void
+  handleSaveAsModule?: () => void
   label: string
   type: string
 }
 
-const OverlayComponent = ({ path, isOptionsOpen, handleOpenOptions, handleDelete, handleDuplicate, label, type }: IOverlayComponentProps) => (
+const OverlayComponent = ({ path, isOptionsOpen, handleOpenOptions, handleDelete, handleDuplicate, label, type, handleSaveAsModule }: IOverlayComponentProps) => (
   <>
     <Box
       component={'div'}
@@ -108,11 +109,13 @@ const OverlayComponent = ({ path, isOptionsOpen, handleOpenOptions, handleDelete
                   </li>
                   {
                     type === ROW_COMPONENT && (
+                    // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
                     <li
                       style={{
                         display: 'flex',
                       }}
                       title="Enregistrer en tant que module"
+                      onClick={handleSaveAsModule}
                     >
                       <Iconify
                         icon="mdi:content-save"

@@ -270,6 +270,14 @@ export const layoutSlice = createSlice({
       const { path } = action.payload;
       state[path.split('-')[0]].children[0].children[path.split('-')[1]].children.splice(path.split('-')[2], 1);
     },
+    addModuleComponent: (state, action: PayloadAction<any>) => {
+      const { path, item } = action.payload;
+      if (action.payload.hoverPosition === 'top') {
+        state.splice(path, 0, item.data.render[0]);
+      } else if (action.payload.hoverPosition === 'bottom') {
+        state.splice(path + 1, 0, item.data.render[0]);
+      }
+    },
   },
 });
 export const {
@@ -290,5 +298,6 @@ export const {
   addSocialItem,
   updateTextValueButton,
   deleteComponent,
+  addModuleComponent,
 } = layoutSlice.actions;
 export default layoutSlice.reducer;
