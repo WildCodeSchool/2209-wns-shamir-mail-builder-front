@@ -78,7 +78,7 @@ const LayoutBuilder = () => {
         component={'div'}
         sx={{
           maxHeight: '100%',
-          height: 'calc(100vh - 250px)',
+          height: 'calc(100vh - 208px)',
           overflowY: 'auto',
         }}
         className={'layout-wrapper'}

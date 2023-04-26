@@ -2,8 +2,15 @@ import React from 'react';
 import { useDrop } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box } from '@mui/material';
-import { GRID, GRID2, GRID2_1_3_L, GRID2_1_3_R, GRID3 } from '../DraggablesSidebar/DraggableBuilderComponentList';
-import { addParentComponent } from '../../../features/layout/layoutSlice';
+import {
+  GRID,
+  GRID2,
+  GRID2_1_3_L,
+  GRID2_1_3_R,
+  GRID3,
+  SIDEBAR_MODULE_ITEM,
+} from '../DraggablesSidebar/DraggableBuilderComponentList';
+import { addModuleComponent, addParentComponent } from '../../../features/layout/layoutSlice';
 
 const EmptyLayout = () => {
   const ref = React.useRef<HTMLDivElement>(null);
@@ -13,12 +20,16 @@ const EmptyLayout = () => {
   const path = 0;
 
   const [{ isOver }, drop] = useDrop({
-    accept: [GRID, GRID2, GRID3, GRID2_1_3_L, GRID2_1_3_R],
+    accept: [GRID, GRID2, GRID3, GRID2_1_3_L, GRID2_1_3_R, SIDEBAR_MODULE_ITEM],
     drop: (item: any) => {
       if (!ref.current) {
         return;
       }
-      dispatch(addParentComponent({ item, hoverPosition: 'top', layout, path }));
+      if (item.type === SIDEBAR_MODULE_ITEM) {
+        dispatch(addModuleComponent({ item, hoverPosition: 'top', path }));
+      } else {
+        dispatch(addParentComponent({ item, hoverPosition: 'top', layout, path }));
+      }
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
