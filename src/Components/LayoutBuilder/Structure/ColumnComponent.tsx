@@ -33,7 +33,7 @@ import { IColumnComponent, IComponent } from '../../../types';
 interface IColumnComponentProps {
   data: IColumnComponent
   path: string
-  rowTypeGrid: 'grid' | 'grid2' | 'grid3' | 'grid2_1_3_l' | 'grid2_1_3_r'
+  rowTypeGrid: string
 }
 
 const renderComponent = (component: IComponent, currentPath: string) => (
@@ -319,6 +319,7 @@ const ColumnComponent = ({ data, path, rowTypeGrid }: IColumnComponentProps) => 
             handleDelete={handleClearColumn}
             path={path}
             type={data.type}
+            showLabel
             label={'Colonne'}
           />
         )

@@ -93,6 +93,10 @@ export default function HomeBuilder() {
     },
   });
 
+  const handleRemoveModule = (id: number) => {
+    setModules(modules.filter((module: any) => module.id !== id));
+  };
+
   useEffect(() => {
     (async () => getModules())();
   }, []);
@@ -169,7 +173,7 @@ export default function HomeBuilder() {
               >
                 {
                   modules.length > 0 ? modules.map((module: any) => (
-                    <Module key={module.id} data={module} />
+                    <Module key={module.id} data={module} handleRemoveModule={handleRemoveModule} />
                   )) : (
                     <Typography
                       variant={'body1'}

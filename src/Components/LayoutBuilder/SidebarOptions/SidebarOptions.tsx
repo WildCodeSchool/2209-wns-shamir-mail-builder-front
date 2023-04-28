@@ -228,7 +228,7 @@ const SidebarOptions = () => {
 
                 <InputLabel id="backgroundUrl">Couleur de fond</InputLabel>
                 <MuiColorInput
-                  disabled={renderPropsState?.style?.backgroundUrl}
+                  disabled={renderPropsState?.style?.backgroundUrl !== ''}
                   value={renderPropsState?.style?.backgroundColor || 'transparent'}
                   onChange={
                   (color: any) => {
@@ -245,7 +245,7 @@ const SidebarOptions = () => {
                 <FormControlLabel
                   control={(
                     <Switch
-                      disabled={renderPropsState?.style?.backgroundUrl}
+                      disabled={renderPropsState?.style?.backgroundUrl !== ''}
                       checked={renderPropsState?.style?.backgroundColor === 'transparent'}
                       onChange={(e) => {
                         handleRenderPropsChange({
@@ -267,7 +267,7 @@ const SidebarOptions = () => {
                 <FormControlLabel
                   control={(
                     <Switch
-                      disabled={renderPropsState?.style?.backgroundUrl}
+                      disabled={renderPropsState?.style?.backgroundUrl !== ''}
                       checked={renderPropsState?.style?.fullWidth === true}
                       onChange={(e) => {
                         handleRenderPropsChange({
@@ -331,7 +331,7 @@ const SidebarOptions = () => {
                     type={'text'}
                     id={'backgroundUrl'}
                     name={'backgroundUrl'}
-                    value={renderPropsState?.style?.backgroundUrl}
+                    value={renderPropsState?.style?.backgroundUrl || ''}
                     onChange={handleRenderPropsChange}
                     placeholder={'https://'}
                     style={{

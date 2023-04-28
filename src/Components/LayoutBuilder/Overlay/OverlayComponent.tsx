@@ -4,18 +4,20 @@ import Iconify from '../../Iconify';
 import { COLUMN, ROW_COMPONENT } from '../DraggablesSidebar/DraggableBuilderComponentList';
 
 interface IOverlayComponentProps {
-  path: string | number
+  path?: string | number
   isOptionsOpen: boolean
   handleOpenOptions: (value: boolean) => void
   handleDelete: () => void
   handleDuplicate?: () => void
   handleSaveAsModule?: () => void
-  label: string
+  label?: string
   type: string
+  showLabel?: boolean
 }
 
-const OverlayComponent = ({ path, isOptionsOpen, handleOpenOptions, handleDelete, handleDuplicate, label, type, handleSaveAsModule }: IOverlayComponentProps) => (
+const OverlayComponent = ({ path, showLabel = true, isOptionsOpen, handleOpenOptions, handleDelete, handleDuplicate, label, type, handleSaveAsModule }: IOverlayComponentProps) => (
   <>
+    {showLabel && (
     <Box
       component={'div'}
       style={{
@@ -38,10 +40,11 @@ const OverlayComponent = ({ path, isOptionsOpen, handleOpenOptions, handleDelete
         {label}
         {' '}
         {
-          type === ROW_COMPONENT ? Number(path) + 1 : type === COLUMN ? Number(typeof path !== 'number' && path.split('-')[1]) + 1 : null
+          path !== undefined && (type === ROW_COMPONENT ? Number(path) + 1 : type === COLUMN ? Number(typeof path !== 'number' && path.split('-')[1]) + 1 : null)
         }
       </Box>
     </Box>
+    )}
     <Box
       component={'div'}
       style={{
