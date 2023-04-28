@@ -26,17 +26,15 @@ import LayoutsForm from '../../Components/LayoutsForm/LayoutsForm';
 const GET_LAYOUT = gql`
 query GetUserLayout($userId: Float!) {
   getUserLayout(userId: $userId) {
-    companies {
+    id
+    name
+    layouts {
       id
       name
-      layouts {
-        id
-        name
-        preview
-        children
-        createdAt
-        updatedAt
-      }
+      preview
+      children
+      createdAt
+      updatedAt
     }
   }
 }
@@ -134,7 +132,7 @@ const Dashboard = () => {
   const [selectedCompany, setSelectedCompany] = React.useState<any>(null);
   const [getLayout] = useLazyQuery(GET_LAYOUT, {
     onCompleted: (data: any) => {
-      setUserLayouts(data.getUserLayout?.companies);
+      setUserLayouts(data.getUserLayout);
     },
   });
   const [createCompany] = useMutation(NEW_COMPANY, {
@@ -218,7 +216,7 @@ const Dashboard = () => {
         userId: user.id,
       },
     }))();
-  }, []);
+  }, [user]);
 
   return (
     <>

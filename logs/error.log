@@ -1,0 +1,6 @@
+2023/03/30 16:29:51 [error] 24#24: *1 rewrite or internal redirection cycle while internally redirecting to "/index.html", client: 172.23.0.1, server: , request: "GET / HTTP/1.1", host: "localhost:8000"
+2023/03/30 16:29:57 [error] 24#24: *3 rewrite or internal redirection cycle while internally redirecting to "/index.html", client: 172.23.0.1, server: , request: "GET / HTTP/1.1", host: "localhost:8000"
+2023/03/30 16:32:45 [error] 31#31: *1 rewrite or internal redirection cycle while internally redirecting to "/index.html", client: 172.23.0.1, server: , request: "GET / HTTP/1.1", host: "localhost:8000"
+2023/03/30 16:32:46 [error] 31#31: *2 rewrite or internal redirection cycle while internally redirecting to "/index.html", client: 172.23.0.1, server: , request: "GET /favicon.ico HTTP/1.1", host: "localhost:8000", referrer: "http://localhost:8000/"
+2023/03/31 12:46:49 [error] 31#31: *1 rewrite or internal redirection cycle while internally redirecting to "/index.html", client: 172.23.0.1, server: , request: "GET / HTTP/1.1", host: "localhost:8002"
+2023/03/31 12:46:49 [error] 31#31: *3 rewrite or internal redirection cycle while internally redirecting to "/index.html", client: 172.23.0.1, server: , request: "GET /favicon.ico HTTP/1.1", host: "localhost:8002", referrer: "http://localhost:8002/"

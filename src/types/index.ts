@@ -113,7 +113,7 @@ export interface IImageComponentRenderProps {
 export interface IColumnComponent {
   id: string
   type: string
-  initialType: 'grid' | 'grid2' | 'grid3' | 'grid2_1_3_l' | 'grid2_1_3_r'
+  initialType: string
   preview: string
   children: [] | IComponent[]
   renderProps: IColumnComponentRenderProps
@@ -130,7 +130,7 @@ export interface IContainer {
   children: any
   renderProps: IContainerRenderProps
   path: number
-  typeGrid: 'grid' | 'grid2' | 'grid3' | 'grid2_1_3_l' | 'grid2_1_3_r'
+  typeGrid: string
 }
 
 export interface IContainerRenderProps {
@@ -176,5 +176,5 @@ export interface IRowComponent {
       borderRadius: number
     }
   }
-  layoutId: number
+  layoutId?: number
 }

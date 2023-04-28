@@ -60,20 +60,23 @@ const AuthProvider = ({ children }: any) => {
   const navigate = useNavigate();
   const [loadToken, { loading, error }] = useMutation(GET_TOKEN, {
     onCompleted: (data) => {
-      localStorage.setItem('token', data.getToken);
-      navigate('/app/home');
+      if (data.getToken) {
+        localStorage.setItem('token', data.getToken);
+        const decodedToken: any = jwt_decode(data.getToken);
+        dispatch({
+          type: 'LOGIN',
+          payload: { email: decodedToken.email, id: decodedToken.id },
+        });
+        navigate('/app/home');
+      }
     },
   });
 
   if (loading) return <Loader />;
   if (error) return <Alert severity="error">{error.message}</Alert>;
 
-  const login = (email: string, password: string) => {
-    loadToken({ variables: { email, password } });
-    dispatch({
-      type: 'LOGIN',
-      payload: { email },
-    });
+  const login = async (email: string, password: string) => {
+    await loadToken({ variables: { email, password } });
   };
 
   const logout = () => {
