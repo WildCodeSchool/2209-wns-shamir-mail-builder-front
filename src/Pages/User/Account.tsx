@@ -3,7 +3,7 @@ import { Typography, Box, Tab } from '@mui/material';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
-import { gql, useQuery } from '@apollo/client';
+import { gql, useQuery, useMutation } from '@apollo/client';
 import Loader from '../../layouts/Main/Loader';
 // import { ContentStyle } from '../../layouts/Main/UserLayoutConfig';
 import UserAccountModal from '../../Components/UserAccountModal/UserAccountModal';
@@ -16,6 +16,7 @@ import { AuthContext } from '../../AuthContext/Authcontext';
 const GET_USER = gql`
 query GetUser($email: String!) {
     getOneUser(email: $email) {
+      id
       username
       email
       phone
@@ -49,8 +50,18 @@ query Query($email: String!) {
         companyId {
             name
         }
-
     }
+}`;
+
+export const UPDATE_USER = gql`
+mutation Mutation($id: Float!, $username: String!, $phone: String!) {
+  updateUser(id: $id, username: $username, phone: $phone) {
+    id
+    username
+    email
+    phone
+    createdAt
+  }
 }`;
 
 export default function UserAccount() {
@@ -69,8 +80,8 @@ export default function UserAccount() {
       email: user.email,
     },
     onCompleted: (data) => {
-      setUserInfos(data.getOneUser);
-      setUserCompanies(data.getOneUser.companies);
+      setUserInfos(data?.getOneUser);
+      setUserCompanies(data?.getOneUser.companies);
     },
   });
 
@@ -79,16 +90,28 @@ export default function UserAccount() {
       email: user.email,
     },
     onCompleted: (data) => {
-      setTemplates(data.getUserTemplates);
+      setTemplates(data?.getUserTemplates);
     },
   });
 
-  if (loading || templatesLoading) return <Loader />;
+  const [updateUser, { loading: updateUserLoading, error: updateUserError }] = useMutation(UPDATE_USER, {
+    onCompleted: (updateUserData) => {
+      setUserInfos(updateUserData.updateUser);
+      setIsModalOpened(false);
+    },
+  });
+
+  if (loading || templatesLoading || updateUserLoading) return <Loader />;
   if (error) return <Typography>{error.message}</Typography>;
   if (templatesError) return <Typography>{templatesError.message}</Typography>;
+  if (updateUserError) return <Typography>{updateUserError.message}</Typography>;
 
   const handleModifyAccount = () => {
     setIsModalOpened(!isModalOpened);
+  };
+
+  const handleUpdateUser = (id: number, username: string, phone: string) => {
+    updateUser({ variables: { id, username, phone } });
   };
 
   return (
@@ -107,7 +130,7 @@ export default function UserAccount() {
       </TabContext>
       {isModalOpened
 && userInfos
-&& <UserAccountModal userInfos={userInfos} isModalOpened={isModalOpened} handleModifyAccount={handleModifyAccount} /> }
+&& <UserAccountModal userInfos={userInfos} isModalOpened={isModalOpened} handleModifyAccount={handleModifyAccount} handleUpdateUser={handleUpdateUser} /> }
     </Box>
   );
 }

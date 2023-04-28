@@ -59,7 +59,7 @@ export default function SubscriptionDetails({ subDetails }: SubscriptionDetailsP
           </Typography>
         </Stack>
       </CardContent>
-      <Button variant="contained" sx={{ mb: 5 }}>Gérer mon abonnement</Button>
+      <Button variant="contained" sx={{ mb: 5, ml: 5 }}>Gérer mon abonnement</Button>
     </Card>
   );
 }

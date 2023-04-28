@@ -28,7 +28,6 @@ query GetUserLayout($userId: Float!) {
       layouts {
         id
         name
-        preview
         children
         createdAt
         updatedAt

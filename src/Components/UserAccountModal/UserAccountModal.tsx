@@ -13,12 +13,12 @@ type UserAccountModalComponentProps = {
   userInfos: UserInfos;
   isModalOpened: boolean;
   handleModifyAccount: () => void;
+  handleUpdateUser: (id: number, username: string, phone: string) => void;
 };
 
-export default function UserAccountModal({ userInfos, isModalOpened, handleModifyAccount }: UserAccountModalComponentProps) {
+export default function UserAccountModal({ userInfos, isModalOpened, handleModifyAccount, handleUpdateUser }: UserAccountModalComponentProps) {
   const [state, setState] = useState({
     username: '',
-    email: '',
     phone: '',
   });
 
@@ -30,6 +30,20 @@ export default function UserAccountModal({ userInfos, isModalOpened, handleModif
     });
   };
 
+  const updateUser = (id: number, username: string, phone: string) => {
+    if (username === '') {
+      username = userInfos.username;
+    } else {
+      username = state.username;
+    }
+    if (phone === '') {
+      phone = userInfos.phone;
+    } else {
+      phone = state.phone;
+    }
+    handleUpdateUser(id, username, phone);
+  };
+
   return (
     <Dialog
       open={isModalOpened}
@@ -37,7 +51,7 @@ export default function UserAccountModal({ userInfos, isModalOpened, handleModif
     >
       <DialogTitle gutterBottom>Modifier vos informations?</DialogTitle>
       <Divider variant="middle" />
-      <DialogContent sx={{ height: 200, display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap', mt: 5 }}>
+      <DialogContent sx={{ height: 200, width: 300, display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap', mt: 5, flexDirection: 'column' }}>
         <TextField
           id="outlined-required-1"
           label="Nom d'utilisateur"
@@ -46,17 +60,6 @@ export default function UserAccountModal({ userInfos, isModalOpened, handleModif
           }}
           name="username"
           defaultValue={userInfos.username}
-          onChange={handleChange}
-        />
-        <TextField
-          id="outlined-required-2"
-          label="Adresse mail"
-          placeholder="pierre.durand@gmail.com"
-          InputLabelProps={{
-            shrink: true,
-          }}
-          name="email"
-          defaultValue={userInfos.email}
           onChange={handleChange}
         />
         <TextField
@@ -73,7 +76,7 @@ export default function UserAccountModal({ userInfos, isModalOpened, handleModif
       </DialogContent>
       <DialogActions sx={{ mb: 2, mr: 5 }}>
         <Button autoFocus sx={{ mr: 4 }} onClick={handleModifyAccount}>Annuler</Button>
-        <Button>Valider</Button>
+        <Button onClick={() => updateUser(userInfos.id, state.username, state.phone)}>Valider</Button>
       </DialogActions>
     </Dialog>
   );

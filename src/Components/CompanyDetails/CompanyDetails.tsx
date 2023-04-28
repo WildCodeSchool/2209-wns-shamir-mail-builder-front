@@ -7,6 +7,7 @@ import MuiAccordionSummary, {
   AccordionSummaryProps,
 } from '@mui/material/AccordionSummary';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
+import { formatPhoneNumber } from '../../helpers';
 import { Companies } from '../../typeDefs/TypeDefs';
 
 const Accordion = styled((props: AccordionProps) => (
@@ -69,14 +70,14 @@ export default function CompanyDetails({ userCompanies }: CompanyDetailsComponen
               {`Dernière modification le: ${new Date(company.updatedAt).toLocaleDateString('fr')}`}
             </Typography>
             <Typography>{`Numéro de Siret: ${company.siret}`}</Typography>
-            <Card sx={{ elevation: 0 }}>
+            <Card elevation={0}>
               <CardHeader
                 sx={{ pr: 20 }}
                 title="Coordonnées"
               />
               <CardContent>
                 <Stack direction="row" spacing={1} justifyContent="space-between" alignItems="center">
-                  <Typography>{`Téléphone: ${company.phone}`}</Typography>
+                  <Typography>{`Téléphone: ${formatPhoneNumber(company.phone)}`}</Typography>
                   <Typography>{`Courriel: ${company.email}`}</Typography>
                 </Stack>
                 <Typography sx={{ mt: 2 }}>{`Adresse: ${company.address}`}</Typography>
@@ -84,7 +85,7 @@ export default function CompanyDetails({ userCompanies }: CompanyDetailsComponen
               </CardContent>
             </Card>
             <Divider variant="middle" />
-            <Card>
+            <Card elevation={0}>
               <CardHeader
                 sx={{ pr: 20 }}
                 title="Liens divers"
@@ -110,7 +111,7 @@ export default function CompanyDetails({ userCompanies }: CompanyDetailsComponen
               </CardContent>
             </Card>
             <Divider variant="middle" />
-            <Card>
+            <Card elevation={0}>
               <CardHeader
                 sx={{ pr: 20 }}
                 title="Description"
@@ -118,7 +119,7 @@ export default function CompanyDetails({ userCompanies }: CompanyDetailsComponen
               <CardContent>
                 <Typography>{company.description}</Typography>
               </CardContent>
-              <Button variant="contained" sx={{ mt: 2, mb: 2 }}>Modifier la description</Button>
+              <Button variant="contained" sx={{ mt: 2, mb: 2, ml: 2 }}>Modifier la description</Button>
             </Card>
           </AccordionDetails>
         </Accordion>

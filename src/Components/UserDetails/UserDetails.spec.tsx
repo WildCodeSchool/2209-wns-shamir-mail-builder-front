@@ -4,6 +4,7 @@ import { formatPhoneNumber } from '../../helpers';
 import UserDetails from './UserDetails';
 
 const userInfos = {
+  id: 1,
   username: 'Joël Miller',
   createdAt: new Date(),
   email: 'joel.miller@gmail.com',
