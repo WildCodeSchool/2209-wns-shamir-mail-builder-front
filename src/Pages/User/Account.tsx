@@ -21,22 +21,26 @@ query GetUser($email: String!) {
       email
       phone
       createdAt
-      companies {
-        id
-        name
-        siret
-        phone
-        email
-        address
-        website
-        facebook
-        instagram
-        twitter
-        description
-        createdAt
-        updatedAt
-      }
     }
+}`;
+
+export const GET_USER_COMPANIES = gql`
+query GetUserCompanies {
+  getUserCompanies {
+    id
+    name
+    siret
+    phone
+    email
+    address
+    website
+    facebook
+    instagram
+    twitter
+    description
+    createdAt
+    updatedAt
+  }
 }`;
 
 export const GET_USER_TEMPLATES = gql`
@@ -81,7 +85,12 @@ export default function UserAccount() {
     },
     onCompleted: (data) => {
       setUserInfos(data?.getOneUser);
-      setUserCompanies(data?.getOneUser.companies);
+    },
+  });
+
+  const { loading: userCompaniesLoading, error: userCompaniesError } = useQuery(GET_USER_COMPANIES, {
+    onCompleted: (data) => {
+      setUserCompanies(data?.getUserCompanies);
     },
   });
 
@@ -101,8 +110,9 @@ export default function UserAccount() {
     },
   });
 
-  if (loading || templatesLoading || updateUserLoading) return <Loader />;
+  if (loading || userCompaniesLoading || templatesLoading || updateUserLoading) return <Loader />;
   if (error) return <Typography>{error.message}</Typography>;
+  if (userCompaniesError) return <Typography>{userCompaniesError.message}</Typography>;
   if (templatesError) return <Typography>{templatesError.message}</Typography>;
   if (updateUserError) return <Typography>{updateUserError.message}</Typography>;
 
@@ -113,7 +123,7 @@ export default function UserAccount() {
   const handleUpdateUser = (id: number, username: string, phone: string) => {
     updateUser({ variables: { id, username, phone } });
   };
-
+  console.log(userCompanies);
   return (
     <Box sx={{ width: '60%', height: '70%', typography: 'body1', mt: 12, ml: 'auto', mr: 'auto' }}>
       <TabContext value={value}>
