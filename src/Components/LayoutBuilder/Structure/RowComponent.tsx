@@ -22,6 +22,7 @@ import DropHere from '../DropHere';
 import OverlayComponent from '../Overlay/OverlayComponent';
 import { DragItem, IContainer, IRowComponent } from '../../../types';
 import { AuthContext } from '../../../AuthContext/Authcontext';
+import { generateNewIdInModule } from '../../../helpers';
 
 interface IRowComponentProps {
   data: IRowComponent
@@ -223,12 +224,13 @@ const RowComponent = ({ data, path }: IRowComponentProps) => {
         })
           .then((res) => res.json())
           .then(async (res) => {
+            const dataFormatted = generateNewIdInModule(data);
             await saveModuleComponent({
               variables: {
                 module: {
                   name: data.type,
                   preview: res.secure_url,
-                  render: [data],
+                  render: [dataFormatted],
                   userId: `${user.id}`,
                 },
               },

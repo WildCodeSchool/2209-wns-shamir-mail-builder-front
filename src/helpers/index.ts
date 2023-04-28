@@ -1,14 +1,14 @@
 import shortid from 'shortid';
 // eslint-disable-next-line import/no-cycle
-import { LayoutState } from '../features/layout/layoutSlice';
 import {
-  COLUMN, CONTAINER,
+  COLUMN,
   GRID2, GRID2_1_3_L, GRID2_1_3_R,
   GRID3,
   PARENT_COMPONENT,
   ROW_COMPONENT, SIDEBAR_BUTTON_ITEM, SIDEBAR_IMAGE_ITEM, SIDEBAR_SOCIAL_ITEM, SIDEBAR_TEXT_ITEM,
 } from '../Components/LayoutBuilder/DraggablesSidebar/DraggableBuilderComponentList';
 import regex from './Regex/regex';
+import { IColumnComponent, IComponent, IContainer, IRowComponent, ISocialItem } from '../types';
 
 export function generateGridChildren(dragElement: any) {
   const numberOfColumns = (dragElement.type === GRID2 || dragElement.type === GRID2_1_3_R || dragElement.type === GRID2_1_3_L) ? 2 : dragElement.type === GRID3 ? 3 : 1;
@@ -33,10 +33,10 @@ export function generateGridChildren(dragElement: any) {
   }));
 }
 
-export const generateContainerChildren = (dragElement: any) => [
+export const generateContainerChildren = (dragElement: any): IContainer[] => [
   {
     id: `container-${shortid.generate()}`,
-    type: CONTAINER,
+    path: 0,
     children: generateGridChildren(dragElement),
     typeGrid: dragElement.type,
     renderProps: {
@@ -50,6 +50,8 @@ export const generateContainerChildren = (dragElement: any) => [
         paddingBottom: 10,
         paddingLeft: 10,
         gap: '2px',
+        backgroundUrl: '',
+        backgroundColor: 'transparent',
         backgroundSize: 'contain',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -65,13 +67,23 @@ export const generateContainerChildren = (dragElement: any) => [
 
 export function generateRowComponent(dragElement: any) {
   const children = generateContainerChildren(dragElement);
-  const newComponent: LayoutState = {
+  const newComponent: IRowComponent = {
     id: shortid.generate(),
     type: ROW_COMPONENT,
     children,
     renderProps: {
       style: {
-        position: 'relative',
+        position: '',
+        paddingBottom: 10,
+        paddingTop: 10,
+        backgroundUrl: '',
+        backgroundSize: 'contain',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        borderStyle: 'none',
+        borderWidth: 0,
+        borderColor: 'transparent',
+        borderRadius: 0,
       },
     },
   };
@@ -80,7 +92,7 @@ export function generateRowComponent(dragElement: any) {
 
 export const appendNewParentComponent = (dragElement: any, dropElement: any, hoverPosition: any, layout: any, path: any) => {
   const newComponent = generateRowComponent(dragElement);
-  const layoutCopy: LayoutState[] = [...layout];
+  const layoutCopy: IRowComponent[] = [...layout];
 
   if (hoverPosition === 'top') {
     layoutCopy.splice(path, 0, newComponent);
@@ -438,3 +450,24 @@ export const isPhoneNumberInValid = (phone: string) => {
   }
   return false;
 };
+
+export const generateNewIdInModule = (module: IRowComponent) => ({
+  ...module,
+  id: shortid.generate(),
+  children: module.children.map((child: IContainer) => ({
+    ...child,
+    id: `container-${shortid.generate()}`,
+    children: child.children.map((grandChild: IColumnComponent) => ({
+      ...grandChild,
+      id: `column-${shortid.generate()}`,
+      children: grandChild.children.map((greatGrandChild: IComponent) => ({
+        ...greatGrandChild,
+        id: shortid.generate(),
+        children: greatGrandChild.children.length > 0 ? greatGrandChild.children.map((greatGreatGreatGrandChild: ISocialItem) => ({
+          ...greatGreatGreatGrandChild,
+          id: shortid.generate(),
+        })) : [],
+      })),
+    })),
+  })),
+});

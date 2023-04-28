@@ -8,7 +8,8 @@ import {
   SIDEBAR_IMAGE_ITEM, SIDEBAR_SOCIAL_ITEM,
 } from '../../Components/LayoutBuilder/DraggablesSidebar/DraggableBuilderComponentList';
 // eslint-disable-next-line import/no-cycle
-import { generateComponentType, generateRowComponent } from '../../helpers';
+import { generateComponentType, generateNewIdInModule, generateRowComponent } from '../../helpers';
+import { IColumnComponent, IRowComponent } from '../../types';
 
 export interface IComponentRenderProps {
   style?: {
@@ -17,17 +18,7 @@ export interface IComponentRenderProps {
   text?: string,
 }
 
-export interface LayoutState {
-  id: string;
-  type: string;
-  typeGrid?: string;
-  children: LayoutState[];
-  renderProps?: IComponentRenderProps;
-  renderState?: any
-  layoutId?: string;
-}
-
-const initialState: LayoutState[] = [];
+const initialState: IRowComponent[] = [];
 
 export const layoutSlice = createSlice({
   name: 'layout',
@@ -42,7 +33,7 @@ export const layoutSlice = createSlice({
       }
     },
     moveParentComponent: (state, action: PayloadAction<any>) => {
-      const layoutCopy: LayoutState[] = [...state];
+      const layoutCopy = [...state];
       const [removed] = layoutCopy.splice(action.payload.sourceIndex, 1);
       if (action.payload.hoverPosition === 'top') {
         if (action.payload.sourceIndex > action.payload.destinationIndex) {
@@ -61,7 +52,7 @@ export const layoutSlice = createSlice({
     },
     // eslint-disable-next-line consistent-return
     change: (state, action: PayloadAction<any>) => {
-      const layoutCopy: LayoutState[] = [...state];
+      const layoutCopy = [...state];
       switch (action.payload.type) {
         case ROW_COMPONENT:
           layoutCopy[action.payload.path].children[0].renderProps!.style = {
@@ -81,7 +72,7 @@ export const layoutSlice = createSlice({
 
           // Si on change l'alignement des colonnes
           if (action.payload.renderProps.style.alignItems) {
-            layoutCopy[action.payload.path].children[0].children.forEach((child) => {
+            layoutCopy[action.payload.path].children[0].children.forEach((child: IColumnComponent) => {
               child.renderProps!.style!.alignSelf = action.payload.renderProps.style.alignItems;
             });
           }
@@ -121,7 +112,7 @@ export const layoutSlice = createSlice({
       }
     },
     addNewComponentInColumn: (state, action: PayloadAction<any>) => {
-      const layoutCopy: LayoutState[] = [...state];
+      const layoutCopy = [...state];
       const newComponent = generateComponentType(action.payload.item);
       const parentPath = action.payload.path.split('-')[0];
       if (action.payload.hoverPosition === 'top') { // @ts-ignore
@@ -137,7 +128,7 @@ export const layoutSlice = createSlice({
       layoutCopy[parentPath].children[0].children[columnPath].renderProps!.style!.height = action.payload.value ?? '150px';
     },
     moveExistChildrenInNewParentComponent: (state, action: PayloadAction<any>) => {
-      const layoutCopy: LayoutState[] = [...state];
+      const layoutCopy = [...state];
       const dragElement = action.payload.item;
       const { path } = action.payload;
 
@@ -154,7 +145,7 @@ export const layoutSlice = createSlice({
       }
     },
     moveExistColumnInSameParent: (state, action: PayloadAction<any>) => {
-      const layoutCopy: LayoutState[] = [...state];
+      const layoutCopy = [...state];
       const { path, hoverPosition, item, initialType } = action.payload;
       const sourcePath = item.path.split('-')[1];
       const targetPath = path.split('-')[1];
@@ -200,7 +191,7 @@ export const layoutSlice = createSlice({
       }
     },
     handleStateComponentChange: (state, action: PayloadAction<any>) => {
-      const layoutCopy: LayoutState[] = [...state];
+      const layoutCopy = [...state];
       const { path } = action.payload;
       layoutCopy[path.split('-')[0]].children[0].children[path.split('-')[1]].children[path.split('-')[2]].renderProps = {
         ...layoutCopy[path.split('-')[0]].children[0].children[path.split('-')[1]].children[path.split('-')[2]].renderProps,
@@ -225,7 +216,7 @@ export const layoutSlice = createSlice({
     changeGridInRowComponent: (state, action: PayloadAction<any>) => {
       const { path, typeGrid, columnCount } = action.payload;
       if (columnCount === 2) {
-        state[path].children[0].children.forEach((el: any, index: number) => {
+        state[path].children[0].children.forEach((el: IColumnComponent, index: number) => {
           if (typeGrid === GRID2_1_3_L) {
             state[path].children[0].typeGrid = GRID2_1_3_L;
             el.preview = '/static/dragPreview/grid-1-3-2-3.png';
@@ -272,10 +263,11 @@ export const layoutSlice = createSlice({
     },
     addModuleComponent: (state, action: PayloadAction<any>) => {
       const { path, item } = action.payload;
+      const itemD = item.data.render[0];
       if (action.payload.hoverPosition === 'top') {
-        state.splice(path, 0, item.data.render[0]);
+        state.splice(Number(path), 0, generateNewIdInModule(itemD));
       } else if (action.payload.hoverPosition === 'bottom') {
-        state.splice(path + 1, 0, item.data.render[0]);
+        state.splice(Number(path) + 1, 0, generateNewIdInModule(itemD));
       }
     },
   },
