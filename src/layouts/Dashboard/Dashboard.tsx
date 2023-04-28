@@ -3,11 +3,14 @@ import { gql, useLazyQuery, useMutation } from '@apollo/client';
 import {
   Accordion,
   AccordionDetails,
-  AccordionSummary, Backdrop,
+  AccordionSummary,
+  Backdrop,
   Box,
   Button,
   Container,
-  Divider, Fade, Modal,
+  Divider,
+  Fade,
+  Modal,
   Stack,
   Typography,
 } from '@mui/material';
@@ -18,6 +21,7 @@ import { setLayout } from '../../features/layout/layoutSlice';
 import { setSelectedLayout } from '../../features/layout/selectedComponent';
 import { AuthContext } from '../../AuthContext/Authcontext';
 import CompaniesForm from '../../Components/CompaniesForm/CompaniesForm';
+import LayoutsForm from '../../Components/LayoutsForm/LayoutsForm';
 
 const GET_LAYOUT = gql`
 query GetUserLayout($userId: Float!) {
@@ -49,6 +53,19 @@ mutation Mutation($company: CompaniesInput!, $userEmail : String!) {
       createdAt
       updatedAt
     }
+  }
+}
+`;
+
+const NEW_LAYOUT = gql`
+mutation Mutation($layout: LayoutInput!, $companyId: Float!) {
+  newLayout(layout: $layout, companyId: $companyId) {
+    id
+    name
+    preview
+    children
+    createdAt
+    updatedAt
   }
 }
 `;
@@ -112,6 +129,8 @@ const Dashboard = () => {
   const [userLayouts, setUserLayouts] = React.useState<any>([]);
   const [layoutSelected, setLayoutSelected] = React.useState<any>(false);
   const [openModalCompanies, setOpenModalCompanies] = React.useState(false);
+  const [openModalLayouts, setOpenModalLayouts] = React.useState(false);
+  const [selectedCompany, setSelectedCompany] = React.useState<any>(null);
   const [getLayout] = useLazyQuery(GET_LAYOUT, {
     onCompleted: (data: any) => {
       setUserLayouts(data.getUserLayout?.companies);
@@ -129,8 +148,25 @@ const Dashboard = () => {
       ]);
     },
   });
+  const [createLayout] = useMutation(NEW_LAYOUT, {
+    onCompleted: (data: any) => {
+      setOpenModalLayouts(false);
+      setUserLayouts((prev: any) => prev.map((company: any) => {
+        if (company.id === selectedCompany) {
+          return {
+            ...company,
+            layouts: [
+              ...company.layouts,
+              data.newLayout,
+            ],
+          };
+        }
+        return company;
+      }));
+    },
+  });
 
-  const handleSubmitForm = (values: CompaniesInput) => {
+  const handleSubmitFormCompany = (values: CompaniesInput) => {
     createCompany({
       variables: {
         company: values,
@@ -143,8 +179,33 @@ const Dashboard = () => {
     setOpenModalCompanies(true);
   };
 
+  const handleOpenModalLayouts = (companyId: number) => {
+    setOpenModalLayouts(true);
+    setSelectedCompany(companyId);
+  };
+
+  const handleCloseModalLayouts = () => {
+    setOpenModalLayouts(false);
+  };
+
   const handleCloseModalCompanies = () => {
     setOpenModalCompanies(false);
+  };
+
+  const handleSubmitFormLayouts = (values: any) => {
+    createLayout(
+      {
+        variables: {
+          layout: {
+            layout: {
+              name: values.name,
+              description: values.description,
+            },
+          },
+          companyId: values.companyId,
+        },
+      },
+    );
   };
 
   /*
@@ -195,7 +256,7 @@ const Dashboard = () => {
                   >
                     <Fade in={openModalCompanies}>
                       <Box sx={style}>
-                        <CompaniesForm handleSubmit={handleSubmitForm} />
+                        <CompaniesForm handleSubmit={handleSubmitFormCompany} />
                       </Box>
                     </Fade>
                   </Modal>
@@ -205,116 +266,136 @@ const Dashboard = () => {
                 my={5}
               >
                 {
-            userLayouts?.map((companies: any) => (
-              <Box
-                key={companies.id}
-                sx={
-                  {
-                    border: '1px solid #000',
-                    borderRadius: '5px',
-                    p: 2,
-                    my: 2,
-                  }
+                  openModalLayouts && (
+                    <Modal
+                      aria-labelledby="transition-modal-title"
+                      aria-describedby="transition-modal-description"
+                      open={openModalLayouts}
+                      onClose={handleCloseModalLayouts}
+                      closeAfterTransition
+                      slots={{ backdrop: Backdrop }}
+                    >
+                      <Fade in={openModalLayouts}>
+                        <Box sx={style}>
+                          <LayoutsForm handleSubmit={handleSubmitFormLayouts} companiesId={selectedCompany} />
+                        </Box>
+                      </Fade>
+                    </Modal>
+                  )
                 }
-              >
-                <Accordion sx={{
-                  boxShadow: 'none',
-                }}
-                >
-                  <AccordionSummary>
-                    <Stack
-                      direction="row"
-                      alignItems={'center'}
-                      spacing={2}
-                      justifyContent={'space-between'}
-                      flexGrow={1}
+                {
+                userLayouts?.map((companies: any) => (
+                  <Box
+                    key={companies.id}
+                    sx={
+                      {
+                        border: '1px solid #000',
+                        borderRadius: '5px',
+                        p: 2,
+                        my: 2,
+                      }
+                    }
+                  >
+                    <Accordion sx={{
+                      boxShadow: 'none',
+                    }}
                     >
-                      <Typography
-                        variant="h4"
-                      >
-                        {companies.name}
-                        {' '}
-                        <Typography>
-                          {companies.layouts.length}
-                          {' '}
-                          layout(s)
-                        </Typography>
-                      </Typography>
-                      <Button
-                        variant="contained"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                      >
-                        Ajouter un template
-                      </Button>
-                    </Stack>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <Divider />
-                    <Stack
-                      direction="row"
-                      alignItems={'center'}
-                      spacing={2}
-                      sx={{
-                        my: 5,
-                      }}
-                    >
-                      {companies.layouts.length > 0 ? companies?.layouts.map((companie: any) => (
-                        <Box
-                          key={companie.id}
+                      <AccordionSummary>
+                        <Stack
+                          direction="row"
+                          alignItems={'center'}
+                          spacing={2}
+                          justifyContent={'space-between'}
+                          flexGrow={1}
                         >
-                          <img
-                            src={companie.preview}
-                            alt="layout"
-                            style={{
-                              width: '100%',
-                              height: '180px',
-                              maxWidth: '180px',
-                              objectFit: 'cover',
-                              border: '1px solid #000',
-                              borderRadius: '5px',
-                            }}
-                          />
                           <Typography
-                            variant="h6"
+                            variant="h4"
                           >
-                            {companie.name}
+                            {companies.name}
+                            {' '}
+                            {companies.id}
+                            {' '}
+                            <Typography>
+                              {companies.layouts.length}
+                              {' '}
+                              layout(s)
+                            </Typography>
                           </Typography>
                           <Button
-                            variant={'contained'}
-                            size={'small'}
-                            sx={{
-                              mt: 1,
-                            }}
-                            onClick={() => {
-                              dispatch(setLayout({
-                                layout: companie.children,
-                                layoutId: companie.id,
-                              }));
-                              dispatch(setSelectedLayout({ layoutId: companie.id }));
-                              setLayoutSelected(true);
+                            variant="contained"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleOpenModalLayouts(companies.id);
                             }}
                           >
-                            Choisir ce layout
+                            Ajouter un template
                           </Button>
-                        </Box>
-                      )) : (
-                        <Typography
-                          variant="h6"
+                        </Stack>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <Divider />
+                        <Stack
+                          direction="row"
+                          alignItems={'center'}
+                          spacing={2}
+                          sx={{
+                            my: 5,
+                          }}
                         >
-                          Aucun layout
-                        </Typography>
-                      )}
-                    </Stack>
-                  </AccordionDetails>
-                </Accordion>
+                          {companies.layouts.length > 0 ? companies?.layouts.map((companie: any) => (
+                            <Box
+                              key={companie.id}
+                            >
+                              <img
+                                src={companie.preview !== '' ? companie.preview : 'http://fakeimg.pl/180x180'}
+                                alt="layout"
+                                style={{
+                                  width: '100%',
+                                  height: '180px',
+                                  maxWidth: '180px',
+                                  objectFit: 'cover',
+                                  border: '1px solid #000',
+                                  borderRadius: '5px',
+                                }}
+                              />
+                              <Typography
+                                variant="h6"
+                              >
+                                {companie.name}
+                              </Typography>
+                              <Button
+                                variant={'contained'}
+                                size={'small'}
+                                sx={{
+                                  mt: 1,
+                                }}
+                                onClick={() => {
+                                  dispatch(setLayout({
+                                    layout: companie.children,
+                                    layoutId: companie.id,
+                                  }));
+                                  dispatch(setSelectedLayout({ layoutId: companie.id }));
+                                  setLayoutSelected(true);
+                                }}
+                              >
+                                Choisir ce layout
+                              </Button>
+                            </Box>
+                          )) : (
+                            <Typography
+                              variant="h6"
+                            >
+                              Aucun layout
+                            </Typography>
+                          )}
+                        </Stack>
+                      </AccordionDetails>
+                    </Accordion>
 
-              </Box>
-            ))
+                  </Box>
+                ))
               }
               </Box>
-
             </Container>
           )
         }
