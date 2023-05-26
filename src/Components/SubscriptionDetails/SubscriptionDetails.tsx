@@ -58,8 +58,8 @@ export default function SubscriptionDetails({ subDetails }: SubscriptionDetailsP
             {new Date(subDetails?.subscriptionEnd).toLocaleDateString('fr')}
           </Typography>
         </Stack>
+        <Button variant="contained" sx={{ mt: 4 }}>Gérer mon abonnement</Button>
       </CardContent>
-      <Button variant="contained" sx={{ mb: 5 }}>Gérer mon abonnement</Button>
     </Card>
   );
 }

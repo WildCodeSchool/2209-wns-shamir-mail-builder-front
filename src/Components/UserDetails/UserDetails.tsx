@@ -43,8 +43,8 @@ export default function UserDetails({ userInfos, handleModifyAccount }: UserDeta
             {formattedPhoneNumber}
           </Typography>
         </Stack>
+        <Button variant="contained" sx={{ mt: 5 }} onClick={() => handleModifyAccount()}>Gérer mon compte</Button>
       </CardContent>
-      <Button variant="contained" sx={{ mb: 5 }} onClick={() => handleModifyAccount()}>Gérer mon compte</Button>
     </Card>
   );
 }
