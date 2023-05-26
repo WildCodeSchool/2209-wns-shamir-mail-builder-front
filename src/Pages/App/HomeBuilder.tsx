@@ -14,7 +14,7 @@ import {
   MjmlText,
 } from '@faire/mjml-react';
 import { useSelector } from 'react-redux';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { gql, useLazyQuery } from '@apollo/client';
 import Iconify from '../../Components/Iconify';
 import DraggablesComponentList from '../../Components/LayoutBuilder/DraggablesSidebar/DraggablesComponentList';
@@ -25,8 +25,8 @@ import {
   SIDEBAR_IMAGE_ITEM, SIDEBAR_SOCIAL_ITEM,
   SIDEBAR_TEXT_ITEM,
 } from '../../Components/LayoutBuilder/DraggablesSidebar/DraggableBuilderComponentList';
-import { ISocialItem } from '../../types';
-import Module from '../../Components/LayoutBuilder/Module';
+import { IColumnComponent, IRowComponent, ISocialItem } from '../../types';
+import Module, { IModule } from '../../Components/LayoutBuilder/Module';
 
 const AppWrapper = styled('div')({
   display: 'flex',
@@ -78,6 +78,12 @@ export const GET_MODULES = gql`
   } 
 `;
 
+export const SEND_EMAIL = gql`
+  query Query($message: String!, $subject: String!, $email: String!) {
+    sendEmail(message: $message, subject: $subject, email: $email)
+  }
+`;
+
 export default function HomeBuilder() {
   const layout = useSelector((state: any) => state.layout);
   const [openPreview, setOpenPreview] = useState<boolean>(false);
@@ -86,12 +92,188 @@ export default function HomeBuilder() {
   const handleOpen = () => setOpenPreview(true);
   const handleClose = () => setOpenPreview(false);
 
-  const [modules, setModules] = useState<any>([]);
+  const [modules, setModules] = useState<IModule[]>([]);
   const [getModules] = useLazyQuery(GET_MODULES, {
     onCompleted: (data) => {
       setModules(data.getAllModules);
     },
   });
+  const [sendEmail] = useLazyQuery(SEND_EMAIL, {
+    variables: {
+      message: previewHtml,
+      subject: 'Test',
+      email: 'seveste.brandon@gmail.com',
+    },
+    onCompleted: (data) => {
+      // eslint-disable-next-line no-alert
+      alert(data.sendEmail.message);
+    },
+  });
+
+  const handleRemoveModule = (id: number) => {
+    setModules(modules.filter((module: IModule) => module.id !== id));
+  };
+
+  const handleSend = useCallback(async () => {
+    const { html } = renderReactToMjml(
+      <Mjml>
+        <MjmlHead>
+          <MjmlFont
+            name="Roboto"
+            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700"
+          />
+          <MjmlStyle>
+            {`
+                              p {
+                              margin: 0 !important;
+                              }
+                              .button table td p {
+                              }
+                              @media screen and (max-width: 600px) {
+                                .fluidOnMobile table,
+                                .fluidOnMobile td,
+                                .fluidOnMobile img {
+                                  width: 100% !important;
+                                  max-width: 100% !important;
+                                  height: auto !important;
+                                }
+                              }
+                              ::-webkit-scrollbar {
+                                  width: 2px;
+                              }
+                              /* Track */
+                              ::-webkit-scrollbar-track {
+                                  background: transparent;
+                              }
+                              /* Handle */
+                              ::-webkit-scrollbar-thumb {
+                                  background: #ebb644;
+                              }
+                              /* Handle on hover */
+                              ::-webkit-scrollbar-thumb:hover {
+                                  background: #ebb64433;
+                              }
+                            `}
+          </MjmlStyle>
+        </MjmlHead>
+        <MjmlBody width={600 + 20}>
+          {
+              layout.map((row: IRowComponent) => (
+                <MjmlSection
+                  key={row.id}
+                  paddingTop={`${row.children[0].renderProps.style.paddingTop}px`}
+                  paddingBottom={`${row.children[0].renderProps.style.paddingBottom}px`}
+                  paddingLeft={`${row.children[0].renderProps.style.paddingLeft}px`}
+                  paddingRight={`${row.children[0].renderProps.style.paddingRight}px`}
+                  backgroundColor={row.children[0].renderProps.style.backgroundColor}
+                  {...row.children[0].renderProps.style.fullWidth && { fullWidth: true }}
+                  backgroundUrl={row.children[0].renderProps.style.backgroundUrl}
+                  backgroundRepeat={row.children[0].renderProps.style.backgroundRepeat}
+                  backgroundSize={row.children[0].renderProps.style.backgroundSize}
+                  backgroundPosition={row.children[0].renderProps.style.backgroundPosition}
+                >
+                  {
+                    row.children[0].children.map((col: IColumnComponent) => (
+                      <MjmlColumn
+                        key={col.id}
+                        paddingTop={col.renderProps.style.paddingTop || '0px'}
+                        paddingBottom={col.renderProps.style.paddingBottom || '0px'}
+                        paddingLeft={col.renderProps.style.paddingLeft || '4px'}
+                        paddingRight={col.renderProps.style.paddingRight || '4px'}
+                        width={col.renderProps.style.flexBasis}
+                        verticalAlign={col.renderProps.style.alignSelf === 'flex-start' ? 'top' : col.renderProps.style.alignSelf === 'flex-end' ? 'bottom' : 'middle'}
+                      >
+                        {
+                          col.children.map((component: any) => {
+                            const { type } = component;
+                            switch (type) {
+                              case SIDEBAR_TEXT_ITEM:
+                                return (
+                                  <MjmlText
+                                    key={component.id}
+                                    dangerouslySetInnerHTML={{ __html: component.renderProps.render }}
+                                    paddingLeft={0}
+                                    paddingRight={0}
+                                    paddingTop={'0.5rem'}
+                                    paddingBottom={'6px'}
+                                    lineHeight={component.renderProps.style.lineHeight || '1.5'}
+                                    fontSize={component.renderProps.style.fontSize || '16px'}
+                                  />
+                                );
+                              case SIDEBAR_IMAGE_ITEM:
+                                return (
+                                  <MjmlImage
+                                    key={component.id}
+                                    src={component.renderProps.style.backgroundUrl}
+                                    height={`${component.renderProps.style.height}px`}
+                                    paddingTop={component.renderProps.style.paddingTop}
+                                    paddingBottom={component.renderProps.style.paddingBottom}
+                                    paddingLeft={component.renderProps.style.paddingLeft}
+                                    paddingRight={component.renderProps.style.paddingRight}
+                                    cssClass={'fluidOnMobile'}
+                                  />
+                                );
+                              case SIDEBAR_SOCIAL_ITEM:
+                                return (
+                                  <MjmlSocial
+                                    key={component.id}
+                                    mode="horizontal"
+                                    paddingTop={component.renderProps.style.paddingTop || '0px'}
+                                    paddingBottom={component.renderProps.style.paddingBottom || '0px'}
+                                    paddingLeft={component.renderProps.style.paddingLeft || '8px'}
+                                    paddingRight={component.renderProps.style.paddingRight || '8px'}
+                                    align={component.renderProps.style.justifyContent === 'flex-start' ? 'left' : component.renderProps.style.justifyContent === 'flex-end' ? 'right' : 'center'}
+                                  >
+                                    {
+                                      component.children.map((social: ISocialItem) => (
+                                        <MjmlSocialElement
+                                          key={social.id}
+                                          href={social.renderProps.style.href}
+                                          iconSize={`${component.renderProps.style.width}px`}
+                                          src={social.renderProps.style.src}
+                                        />
+                                      ))
+                                    }
+                                  </MjmlSocial>
+                                );
+                              case SIDEBAR_BUTTON_ITEM:
+                                return (
+                                  <MjmlButton
+                                    key={component.id}
+                                    backgroundColor={component.renderProps.style.backgroundColor}
+                                    color={component.renderProps.style.color}
+                                    fontFamily={`${component.renderProps.style.fontFamily}, sans-serif`}
+                                    fontSize={`${component.renderProps.style.fontSize}px`}
+                                    fontWeight={component.renderProps.style.fontWeight}
+                                    lineHeight={'16px'}
+                                    innerPadding={`${component.renderProps.style.innerPaddingTop}px ${component.renderProps.style.innerPaddingRight}px ${component.renderProps.style.innerPaddingBottom}px ${component.renderProps.style.innerPaddingLeft}px`}
+                                    padding={`${component.renderProps.style.paddingTop}px ${component.renderProps.style.paddingRight}px ${component.renderProps.style.paddingBottom}px ${component.renderProps.style.paddingLeft}px`}
+                                    href={component.renderProps.style.href}
+                                    cssClass={'button'}
+                                    align={component.renderProps.style.justifyContent === 'flex-start' ? 'left' : component.renderProps.style.justifyContent === 'flex-end' ? 'right' : 'center'}
+                                    borderRadius={`${component.renderProps.style.borderRadius}px`}
+                                    textTransform={component.renderProps.style.textTransform}
+                                  >
+                                    {component.renderProps.text}
+                                  </MjmlButton>
+                                );
+                              default:
+                                return null;
+                            }
+                          })
+                        }
+                      </MjmlColumn>
+                    ))
+                  }
+                </MjmlSection>
+              ))
+            }
+        </MjmlBody>
+      </Mjml>,
+    );
+    setPreviewHtml(html);
+    await sendEmail();
+  }, [sendEmail]);
 
   useEffect(() => {
     (async () => getModules())();
@@ -168,8 +350,8 @@ export default function HomeBuilder() {
                 }}
               >
                 {
-                  modules.length > 0 ? modules.map((module: any) => (
-                    <Module key={module.id} data={module} />
+                  modules.length > 0 ? modules.map((module: IModule) => (
+                    <Module key={module.id} data={module} handleRemoveModule={handleRemoveModule} />
                   )) : (
                     <Typography
                       variant={'body1'}
@@ -205,22 +387,30 @@ export default function HomeBuilder() {
 
               <Box
                 component={'div'}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                }}
               >
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<Iconify icon="mdi:responsive" />}
-                  onClick={() => {
+                <Box
+                  component={'div'}
+                >
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<Iconify icon="mdi:responsive" />}
+                    onClick={() => {
                     // @ts-ignore
-                    const { html } = renderReactToMjml(
-                      <Mjml>
-                        <MjmlHead>
-                          <MjmlFont
-                            name="Roboto"
-                            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700"
-                          />
-                          <MjmlStyle>
-                            {`
+                      const { html } = renderReactToMjml(
+                        <Mjml>
+                          <MjmlHead>
+                            <MjmlFont
+                              name="Roboto"
+                              href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700"
+                            />
+                            <MjmlStyle>
+                              {`
                               p {
                               margin: 0 !important;
                               }
@@ -251,11 +441,11 @@ export default function HomeBuilder() {
                                   background: #ebb64433;
                               }
                             `}
-                          </MjmlStyle>
-                        </MjmlHead>
-                        <MjmlBody width={600 + 20}>
-                          {
-                            layout.map((row: any) => (
+                            </MjmlStyle>
+                          </MjmlHead>
+                          <MjmlBody width={600 + 20}>
+                            {
+                            layout.map((row: IRowComponent) => (
                               <MjmlSection
                                 key={row.id}
                                 paddingTop={`${row.children[0].renderProps.style.paddingTop}px`}
@@ -270,7 +460,7 @@ export default function HomeBuilder() {
                                 backgroundPosition={row.children[0].renderProps.style.backgroundPosition}
                               >
                                 {
-                                  row.children[0].children.map((col: any) => (
+                                  row.children[0].children.map((col: IColumnComponent) => (
                                     <MjmlColumn
                                       key={col.id}
                                       paddingTop={col.renderProps.style.paddingTop || '0px'}
@@ -319,6 +509,7 @@ export default function HomeBuilder() {
                                                   paddingBottom={component.renderProps.style.paddingBottom || '0px'}
                                                   paddingLeft={component.renderProps.style.paddingLeft || '8px'}
                                                   paddingRight={component.renderProps.style.paddingRight || '8px'}
+                                                  align={component.renderProps.style.justifyContent === 'flex-start' ? 'left' : component.renderProps.style.justifyContent === 'flex-end' ? 'right' : 'center'}
                                                 >
                                                   {
                                                     component.children.map((social: ISocialItem) => (
@@ -364,16 +555,29 @@ export default function HomeBuilder() {
                               </MjmlSection>
                             ))
                           }
-                        </MjmlBody>
-                      </Mjml>,
-                    );
-                    handleOpen();
-                    setPreviewHtml(html);
-                  }}
+                          </MjmlBody>
+                        </Mjml>,
+                      );
+                      handleOpen();
+                      setPreviewHtml(html);
+                    }}
+                  >
+                    Apercu du mail
+                  </Button>
+                </Box>
+                <Box
+                  component={'div'}
                 >
-                  Apercu du mail
-                </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleSend}
+                  >
+                    Envoyer
+                  </Button>
+                </Box>
               </Box>
+
             </Stack>
             <LayoutBuilder />
           </Box>
@@ -470,7 +674,6 @@ export default function HomeBuilder() {
                               border: 'none',
                             }}
                           />
-
                         </Box>
                       </Grid>
                     </Grid>

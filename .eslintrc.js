@@ -38,6 +38,7 @@ module.exports = {
     'import/no-extraneous-dependencies': 0,
     'react/no-unescaped-entities': 0,
     'no-case-declarations': 0,
+    'react/jsx-closing-tag-location': 0,
     semi: ['error', 'always'],
     quotes: ['error', 'single'],
   },

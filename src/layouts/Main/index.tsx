@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useLocation, Outlet } from 'react-router-dom';
+import { useLocation, Outlet, useOutlet, Navigate } from 'react-router-dom';
 
 import { Box, Container, Stack, Typography } from '@mui/material';
 
@@ -9,8 +9,12 @@ import Header from './Header';
 
 export default function PublicLayout() {
   const { pathname } = useLocation();
-
+  const outlet = useOutlet();
   const isHome = pathname === '/';
+
+  if (!outlet) {
+    return <Navigate to={'/'} replace />;
+  }
 
   return (
     <Stack sx={{ minHeight: 1 }}>
