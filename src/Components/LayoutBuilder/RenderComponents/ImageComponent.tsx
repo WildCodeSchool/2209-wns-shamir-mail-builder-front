@@ -101,7 +101,7 @@ const Image = ({ data, path }: IImageComponentProps) => {
   }, [openImageOptions]);
 
   const handleDeleteImage = useCallback(() => {
-    // eslint-disable-next-line no-restricted-globals
+    // eslint-disable-next-line no-restricted-globals,no-alert
     if (confirm('Etes vous sûr de vouloir supprimer cette image ?')) {
       dispatch(deleteComponent({ path }));
       dispatch(resetSelectedComponent());

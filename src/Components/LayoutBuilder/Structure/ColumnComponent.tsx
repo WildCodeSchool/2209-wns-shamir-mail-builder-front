@@ -100,7 +100,8 @@ const ColumnComponent = ({ data, path, rowTypeGrid }: IColumnComponentProps) => 
           const dropParentPath = path.split('-')[0];
 
           if (dragParentPath !== dropParentPath) {
-            alert('You can not move column to another parent component, wait this awesome feature coming soon!');
+            // eslint-disable-next-line no-alert
+            alert('You cannot move column to another parent component, wait this awesome feature coming soon!');
           } else {
             dispatch(moveExistColumnInSameParent({ item, hoverPosition, path, initialType: rowTypeGrid }));
           }
@@ -184,7 +185,7 @@ const ColumnComponent = ({ data, path, rowTypeGrid }: IColumnComponentProps) => 
 
   drag(drop(ref));
 
-  const handleClickOutside = useCallback((e: any) => {
+  const handleClickOutside = useCallback((e: MouseEvent) => {
     const target = e.target as HTMLElement;
     const sidebarOptionsWrapper = target.closest('.sidebar-options');
     const materialPopover = target.closest('.MuiPopover-root') || target.closest('.MuiPopper-root');

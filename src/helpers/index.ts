@@ -74,8 +74,8 @@ export function generateRowComponent(dragElement: any) {
     renderProps: {
       style: {
         position: '',
-        paddingBottom: 10,
-        paddingTop: 10,
+        paddingBottom: 0,
+        paddingTop: 0,
         backgroundUrl: '',
         backgroundSize: 'contain',
         backgroundPosition: 'center',

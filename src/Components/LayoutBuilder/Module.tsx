@@ -6,7 +6,7 @@ import { SIDEBAR_MODULE_ITEM } from './DraggablesSidebar/DraggableBuilderCompone
 import { IRowComponent } from '../../types';
 import OverlayComponent from './Overlay/OverlayComponent';
 
-type IModule = {
+export type IModule = {
   id: number;
   name: string;
   preview: string;

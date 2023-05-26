@@ -1,9 +1,12 @@
 // @ts-nocheck
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useContext } from 'react';
 import { useRoutes, useLocation } from 'react-router-dom';
 import { Typography } from '@mui/material';
 import PublicLayout from '../layouts/Main';
 import DashboardLayout from '../layouts/Dashboard';
+import ProtectedRoutes from './ProtectedRoutes';
+import { AuthContext } from '../AuthContext/Authcontext';
+import { PATH_AUTH, ROOTS_PUBLIC } from './paths';
 
 const Loadable = (Component: any) => (props: any) => {
   // eslint-disable-next-line
@@ -58,6 +61,7 @@ const StripeCancel = Loadable(
 );
 
 export default function Router() {
+  const { user } = useContext(AuthContext);
   return useRoutes([
     // Public Routes
     {
@@ -84,11 +88,15 @@ export default function Router() {
       children: [
         {
           path: 'login',
-          element: <Login />,
+          element: <ProtectedRoutes isAuthorize={!user} redirectTo={ROOTS_PUBLIC}>
+            <Login />
+          </ProtectedRoutes>,
         },
         {
           path: 'register',
-          element: <Register />,
+          element: <ProtectedRoutes isAuthorize={!user} redirectTo={PATH_AUTH.login}>
+            <Register />
+          </ProtectedRoutes>,
         },
       ],
     },
@@ -99,7 +107,9 @@ export default function Router() {
       children: [
         {
           path: 'account',
-          element: <UserAccount />,
+          element: <ProtectedRoutes isAuthorize={user} redirectTo={PATH_AUTH.login}>
+            <UserAccount />
+          </ProtectedRoutes>,
         },
       ],
     },
@@ -107,11 +117,15 @@ export default function Router() {
     // App MailBuilder
     {
       path: '/app',
-      element: <DashboardLayout />,
+      element: <ProtectedRoutes isAuthorize={user} redirectTo={PATH_AUTH.login}>
+        <DashboardLayout />
+      </ProtectedRoutes>,
       children: [
         {
           path: 'home',
-          element: <HomeBuilder />,
+          element: <ProtectedRoutes isAuthorize={user} redirectTo={PATH_AUTH.login}>
+            <HomeBuilder />
+          </ProtectedRoutes>,
         },
       ],
     },
@@ -122,11 +136,25 @@ export default function Router() {
       children: [
         {
           path: 'success',
-          element: <StripeSuccess />,
+          element: <ProtectedRoutes isAuthorize={user} redirectTo={PATH_AUTH.login}>
+            <StripeSuccess />
+          </ProtectedRoutes>,
         },
         {
           path: 'cancel',
-          element: <StripeCancel />,
+          element: <ProtectedRoutes isAuthorize={user} redirectTo={PATH_AUTH.login}>
+            <StripeCancel />
+          </ProtectedRoutes>,
+        },
+      ],
+    },
+    {
+      path: '*',
+      element: <PublicLayout />,
+      children: [
+        {
+          path: '/*',
+          element: <HomePage />,
         },
       ],
     },

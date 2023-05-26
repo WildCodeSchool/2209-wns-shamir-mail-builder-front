@@ -13,7 +13,7 @@ import { handleStateComponentChange } from '../../../features/layout/layoutSlice
 import { IComponent, ITextComponentRenderProps } from '../../../types';
 // eslint-disable-next-line import/no-cycle
 
-interface ITextComponentProps {
+export interface ITextComponentProps {
   data: IComponent & { renderProps?: ITextComponentRenderProps };
   path: string;
 }

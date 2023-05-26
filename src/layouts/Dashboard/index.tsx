@@ -1,13 +1,8 @@
-// import { Outlet } from 'react-router-dom';
+import React from 'react';
 import DashboardProvider from './DashboardProvider';
 import Dashboard from './Dashboard';
-// import Header from '../Main/Header';
 
-interface DashboardLayoutProps {
-  children: React.ReactNode;
-}
-
-const DashboardLayout: React.FC<DashboardLayoutProps> = () => (
+const DashboardLayout: React.FC = () => (
   <DashboardProvider>
     <Dashboard />
   </DashboardProvider>
