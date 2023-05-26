@@ -8,7 +8,7 @@ type TemplateComponentProps = {
 
 export default function TemplateItem({ template }: TemplateComponentProps) {
   return (
-    <Card>
+    <Card elevation={0}>
       <CardHeader
         sx={{ pr: 20 }}
         title={template.name}

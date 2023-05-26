@@ -11,7 +11,7 @@ export default function UserDetails({ userInfos, handleModifyAccount }: UserDeta
   const formattedPhoneNumber = formatPhoneNumber(userInfos.phone);
 
   return (
-    <Card sx={{ width: '100%', height: '100%' }}>
+    <Card elevation={0} sx={{ width: '100%', height: '100%' }}>
       <CardHeader
         sx={{ pr: 40 }}
         title={userInfos?.username}

@@ -3,9 +3,8 @@ import { Typography, Box, Tab } from '@mui/material';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
-import { gql, useQuery } from '@apollo/client';
+import { gql, useQuery, useMutation } from '@apollo/client';
 import Loader from '../../layouts/Main/Loader';
-// import { ContentStyle } from '../../layouts/Main/UserLayoutConfig';
 import UserAccountModal from '../../Components/UserAccountModal/UserAccountModal';
 import UserDetails from '../../Components/UserDetails/UserDetails';
 import TemplateDetails from '../../Components/TemplateDetails/TemplateDetails';
@@ -16,26 +15,31 @@ import { AuthContext } from '../../AuthContext/Authcontext';
 const GET_USER = gql`
 query GetUser($email: String!) {
     getOneUser(email: $email) {
+      id
       username
       email
       phone
       createdAt
-      companies {
-        id
-        name
-        siret
-        phone
-        email
-        address
-        website
-        facebook
-        instagram
-        twitter
-        description
-        createdAt
-        updatedAt
-      }
     }
+}`;
+
+export const GET_USER_COMPANIES = gql`
+query GetUserCompanies($userId: Float!) {
+  getUserCompanies(userId: $userId) {
+    id
+    name
+    siret
+    phone
+    email
+    address
+    website
+    facebook
+    instagram
+    twitter
+    description
+    createdAt
+    updatedAt
+  }
 }`;
 
 export const GET_USER_TEMPLATES = gql`
@@ -49,8 +53,18 @@ query Query($email: String!) {
         companyId {
             name
         }
-
     }
+}`;
+
+export const UPDATE_USER = gql`
+mutation Mutation($id: Float!, $username: String!, $phone: String!) {
+  updateUser(id: $id, username: $username, phone: $phone) {
+    id
+    username
+    email
+    phone
+    createdAt
+  }
 }`;
 
 export default function UserAccount() {
@@ -69,8 +83,16 @@ export default function UserAccount() {
       email: user.email,
     },
     onCompleted: (data) => {
-      setUserInfos(data.getOneUser);
-      setUserCompanies(data.getOneUser.companies);
+      setUserInfos(data?.getOneUser);
+    },
+  });
+
+  const { loading: userCompaniesLoading, error: userCompaniesError } = useQuery(GET_USER_COMPANIES, {
+    variables: {
+      userId: user.id,
+    },
+    onCompleted: (data) => {
+      setUserCompanies(data?.getUserCompanies);
     },
   });
 
@@ -79,22 +101,35 @@ export default function UserAccount() {
       email: user.email,
     },
     onCompleted: (data) => {
-      setTemplates(data.getUserTemplates);
+      setTemplates(data?.getUserTemplates);
     },
   });
 
-  if (loading || templatesLoading) return <Loader />;
+  const [updateUser, { loading: updateUserLoading, error: updateUserError }] = useMutation(UPDATE_USER, {
+    onCompleted: (updateUserData) => {
+      setUserInfos(updateUserData.updateUser);
+      setIsModalOpened(false);
+    },
+  });
+
+  if (loading || userCompaniesLoading || templatesLoading || updateUserLoading) return <Loader />;
   if (error) return <Typography>{error.message}</Typography>;
+  if (userCompaniesError) return <Typography>{userCompaniesError.message}</Typography>;
   if (templatesError) return <Typography>{templatesError.message}</Typography>;
+  if (updateUserError) return <Typography>{updateUserError.message}</Typography>;
 
   const handleModifyAccount = () => {
     setIsModalOpened(!isModalOpened);
   };
 
+  const handleUpdateUser = (id: number, username: string, phone: string) => {
+    updateUser({ variables: { id, username, phone } });
+  };
+  console.log(userCompanies);
   return (
-    <Box sx={{ width: '70%', height: '70%', typography: 'body1', mt: 12, ml: 'auto', mr: 'auto' }}>
+    <Box sx={{ width: '60%', height: '70%', typography: 'body1', mt: 12, ml: 'auto', mr: 'auto' }}>
       <TabContext value={value}>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Box>
           <TabList onChange={handleChange}>
             <Tab label="Utilisateur" value="1" />
             <Tab label="Maquettes" value="2" />
@@ -107,7 +142,7 @@ export default function UserAccount() {
       </TabContext>
       {isModalOpened
 && userInfos
-&& <UserAccountModal userInfos={userInfos} isModalOpened={isModalOpened} handleModifyAccount={handleModifyAccount} /> }
+&& <UserAccountModal userInfos={userInfos} isModalOpened={isModalOpened} handleModifyAccount={handleModifyAccount} handleUpdateUser={handleUpdateUser} /> }
     </Box>
   );
 }
