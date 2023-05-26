@@ -110,10 +110,6 @@ export default function HomeBuilder() {
     },
   });
 
-  const handleRemoveModule = (id: number) => {
-    setModules(modules.filter((module: IModule) => module.id !== id));
-  };
-
   const handleSend = useCallback(async () => {
     const { html } = renderReactToMjml(
       <Mjml>

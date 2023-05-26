@@ -7,10 +7,6 @@ COPY package-lock.json ./
 
 RUN npm install
 
-COPY tsconfig.json ./
-COPY public public
-COPY src src
-COPY ckeditor ckeditor
-COPY .eslintrc.js ./
+COPY . .
 
 CMD ["npm", "start"]
