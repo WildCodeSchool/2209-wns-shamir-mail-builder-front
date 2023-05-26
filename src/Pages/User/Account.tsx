@@ -5,7 +5,6 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import { gql, useQuery, useMutation } from '@apollo/client';
 import Loader from '../../layouts/Main/Loader';
-// import { ContentStyle } from '../../layouts/Main/UserLayoutConfig';
 import UserAccountModal from '../../Components/UserAccountModal/UserAccountModal';
 import UserDetails from '../../Components/UserDetails/UserDetails';
 import TemplateDetails from '../../Components/TemplateDetails/TemplateDetails';
@@ -25,8 +24,8 @@ query GetUser($email: String!) {
 }`;
 
 export const GET_USER_COMPANIES = gql`
-query GetUserCompanies {
-  getUserCompanies {
+query GetUserCompanies($userId: Float!) {
+  getUserCompanies(userId: $userId) {
     id
     name
     siret
@@ -89,6 +88,9 @@ export default function UserAccount() {
   });
 
   const { loading: userCompaniesLoading, error: userCompaniesError } = useQuery(GET_USER_COMPANIES, {
+    variables: {
+      userId: user.id,
+    },
     onCompleted: (data) => {
       setUserCompanies(data?.getUserCompanies);
     },

@@ -31,20 +31,10 @@ query GetUserLayout($userId: Float!) {
     layouts {
       id
       name
-<<<<<<< HEAD
-      layouts {
-        id
-        name
-        children
-        createdAt
-        updatedAt
-      }
-=======
       preview
       children
       createdAt
       updatedAt
->>>>>>> main
     }
   }
 }
