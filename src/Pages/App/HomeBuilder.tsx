@@ -275,6 +275,10 @@ export default function HomeBuilder() {
     await sendEmail();
   }, [sendEmail]);
 
+  const handleRemoveModule = (id: number) => {
+    setModules(modules.filter((module: any) => module.id !== id));
+  };
+
   useEffect(() => {
     (async () => getModules())();
   }, []);
