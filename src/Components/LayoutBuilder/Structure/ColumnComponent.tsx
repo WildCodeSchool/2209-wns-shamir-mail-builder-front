@@ -100,6 +100,7 @@ const ColumnComponent = ({ data, path, rowTypeGrid }: IColumnComponentProps) => 
           const dropParentPath = path.split('-')[0];
 
           if (dragParentPath !== dropParentPath) {
+            // eslint-disable-next-line no-alert
             alert('You cannot move column to another parent component, wait this awesome feature coming soon!');
           } else {
             dispatch(moveExistColumnInSameParent({ item, hoverPosition, path, initialType: rowTypeGrid }));
