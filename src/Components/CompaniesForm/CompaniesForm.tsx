@@ -43,10 +43,13 @@ const CompaniesForm = ({ handleSubmit }: { handleSubmit: (values: any) => void }
       name: Yup.string()
         .required('Champ requis'),
       siret: Yup.string()
+        .length(14, '14 chiffres maximum')
+        .matches(/^[0-9]{14}$/, 'Siret Invalide')
         .required('Champ requis'),
       address: Yup.string()
         .required('Champ requis'),
       phone: Yup.string()
+        .matches(/^[0]{1}[1-7]{1}[0-9]{8}$/, 'Numéro invalide')
         .required('Champ requis'),
       email: Yup.string()
         .email('Email invalide')
@@ -93,7 +96,7 @@ const CompaniesForm = ({ handleSubmit }: { handleSubmit: (values: any) => void }
                   color: 'black',
                 }}
               >
-                Nom de la compagnie
+                Nom de la société
               </InputLabel>
               <TextField
                 id="name"

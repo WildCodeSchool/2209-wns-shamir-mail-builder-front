@@ -8,7 +8,7 @@ import MuiAccordionSummary, {
 } from '@mui/material/AccordionSummary';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import { formatPhoneNumber } from '../../helpers';
-import { Companies } from '../../typeDefs/TypeDefs';
+import { Company } from '../../typeDefs/TypeDefs';
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -47,7 +47,7 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 }));
 
 type CompanyDetailsComponentProps = {
-  userCompanies: Companies[];
+  userCompanies: Company[];
 };
 
 export default function CompanyDetails({ userCompanies }: CompanyDetailsComponentProps) {
