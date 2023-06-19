@@ -39,16 +39,16 @@ const AppWrapper = styled('div')({
   '& > *:not(:last-child)': {
     borderRight: '1px solid #ccc',
   },
-  '& > :nth-child(2)': {
+  '& > :nth-of-type(2)': {
     flexBasis: '60%',
     flexGrow: '1',
   },
-  '& > :nth-child(1)': {
+  '& > :nth-of-type(1)': {
     flexBasis: '20%',
     flexGrow: '1',
     maxWidth: '350px',
   },
-  '& > :nth-child(3)': {
+  '& > :nth-of-type(3)': {
     flexBasis: '20%',
     flexGrow: '1',
     maxWidth: '300px',

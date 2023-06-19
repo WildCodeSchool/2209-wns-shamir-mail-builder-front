@@ -1,26 +1,25 @@
 import React from 'react';
 import { Card, CardHeader, CardContent, Typography, Stack, Button } from '@mui/material';
-import { Template } from '../../typeDefs/TypeDefs';
+import { Layout } from '../../typeDefs/TypeDefs';
 
-type TemplateComponentProps = {
-  template: Template;
+type LayoutCardComponentProps = {
+  layout: Layout;
 };
 
-export default function TemplateItem({ template }: TemplateComponentProps) {
+export default function LayoutCard({ layout }: LayoutCardComponentProps) {
   return (
     <Card elevation={0}>
       <CardHeader
         sx={{ pr: 20 }}
-        title={template.name}
-        subheader={template.subject}
+        title={layout.name}
       />
       <CardContent>
         <Stack direction="row" spacing={1} justifyContent="space-between" alignItems="center">
           <Typography variant="h5">
-            Société:
+            Description:
           </Typography>
           <Typography variant="body1" gutterBottom>
-            {template.companyId.name}
+            {layout.description}
           </Typography>
         </Stack>
         <Stack direction="row" spacing={1} justifyContent="space-between" alignItems="center">
@@ -28,7 +27,7 @@ export default function TemplateItem({ template }: TemplateComponentProps) {
             Créé le:
           </Typography>
           <Typography variant="body1" gutterBottom>
-            {new Date(template.createdAt).toLocaleDateString('fr')}
+            {new Date(layout.createdAt).toLocaleDateString('fr')}
           </Typography>
         </Stack>
         <Stack direction="row" spacing={1} justifyContent="space-between" alignItems="center">
@@ -36,10 +35,14 @@ export default function TemplateItem({ template }: TemplateComponentProps) {
             Modifié le:
           </Typography>
           <Typography variant="body1" gutterBottom>
-            {new Date(template.updatedAt).toLocaleDateString('fr')}
+            {new Date(layout.updatedAt).toLocaleDateString('fr')}
           </Typography>
         </Stack>
-        <Button>Créer une maquette</Button>
+        <Button
+          variant="contained"
+        >
+          Créer une maquette
+        </Button>
       </CardContent>
     </Card>
   );

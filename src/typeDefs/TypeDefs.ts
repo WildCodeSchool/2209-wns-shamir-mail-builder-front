@@ -24,10 +24,6 @@ export type Template = {
 };
 
 export type Company = {
-  name: string;
-};
-
-export type Companies = {
   id: number;
   name: string;
   siret: string;
@@ -41,4 +37,14 @@ export type Companies = {
   description: string;
   createdAt: Date;
   updatedAt: Date;
+  layouts: Layout[];
+};
+
+export type Layout = {
+  id: number;
+  name: string;
+  description: string;
+  createdAt: Date;
+  updatedAt: Date;
+  companyId: Company;
 };

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { gql, useLazyQuery, useMutation } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import {
   Accordion,
   AccordionDetails,
@@ -20,95 +20,11 @@ import Header from '../Main/Header';
 import { setLayout } from '../../features/layout/layoutSlice';
 import { setSelectedLayout } from '../../features/layout/selectedComponent';
 import { AuthContext } from '../../AuthContext/Authcontext';
+import { NEW_COMPANY, NEW_LAYOUT } from '../../graphql/Mutations';
+import { GET_COMPANIES_WITH_LAYOUTS } from '../../graphql/Queries';
+import { Company } from '../../typeDefs/TypeDefs';
 import CompaniesForm from '../../Components/CompaniesForm/CompaniesForm';
 import LayoutsForm from '../../Components/LayoutsForm/LayoutsForm';
-
-const GET_LAYOUT = gql`
-query GetUserLayout($userId: Float!) {
-  getUserLayout(userId: $userId) {
-    id
-    name
-    layouts {
-      id
-      name
-      preview
-      children
-      createdAt
-      updatedAt
-    }
-  }
-}
-`;
-
-const NEW_COMPANY = gql`
-mutation Mutation($company: CompaniesInput!, $userEmail : String!) {
-  createCompany(company: $company, userEmail: $userEmail) {
-    id
-    name
-    layouts {
-      id
-      name
-      children
-      createdAt
-      updatedAt
-    }
-  }
-}
-`;
-
-const NEW_LAYOUT = gql`
-mutation Mutation($layout: LayoutInput!, $companyId: Float!) {
-  newLayout(layout: $layout, companyId: $companyId) {
-    id
-    name
-    preview
-    children
-    createdAt
-    updatedAt
-  }
-}
-`;
-
-type CompaniesInput = {
-  name:
-  string
-
-  siret:
-  string
-
-  address:
-  string
-
-  phone:
-  string
-
-  email:
-  string
-
-  website:
-  string
-
-  logo:
-  string
-
-  description:
-  string
-
-  facebook:
-  string
-
-  twitter:
-  string
-
-  instagram:
-  string
-
-  userId:
-  string
-
-  subscribed:
-  boolean
-};
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -130,9 +46,9 @@ const Dashboard = () => {
   const [openModalCompanies, setOpenModalCompanies] = React.useState(false);
   const [openModalLayouts, setOpenModalLayouts] = React.useState(false);
   const [selectedCompany, setSelectedCompany] = React.useState<any>(null);
-  const [getLayout] = useLazyQuery(GET_LAYOUT, {
+  const [getLayouts] = useLazyQuery(GET_COMPANIES_WITH_LAYOUTS, {
     onCompleted: (data: any) => {
-      setUserLayouts(data.getUserLayout);
+      setUserLayouts(data.getCompaniesWithLayouts);
     },
   });
   const [createCompany] = useMutation(NEW_COMPANY, {
@@ -165,7 +81,7 @@ const Dashboard = () => {
     },
   });
 
-  const handleSubmitFormCompany = (values: CompaniesInput) => {
+  const handleSubmitFormCompany = (values: Company) => {
     createCompany({
       variables: {
         company: values,
@@ -211,7 +127,7 @@ const Dashboard = () => {
   Récupération des layouts de l'utilisateur au montage du composant
    */
   useEffect(() => {
-    (async () => getLayout({
+    (async () => getLayouts({
       variables: {
         userId: user.id,
       },
@@ -241,7 +157,7 @@ const Dashboard = () => {
                 size={'small'}
                 onClick={handleOpenModalCompanies}
               >
-                Créer une nouvelle compagnie
+                Enregistrer votre société
               </Button>
               {
                 openModalCompanies && (
