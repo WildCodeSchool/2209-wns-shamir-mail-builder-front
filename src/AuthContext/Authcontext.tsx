@@ -1,4 +1,4 @@
-import React, { useReducer, createContext } from 'react';
+import React, { useReducer, createContext, useEffect } from 'react';
 import { gql, useMutation } from '@apollo/client';
 import { Alert } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -14,6 +14,15 @@ mutation GetToken($email: String!, $password: String!) {
   getToken(email: $email, password: $password)
 }`;
 
+export const VERIFY_TOKEN = gql`
+mutation Mutation($token: String!) {
+  verifyToken(token: $token) {
+    id
+    username
+    email
+  }
+}`;
+
 export type AuthContextType = {
   user: any;
   login: (email: string, password: string) => void;
@@ -21,15 +30,6 @@ export type AuthContextType = {
 };
 
 const token = localStorage.getItem('token');
-
-if (token !== null) {
-  const decodedToken: any = jwt_decode(token);
-  if (decodedToken.exp * 1000 < Date.now()) {
-    localStorage.removeItem('token');
-  } else {
-    initialState.user = decodedToken;
-  }
-}
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
@@ -57,6 +57,7 @@ function authReducer(state: any, action: any) {
 
 const AuthProvider = ({ children }: any) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
+  const [load, setLoad] = React.useState(true);
   const navigate = useNavigate();
   const [loadToken, { loading, error }] = useMutation(GET_TOKEN, {
     onCompleted: (data) => {
@@ -72,8 +73,21 @@ const AuthProvider = ({ children }: any) => {
     },
   });
 
-  if (loading) return <Loader />;
-  if (error) return <Alert severity="error">{error.message}</Alert>;
+  const [verifyToken] = useMutation(VERIFY_TOKEN, {
+    onCompleted: (data) => {
+      if (data.verifyToken) {
+        dispatch({
+          type: 'LOGIN',
+          payload: { email: data.verifyToken.email, id: data.verifyToken.id },
+        });
+        setLoad(false);
+      }
+    },
+    onError: () => {
+      localStorage.removeItem('token');
+      setLoad(false);
+    },
+  });
 
   const login = async (email: string, password: string) => {
     await loadToken({ variables: { email, password } });
@@ -84,10 +98,23 @@ const AuthProvider = ({ children }: any) => {
     dispatch({ type: 'LOGOUT' });
   };
 
+  useEffect(() => {
+    (async () => {
+      if (token) {
+        await verifyToken({ variables: { token } });
+      } else {
+        setLoad(false);
+      }
+    })();
+  }, []);
+
+  if (loading) return <Loader />;
+  if (error) return <Alert severity="error">{error.message}</Alert>;
+
   return (
     // eslint-disable-next-line react/jsx-no-constructed-context-values
     <AuthContext.Provider value={{ user: state.user, login, logout }}>
-      {children}
+      {!load && children}
     </AuthContext.Provider>
   );
 };

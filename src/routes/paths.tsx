@@ -4,7 +4,7 @@ function path(root: string, sublink: string): string {
 
 // ROOTS ========================================================== //
 
-const ROOTS_PUBLIC = '/';
+export const ROOTS_PUBLIC = '/';
 const ROOTS_AUTH = '/auth';
 const ROOTS_USER = '/user';
 const ROOTS_DASHBOARD = '/dashboard';
