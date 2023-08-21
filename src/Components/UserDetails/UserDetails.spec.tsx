@@ -1,6 +1,5 @@
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
-import { formatPhoneNumber } from '../../helpers';
 import UserDetails from './UserDetails';
 
 const userInfos = {
@@ -8,7 +7,7 @@ const userInfos = {
   username: 'Joël Miller',
   createdAt: new Date(),
   email: 'joel.miller@gmail.com',
-  phone: formatPhoneNumber('0123456789'),
+  phone: '0123456789',
 };
 
 const handleModifyAccount = jest.fn();
