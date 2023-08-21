@@ -1,29 +1,23 @@
 version: '3.8'
 
 services:
-  front-mailsaw-prod:
+  front_mailbuilder:
     image: brandonsev/mailsaw:latest
-    command: sh -c "npm run build"
+    command: sh -c "npm run build && npm i -g serve && serve -s build -l 3002"
+    container_name: front_mailbuilder
     volumes:
       - mailsaw-client-build:/app/build/
     ports:
-      - 3000:3000
+      - 3002:3002
     env_file:
       - ./.env.production
     environment:
-        - NODE_ENV=production
-
-  nginx:
-    image: nginx:1.21.3
-    depends_on:
-      - front-mailsaw-prod
-    restart: always
-    ports:
-      - ${GATEWAY_PORT:-8000}:80
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-      - mailsaw-client-build:/usr/share/nginx/html
-      - ./logs:/var/log/nginx
+      - NODE_ENV=production
 
 volumes:
   mailsaw-client-build:
+
+networks:
+  default:
+    name: web
+    external: true
