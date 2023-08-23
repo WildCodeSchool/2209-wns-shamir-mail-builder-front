@@ -3,6 +3,7 @@ FROM node:14 AS build-stage
 WORKDIR /app
 
 # Copier les fichiers de configuration et les dépendances
+COPY ./ckeditor ./ckeditor
 COPY package*.json ./
 RUN npm install
 
