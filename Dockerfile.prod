@@ -1,0 +1,28 @@
+FROM node:14 AS build-stage
+
+WORKDIR /app
+
+# Copier les fichiers de configuration et les dépendances
+COPY package*.json ./
+RUN npm install
+
+# Copier le reste des fichiers de l'application
+COPY . .
+
+# Construire l'application React
+RUN npm run build
+
+# Étape 2 : Exécuter le serveur avec `serve`
+FROM node:14 AS production-stage
+
+WORKDIR /app
+
+# Copier les fichiers de configuration et les dépendances
+COPY package*.json ./
+RUN npm install --only=production
+
+# Copier les fichiers de l'application construite depuis l'étape précédente
+COPY --from=build-stage /app/build ./build
+
+# Installer le package `serve` de manière globale
+RUN npm install -g serve
