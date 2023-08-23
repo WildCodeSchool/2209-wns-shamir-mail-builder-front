@@ -31,6 +31,5 @@ jobs:
         with:
           push: true
           context: .
-          file: ./Dockerfile.prod
-
+          file: Dockerfile.prod
           tags: ${{ secrets.DOCKER_USERNAME }}/mailsaw:latest
