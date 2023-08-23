@@ -3,7 +3,7 @@ version: '3.8'
 services:
   front_mailbuilder:
     image: brandonsev/mailsaw:latest
-    command: sh -c "npm run build && npm i -g serve && serve -s build -l 3002"
+    command: sh -c "serve -s build -l 3002"
     container_name: front_mailbuilder
     volumes:
       - mailsaw-client-build:/app/build/
