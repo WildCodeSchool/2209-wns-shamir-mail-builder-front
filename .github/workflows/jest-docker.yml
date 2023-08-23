@@ -30,6 +30,5 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          context: .
-          file: Dockerfile.prod
+          file: ./Dockerfile.prod
           tags: ${{ secrets.DOCKER_USERNAME }}/mailsaw:latest
