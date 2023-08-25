@@ -88,8 +88,8 @@ export default function UserAccount() {
         <TabPanel value="3">{userCompanies && <CompanyDetails userCompanies={userCompanies} />}</TabPanel>
       </TabContext>
       {isModalOpened
-&& userInfos
-&& <UserAccountModal userInfos={userInfos} isModalOpened={isModalOpened} handleModifyAccount={handleModifyAccount} handleUpdateUser={handleUpdateUser} /> }
+        && userInfos
+        && <UserAccountModal userInfos={userInfos} isModalOpened={isModalOpened} handleModifyAccount={handleModifyAccount} handleUpdateUser={handleUpdateUser} />}
     </Box>
   );
 }

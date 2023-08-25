@@ -10,6 +10,7 @@ import { renderToMjml } from '@faire/mjml-react/utils/renderToMjml';
 import EmptyLayout from './Empty/EmptyLayout';
 import RowComponent from './Structure/RowComponent';
 import { IRowComponent } from '../../types';
+import { IModule } from './Module';
 
 export function renderReactToMjml(email: React.ReactElement): MJMLParseResults {
   return mjml2html(renderToMjml(email));
@@ -23,7 +24,11 @@ const SAVE_LAYOUT = gql`
   }
 `;
 
-const LayoutBuilder = () => {
+interface ILayoutBuilderProps {
+  handleAddModule: (module: IModule) => void
+}
+
+const LayoutBuilder = ({ handleAddModule }: ILayoutBuilderProps) => {
   const layout = useSelector((state: any) => state.layout);
   const selectedLayout = useSelector((state: any) => state.selectedComponent);
   const [saveLayout] = useMutation(SAVE_LAYOUT);
@@ -78,7 +83,7 @@ const LayoutBuilder = () => {
         component={'div'}
         sx={{
           maxHeight: '100%',
-          height: 'calc(100vh - 208px)',
+          height: 'calc(100vh - 237px)',
           overflowY: 'auto',
         }}
         className={'layout-wrapper'}
@@ -96,7 +101,7 @@ const LayoutBuilder = () => {
         >
           {layout.length > 0 ? layout.map((item: IRowComponent, index: number) => (
             <React.Fragment key={item.id}>
-              {<RowComponent key={item.id} data={item} path={index} />}
+              {<RowComponent key={item.id} data={item} path={index} handleAddModule={handleAddModule} />}
             </React.Fragment>
           )) : (
             <EmptyLayout />

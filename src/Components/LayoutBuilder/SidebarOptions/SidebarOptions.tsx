@@ -30,7 +30,7 @@ import Iconify from '../../Iconify';
 import { generateSocialItem, socialItems } from '../../../helpers';
 
 const SidebarOptionsWrapper = styled(Box)({
-  maxHeight: 'calc(100vh - 180px)',
+  maxHeight: 'calc(100vh - 221px)',
   overflowY: 'auto',
 });
 
@@ -127,59 +127,59 @@ const SidebarOptions = () => {
                     }}
                   >
                     {
-                       [{
-                         value: GRID,
-                         label: '1 colonne',
-                         columnCount: 1,
-                         image: '/static/dragPreview/grid-1.png',
-                       },
-                       {
-                         value: GRID2,
-                         label: '2 colonnes',
-                         columnCount: 2,
-                         image: '/static/dragPreview/grid-2.png',
-                       },
-                       {
-                         value: GRID2_1_3_L,
-                         label: '2 colonnes (1/3 - 2/3)',
-                         columnCount: 2,
-                         image: '/static/dragPreview/grid-1-3-2-3.png',
-                       },
-                       {
-                         value: GRID2_1_3_R,
-                         label: '2 colonnes (2/3 - 1/3)',
-                         columnCount: 2,
-                         image: '/static/dragPreview/grid-2-3-1-3.png',
-                       },
-                       {
-                         value: GRID3,
-                         label: '3 colonnes',
-                         columnCount: 3,
-                         image: '/static/dragPreview/grid-3.png',
-                       }].filter((item) => item.columnCount === selectedComponent[0]?.columnCount).map((item) => (
-                         <MenuItem
-                           value={item.value}
-                           key={item.value}
-                           style={{
-                             backgroundColor: item.value === selectedComponent[0]?.typeGrid ? '#cccccc80' : 'transparent',
-                           }}
-                           selected={item.value === selectedComponent[0]?.typeGrid}
-                         >
-                           <Box>
-                             <img
-                               src={item.image}
-                               alt={item.label}
-                               style={{
-                                 width: '100%',
-                               }}
-                             />
-                             <Typography fontSize={13}>
-                               {item.label}
-                             </Typography>
-                           </Box>
-                         </MenuItem>
-                       ))
-                   }
+                      [{
+                        value: GRID,
+                        label: '1 colonne',
+                        columnCount: 1,
+                        image: '/static/dragPreview/grid-1.png',
+                      },
+                      {
+                        value: GRID2,
+                        label: '2 colonnes',
+                        columnCount: 2,
+                        image: '/static/dragPreview/grid-2.png',
+                      },
+                      {
+                        value: GRID2_1_3_L,
+                        label: '2 colonnes (1/3 - 2/3)',
+                        columnCount: 2,
+                        image: '/static/dragPreview/grid-1-3-2-3.png',
+                      },
+                      {
+                        value: GRID2_1_3_R,
+                        label: '2 colonnes (2/3 - 1/3)',
+                        columnCount: 2,
+                        image: '/static/dragPreview/grid-2-3-1-3.png',
+                      },
+                      {
+                        value: GRID3,
+                        label: '3 colonnes',
+                        columnCount: 3,
+                        image: '/static/dragPreview/grid-3.png',
+                      }].filter((item) => item.columnCount === selectedComponent[0]?.columnCount).map((item) => (
+                        <MenuItem
+                          value={item.value}
+                          key={item.value}
+                          style={{
+                            backgroundColor: item.value === selectedComponent[0]?.typeGrid ? '#cccccc80' : 'transparent',
+                          }}
+                          selected={item.value === selectedComponent[0]?.typeGrid}
+                        >
+                          <Box>
+                            <img
+                              src={item.image}
+                              alt={item.label}
+                              style={{
+                                width: '100%',
+                              }}
+                            />
+                            <Typography fontSize={13}>
+                              {item.label}
+                            </Typography>
+                          </Box>
+                        </MenuItem>
+                      ))
+                    }
                   </Select>
                 </Box>
 
@@ -203,15 +203,15 @@ const SidebarOptions = () => {
                     name={'noWrapColumnInMobile'}
                     checked={renderPropsState?.style?.noWrapColumnInMobile}
                     onChange={
-                    (event) => {
-                      handleRenderPropsChange({
-                        target: {
-                          name: 'noWrapColumnInMobile',
-                          value: event.target.checked,
-                        },
-                      });
+                      (event) => {
+                        handleRenderPropsChange({
+                          target: {
+                            name: 'noWrapColumnInMobile',
+                            value: event.target.checked,
+                          },
+                        });
+                      }
                     }
-}
                   />
                 </Box>
               </SidebarOptionsBodyItem>
@@ -231,15 +231,15 @@ const SidebarOptions = () => {
                   disabled={renderPropsState?.style?.backgroundUrl !== ''}
                   value={renderPropsState?.style?.backgroundColor || 'transparent'}
                   onChange={
-                  (color: any) => {
-                    handleRenderPropsChange({
-                      target: {
-                        name: 'backgroundColor',
-                        value: color,
-                      },
-                    });
+                    (color: any) => {
+                      handleRenderPropsChange({
+                        target: {
+                          name: 'backgroundColor',
+                          value: color,
+                        },
+                      });
+                    }
                   }
-                }
                 />
 
                 <FormControlLabel
@@ -1125,7 +1125,7 @@ const SidebarOptions = () => {
                         name="fullWidth"
                         color="primary"
                       />
-                  )}
+                    )}
                     label="Pleine largeur sur mobile"
                   />
                 </Box>
@@ -1625,51 +1625,51 @@ const SidebarOptions = () => {
 
                 {
                   children?.length > 0 && (
-                  <>
-                    <Box
-                      sx={{
-                        marginTop: '1rem',
-                      }}
-                    >
-                      <InputLabel id="gap">Espacement entre les icones</InputLabel>
-                      <Input
-                        type={'number'}
-                        id={'gap'}
-                        name={'gap'}
-                        value={renderPropsState?.style?.gap}
-                        onChange={handleRenderPropsChange}
-                        placeholder={'0'}
-                        inputProps={
-                          {
-                            min: 0,
-                            max: 15,
+                    <>
+                      <Box
+                        sx={{
+                          marginTop: '1rem',
+                        }}
+                      >
+                        <InputLabel id="gap">Espacement entre les icones</InputLabel>
+                        <Input
+                          type={'number'}
+                          id={'gap'}
+                          name={'gap'}
+                          value={renderPropsState?.style?.gap}
+                          onChange={handleRenderPropsChange}
+                          placeholder={'0'}
+                          inputProps={
+                            {
+                              min: 0,
+                              max: 15,
+                            }
                           }
-                        }
-                        style={{
-                          display: 'block',
-                        }}
-                      />
-                    </Box>
+                          style={{
+                            display: 'block',
+                          }}
+                        />
+                      </Box>
 
-                    <Box
-                      sx={{
-                        marginTop: '1rem',
-                      }}
-                    >
-                      <InputLabel id="width">Taille des icones</InputLabel>
-                      <Input
-                        type={'number'}
-                        id={'width'}
-                        name={'width'}
-                        value={renderPropsState?.style?.width}
-                        onChange={handleRenderPropsChange}
-                        placeholder={'0'}
-                        style={{
-                          display: 'block',
+                      <Box
+                        sx={{
+                          marginTop: '1rem',
                         }}
-                      />
-                    </Box>
-                  </>
+                      >
+                        <InputLabel id="width">Taille des icones</InputLabel>
+                        <Input
+                          type={'number'}
+                          id={'width'}
+                          name={'width'}
+                          value={renderPropsState?.style?.width}
+                          onChange={handleRenderPropsChange}
+                          placeholder={'0'}
+                          style={{
+                            display: 'block',
+                          }}
+                        />
+                      </Box>
+                    </>
                   )
                 }
               </SidebarOptionsBodyItem>

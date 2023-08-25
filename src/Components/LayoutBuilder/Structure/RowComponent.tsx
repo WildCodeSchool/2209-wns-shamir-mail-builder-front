@@ -23,10 +23,12 @@ import OverlayComponent from '../Overlay/OverlayComponent';
 import { DragItem, IContainer, IRowComponent } from '../../../types';
 import { AuthContext } from '../../../AuthContext/Authcontext';
 import { generateNewIdInModule } from '../../../helpers';
+import { IModule } from '../Module';
 
 interface IRowComponentProps {
   data: IRowComponent
   path: number
+  handleAddModule: (module: IModule) => void
 }
 
 const SAVE_MODULE_COMPONENT = gql`
@@ -40,14 +42,18 @@ const SAVE_MODULE_COMPONENT = gql`
   }
 `;
 
-const RowComponent = ({ data, path }: IRowComponentProps) => {
+const RowComponent = ({ data, path, handleAddModule }: IRowComponentProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const [renderPropsState, setRenderPropsState] = React.useState(data.renderProps);
   const [hoverPosition, setHoverPosition] = React.useState<string>('');
   const [isSelected, setIsSelected] = React.useState<boolean>(false);
   const [over, setOver] = React.useState<boolean>(false);
   const [openRowOptions, setOpenRowOptions] = React.useState<boolean>(false);
-  const [saveModuleComponent] = useMutation(SAVE_MODULE_COMPONENT);
+  const [saveModuleComponent] = useMutation(SAVE_MODULE_COMPONENT, {
+    onCompleted: (moduleData) => {
+      handleAddModule(moduleData.createModule);
+    },
+  });
   const dispatch = useDispatch();
   const layout = useSelector((state: any) => state.layout);
   const { user } = useContext(AuthContext);
@@ -85,7 +91,7 @@ const RowComponent = ({ data, path }: IRowComponentProps) => {
     collect: (monitor: DropTargetMonitor<DragItem, void>) => ({
       isOver: monitor.isOver(),
     }),
-    hover: (item: DragItem, monitor:DropTargetMonitor<DragItem, void>) => {
+    hover: (item: DragItem, monitor: DropTargetMonitor<DragItem, void>) => {
       if (!ref.current) {
         return;
       }

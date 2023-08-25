@@ -14,8 +14,9 @@ import {
   MjmlText,
 } from '@faire/mjml-react';
 import { useSelector } from 'react-redux';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { gql, useLazyQuery } from '@apollo/client';
+import { useOutletContext } from 'react-router-dom';
 import Iconify from '../../Components/Iconify';
 import DraggablesComponentList from '../../Components/LayoutBuilder/DraggablesSidebar/DraggablesComponentList';
 import LayoutBuilder, { renderReactToMjml } from '../../Components/LayoutBuilder/LayoutBuilder';
@@ -31,8 +32,7 @@ import Module, { IModule } from '../../Components/LayoutBuilder/Module';
 const AppWrapper = styled('div')({
   display: 'flex',
   flexWrap: 'wrap',
-  maxHeight: 'calc(100vh - 120px)',
-  marginTop: '120px',
+  maxHeight: 'calc(100vh - 157px)',
   '& > *': {
     padding: '1em',
   },
@@ -85,6 +85,7 @@ export const SEND_EMAIL = gql`
 `;
 
 export default function HomeBuilder() {
+  const { setLayoutSelected }: { setLayoutSelected: any } = useOutletContext();
   const layout = useSelector((state: any) => state.layout);
   const [openPreview, setOpenPreview] = useState<boolean>(false);
   const [previewHtml, setPreviewHtml] = useState<string>('');
@@ -97,6 +98,7 @@ export default function HomeBuilder() {
     onCompleted: (data) => {
       setModules(data.getAllModules);
     },
+    fetchPolicy: 'network-only',
   });
   const [sendEmail] = useLazyQuery(SEND_EMAIL, {
     variables: {
@@ -110,7 +112,7 @@ export default function HomeBuilder() {
     },
   });
 
-  const handleSend = useCallback(async () => {
+  const handleSend = async () => {
     const { html } = renderReactToMjml(
       <Mjml>
         <MjmlHead>
@@ -154,125 +156,129 @@ export default function HomeBuilder() {
         </MjmlHead>
         <MjmlBody width={600 + 20}>
           {
-              layout.map((row: IRowComponent) => (
-                <MjmlSection
-                  key={row.id}
-                  paddingTop={`${row.children[0].renderProps.style.paddingTop}px`}
-                  paddingBottom={`${row.children[0].renderProps.style.paddingBottom}px`}
-                  paddingLeft={`${row.children[0].renderProps.style.paddingLeft}px`}
-                  paddingRight={`${row.children[0].renderProps.style.paddingRight}px`}
-                  backgroundColor={row.children[0].renderProps.style.backgroundColor}
-                  {...row.children[0].renderProps.style.fullWidth && { fullWidth: true }}
-                  backgroundUrl={row.children[0].renderProps.style.backgroundUrl}
-                  backgroundRepeat={row.children[0].renderProps.style.backgroundRepeat}
-                  backgroundSize={row.children[0].renderProps.style.backgroundSize}
-                  backgroundPosition={row.children[0].renderProps.style.backgroundPosition}
-                >
-                  {
-                    row.children[0].children.map((col: IColumnComponent) => (
-                      <MjmlColumn
-                        key={col.id}
-                        paddingTop={col.renderProps.style.paddingTop || '0px'}
-                        paddingBottom={col.renderProps.style.paddingBottom || '0px'}
-                        paddingLeft={col.renderProps.style.paddingLeft || '4px'}
-                        paddingRight={col.renderProps.style.paddingRight || '4px'}
-                        width={col.renderProps.style.flexBasis}
-                        verticalAlign={col.renderProps.style.alignSelf === 'flex-start' ? 'top' : col.renderProps.style.alignSelf === 'flex-end' ? 'bottom' : 'middle'}
-                      >
-                        {
-                          col.children.map((component: any) => {
-                            const { type } = component;
-                            switch (type) {
-                              case SIDEBAR_TEXT_ITEM:
-                                return (
-                                  <MjmlText
-                                    key={component.id}
-                                    dangerouslySetInnerHTML={{ __html: component.renderProps.render }}
-                                    paddingLeft={0}
-                                    paddingRight={0}
-                                    paddingTop={'0.5rem'}
-                                    paddingBottom={'6px'}
-                                    lineHeight={component.renderProps.style.lineHeight || '1.5'}
-                                    fontSize={component.renderProps.style.fontSize || '16px'}
-                                  />
-                                );
-                              case SIDEBAR_IMAGE_ITEM:
-                                return (
-                                  <MjmlImage
-                                    key={component.id}
-                                    src={component.renderProps.style.backgroundUrl}
-                                    height={`${component.renderProps.style.height}px`}
-                                    paddingTop={component.renderProps.style.paddingTop}
-                                    paddingBottom={component.renderProps.style.paddingBottom}
-                                    paddingLeft={component.renderProps.style.paddingLeft}
-                                    paddingRight={component.renderProps.style.paddingRight}
-                                    cssClass={'fluidOnMobile'}
-                                  />
-                                );
-                              case SIDEBAR_SOCIAL_ITEM:
-                                return (
-                                  <MjmlSocial
-                                    key={component.id}
-                                    mode="horizontal"
-                                    paddingTop={component.renderProps.style.paddingTop || '0px'}
-                                    paddingBottom={component.renderProps.style.paddingBottom || '0px'}
-                                    paddingLeft={component.renderProps.style.paddingLeft || '8px'}
-                                    paddingRight={component.renderProps.style.paddingRight || '8px'}
-                                    align={component.renderProps.style.justifyContent === 'flex-start' ? 'left' : component.renderProps.style.justifyContent === 'flex-end' ? 'right' : 'center'}
-                                  >
-                                    {
-                                      component.children.map((social: ISocialItem) => (
-                                        <MjmlSocialElement
-                                          key={social.id}
-                                          href={social.renderProps.style.href}
-                                          iconSize={`${component.renderProps.style.width}px`}
-                                          src={social.renderProps.style.src}
-                                        />
-                                      ))
-                                    }
-                                  </MjmlSocial>
-                                );
-                              case SIDEBAR_BUTTON_ITEM:
-                                return (
-                                  <MjmlButton
-                                    key={component.id}
-                                    backgroundColor={component.renderProps.style.backgroundColor}
-                                    color={component.renderProps.style.color}
-                                    fontFamily={`${component.renderProps.style.fontFamily}, sans-serif`}
-                                    fontSize={`${component.renderProps.style.fontSize}px`}
-                                    fontWeight={component.renderProps.style.fontWeight}
-                                    lineHeight={'16px'}
-                                    innerPadding={`${component.renderProps.style.innerPaddingTop}px ${component.renderProps.style.innerPaddingRight}px ${component.renderProps.style.innerPaddingBottom}px ${component.renderProps.style.innerPaddingLeft}px`}
-                                    padding={`${component.renderProps.style.paddingTop}px ${component.renderProps.style.paddingRight}px ${component.renderProps.style.paddingBottom}px ${component.renderProps.style.paddingLeft}px`}
-                                    href={component.renderProps.style.href}
-                                    cssClass={'button'}
-                                    align={component.renderProps.style.justifyContent === 'flex-start' ? 'left' : component.renderProps.style.justifyContent === 'flex-end' ? 'right' : 'center'}
-                                    borderRadius={`${component.renderProps.style.borderRadius}px`}
-                                    textTransform={component.renderProps.style.textTransform}
-                                  >
-                                    {component.renderProps.text}
-                                  </MjmlButton>
-                                );
-                              default:
-                                return null;
-                            }
-                          })
-                        }
-                      </MjmlColumn>
-                    ))
-                  }
-                </MjmlSection>
-              ))
-            }
+            layout.map((row: IRowComponent) => (
+              <MjmlSection
+                key={row.id}
+                paddingTop={`${row.children[0].renderProps.style.paddingTop}px`}
+                paddingBottom={`${row.children[0].renderProps.style.paddingBottom}px`}
+                paddingLeft={`${row.children[0].renderProps.style.paddingLeft}px`}
+                paddingRight={`${row.children[0].renderProps.style.paddingRight}px`}
+                backgroundColor={row.children[0].renderProps.style.backgroundColor}
+                {...row.children[0].renderProps.style.fullWidth && { fullWidth: true }}
+                backgroundUrl={row.children[0].renderProps.style.backgroundUrl}
+                backgroundRepeat={row.children[0].renderProps.style.backgroundRepeat}
+                backgroundSize={row.children[0].renderProps.style.backgroundSize}
+                backgroundPosition={row.children[0].renderProps.style.backgroundPosition}
+              >
+                {
+                  row.children[0].children.map((col: IColumnComponent) => (
+                    <MjmlColumn
+                      key={col.id}
+                      paddingTop={col.renderProps.style.paddingTop || '0px'}
+                      paddingBottom={col.renderProps.style.paddingBottom || '0px'}
+                      paddingLeft={col.renderProps.style.paddingLeft || '4px'}
+                      paddingRight={col.renderProps.style.paddingRight || '4px'}
+                      width={col.renderProps.style.flexBasis}
+                      verticalAlign={col.renderProps.style.alignSelf === 'flex-start' ? 'top' : col.renderProps.style.alignSelf === 'flex-end' ? 'bottom' : 'middle'}
+                    >
+                      {
+                        col.children.map((component: any) => {
+                          const { type } = component;
+                          switch (type) {
+                            case SIDEBAR_TEXT_ITEM:
+                              return (
+                                <MjmlText
+                                  key={component.id}
+                                  dangerouslySetInnerHTML={{ __html: component.renderProps.render }}
+                                  paddingLeft={0}
+                                  paddingRight={0}
+                                  paddingTop={'0.5rem'}
+                                  paddingBottom={'6px'}
+                                  lineHeight={component.renderProps.style.lineHeight || '1.5'}
+                                  fontSize={component.renderProps.style.fontSize || '16px'}
+                                />
+                              );
+                            case SIDEBAR_IMAGE_ITEM:
+                              return (
+                                <MjmlImage
+                                  key={component.id}
+                                  src={component.renderProps.style.backgroundUrl}
+                                  height={`${component.renderProps.style.height}px`}
+                                  paddingTop={component.renderProps.style.paddingTop}
+                                  paddingBottom={component.renderProps.style.paddingBottom}
+                                  paddingLeft={component.renderProps.style.paddingLeft}
+                                  paddingRight={component.renderProps.style.paddingRight}
+                                  cssClass={'fluidOnMobile'}
+                                />
+                              );
+                            case SIDEBAR_SOCIAL_ITEM:
+                              return (
+                                <MjmlSocial
+                                  key={component.id}
+                                  mode="horizontal"
+                                  paddingTop={component.renderProps.style.paddingTop || '0px'}
+                                  paddingBottom={component.renderProps.style.paddingBottom || '0px'}
+                                  paddingLeft={component.renderProps.style.paddingLeft || '8px'}
+                                  paddingRight={component.renderProps.style.paddingRight || '8px'}
+                                  align={component.renderProps.style.justifyContent === 'flex-start' ? 'left' : component.renderProps.style.justifyContent === 'flex-end' ? 'right' : 'center'}
+                                >
+                                  {
+                                    component.children.map((social: ISocialItem) => (
+                                      <MjmlSocialElement
+                                        key={social.id}
+                                        href={social.renderProps.style.href}
+                                        iconSize={`${component.renderProps.style.width}px`}
+                                        src={social.renderProps.style.src}
+                                      />
+                                    ))
+                                  }
+                                </MjmlSocial>
+                              );
+                            case SIDEBAR_BUTTON_ITEM:
+                              return (
+                                <MjmlButton
+                                  key={component.id}
+                                  backgroundColor={component.renderProps.style.backgroundColor}
+                                  color={component.renderProps.style.color}
+                                  fontFamily={`${component.renderProps.style.fontFamily}, sans-serif`}
+                                  fontSize={`${component.renderProps.style.fontSize}px`}
+                                  fontWeight={component.renderProps.style.fontWeight}
+                                  lineHeight={'16px'}
+                                  innerPadding={`${component.renderProps.style.innerPaddingTop}px ${component.renderProps.style.innerPaddingRight}px ${component.renderProps.style.innerPaddingBottom}px ${component.renderProps.style.innerPaddingLeft}px`}
+                                  padding={`${component.renderProps.style.paddingTop}px ${component.renderProps.style.paddingRight}px ${component.renderProps.style.paddingBottom}px ${component.renderProps.style.paddingLeft}px`}
+                                  href={component.renderProps.style.href}
+                                  cssClass={'button'}
+                                  align={component.renderProps.style.justifyContent === 'flex-start' ? 'left' : component.renderProps.style.justifyContent === 'flex-end' ? 'right' : 'center'}
+                                  borderRadius={`${component.renderProps.style.borderRadius}px`}
+                                  textTransform={component.renderProps.style.textTransform}
+                                >
+                                  {component.renderProps.text}
+                                </MjmlButton>
+                              );
+                            default:
+                              return null;
+                          }
+                        })
+                      }
+                    </MjmlColumn>
+                  ))
+                }
+              </MjmlSection>
+            ))
+          }
         </MjmlBody>
       </Mjml>,
     );
     setPreviewHtml(html);
     await sendEmail();
-  }, [sendEmail]);
+  };
 
   const handleRemoveModule = (id: number) => {
     setModules(modules.filter((module: any) => module.id !== id));
+  };
+
+  const handleAddModule = (module: IModule) => {
+    setModules([...modules, module]);
   };
 
   useEffect(() => {
@@ -286,6 +292,23 @@ export default function HomeBuilder() {
       sx={{ overflow: 'hidden' }}
     >
       <DndProvider backend={HTML5Backend}>
+        <Button
+          variant="contained"
+          onClick={() => {
+            setLayoutSelected(false);
+          }}
+          size="small"
+          sx={{
+            display: 'flex',
+            gap: '10px',
+            alignItems: 'center',
+            mt: '120px',
+            ml: '1rem',
+          }}
+        >
+          <Iconify icon="fa-solid:arrow-left" />
+          Retour à ma liste
+        </Button>
         <AppWrapper>
           <Box
             className="builder-sidebar"
@@ -307,7 +330,7 @@ export default function HomeBuilder() {
               style={{
                 width: '100%',
                 overflowY: 'auto',
-                height: 'calc(100vh - 200px)',
+                height: 'calc(100vh - 237px)',
                 paddingRight: '.5rem',
               }}
               mt={4}
@@ -401,7 +424,7 @@ export default function HomeBuilder() {
                     color="primary"
                     startIcon={<Iconify icon="mdi:responsive" />}
                     onClick={() => {
-                    // @ts-ignore
+                      // @ts-ignore
                       const { html } = renderReactToMjml(
                         <Mjml>
                           <MjmlHead>
@@ -445,116 +468,116 @@ export default function HomeBuilder() {
                           </MjmlHead>
                           <MjmlBody width={600 + 20}>
                             {
-                            layout.map((row: IRowComponent) => (
-                              <MjmlSection
-                                key={row.id}
-                                paddingTop={`${row.children[0].renderProps.style.paddingTop}px`}
-                                paddingBottom={`${row.children[0].renderProps.style.paddingBottom}px`}
-                                paddingLeft={`${row.children[0].renderProps.style.paddingLeft}px`}
-                                paddingRight={`${row.children[0].renderProps.style.paddingRight}px`}
-                                backgroundColor={row.children[0].renderProps.style.backgroundColor}
-                                {...row.children[0].renderProps.style.fullWidth && { fullWidth: true }}
-                                backgroundUrl={row.children[0].renderProps.style.backgroundUrl}
-                                backgroundRepeat={row.children[0].renderProps.style.backgroundRepeat}
-                                backgroundSize={row.children[0].renderProps.style.backgroundSize}
-                                backgroundPosition={row.children[0].renderProps.style.backgroundPosition}
-                              >
-                                {
-                                  row.children[0].children.map((col: IColumnComponent) => (
-                                    <MjmlColumn
-                                      key={col.id}
-                                      paddingTop={col.renderProps.style.paddingTop || '0px'}
-                                      paddingBottom={col.renderProps.style.paddingBottom || '0px'}
-                                      paddingLeft={col.renderProps.style.paddingLeft || '4px'}
-                                      paddingRight={col.renderProps.style.paddingRight || '4px'}
-                                      width={col.renderProps.style.flexBasis}
-                                      verticalAlign={col.renderProps.style.alignSelf === 'flex-start' ? 'top' : col.renderProps.style.alignSelf === 'flex-end' ? 'bottom' : 'middle'}
-                                    >
-                                      {
-                                        col.children.map((component: any) => {
-                                          const { type } = component;
-                                          switch (type) {
-                                            case SIDEBAR_TEXT_ITEM:
-                                              return (
-                                                <MjmlText
-                                                  key={component.id}
-                                                  dangerouslySetInnerHTML={{ __html: component.renderProps.render }}
-                                                  paddingLeft={0}
-                                                  paddingRight={0}
-                                                  paddingTop={'0.5rem'}
-                                                  paddingBottom={'6px'}
-                                                  lineHeight={component.renderProps.style.lineHeight || '1.5'}
-                                                  fontSize={component.renderProps.style.fontSize || '16px'}
-                                                />
-                                              );
-                                            case SIDEBAR_IMAGE_ITEM:
-                                              return (
-                                                <MjmlImage
-                                                  key={component.id}
-                                                  src={component.renderProps.style.backgroundUrl}
-                                                  height={`${component.renderProps.style.height}px`}
-                                                  paddingTop={component.renderProps.style.paddingTop}
-                                                  paddingBottom={component.renderProps.style.paddingBottom}
-                                                  paddingLeft={component.renderProps.style.paddingLeft}
-                                                  paddingRight={component.renderProps.style.paddingRight}
-                                                  cssClass={'fluidOnMobile'}
-                                                />
-                                              );
-                                            case SIDEBAR_SOCIAL_ITEM:
-                                              return (
-                                                <MjmlSocial
-                                                  key={component.id}
-                                                  mode="horizontal"
-                                                  paddingTop={component.renderProps.style.paddingTop || '0px'}
-                                                  paddingBottom={component.renderProps.style.paddingBottom || '0px'}
-                                                  paddingLeft={component.renderProps.style.paddingLeft || '8px'}
-                                                  paddingRight={component.renderProps.style.paddingRight || '8px'}
-                                                  align={component.renderProps.style.justifyContent === 'flex-start' ? 'left' : component.renderProps.style.justifyContent === 'flex-end' ? 'right' : 'center'}
-                                                >
-                                                  {
-                                                    component.children.map((social: ISocialItem) => (
-                                                      <MjmlSocialElement
-                                                        key={social.id}
-                                                        href={social.renderProps.style.href}
-                                                        iconSize={`${component.renderProps.style.width}px`}
-                                                        src={social.renderProps.style.src}
-                                                      />
-                                                    ))
-                                                  }
-                                                </MjmlSocial>
-                                              );
-                                            case SIDEBAR_BUTTON_ITEM:
-                                              return (
-                                                <MjmlButton
-                                                  key={component.id}
-                                                  backgroundColor={component.renderProps.style.backgroundColor}
-                                                  color={component.renderProps.style.color}
-                                                  fontFamily={`${component.renderProps.style.fontFamily}, sans-serif`}
-                                                  fontSize={`${component.renderProps.style.fontSize}px`}
-                                                  fontWeight={component.renderProps.style.fontWeight}
-                                                  lineHeight={'16px'}
-                                                  innerPadding={`${component.renderProps.style.innerPaddingTop}px ${component.renderProps.style.innerPaddingRight}px ${component.renderProps.style.innerPaddingBottom}px ${component.renderProps.style.innerPaddingLeft}px`}
-                                                  padding={`${component.renderProps.style.paddingTop}px ${component.renderProps.style.paddingRight}px ${component.renderProps.style.paddingBottom}px ${component.renderProps.style.paddingLeft}px`}
-                                                  href={component.renderProps.style.href}
-                                                  cssClass={'button'}
-                                                  align={component.renderProps.style.justifyContent === 'flex-start' ? 'left' : component.renderProps.style.justifyContent === 'flex-end' ? 'right' : 'center'}
-                                                  borderRadius={`${component.renderProps.style.borderRadius}px`}
-                                                  textTransform={component.renderProps.style.textTransform}
-                                                >
-                                                  {component.renderProps.text}
-                                                </MjmlButton>
-                                              );
-                                            default:
-                                              return null;
-                                          }
-                                        })
-                                      }
-                                    </MjmlColumn>
-                                  ))
-                                }
-                              </MjmlSection>
-                            ))
-                          }
+                              layout.map((row: IRowComponent) => (
+                                <MjmlSection
+                                  key={row.id}
+                                  paddingTop={`${row.children[0].renderProps.style.paddingTop}px`}
+                                  paddingBottom={`${row.children[0].renderProps.style.paddingBottom}px`}
+                                  paddingLeft={`${row.children[0].renderProps.style.paddingLeft}px`}
+                                  paddingRight={`${row.children[0].renderProps.style.paddingRight}px`}
+                                  backgroundColor={row.children[0].renderProps.style.backgroundColor}
+                                  {...row.children[0].renderProps.style.fullWidth && { fullWidth: true }}
+                                  backgroundUrl={row.children[0].renderProps.style.backgroundUrl}
+                                  backgroundRepeat={row.children[0].renderProps.style.backgroundRepeat}
+                                  backgroundSize={row.children[0].renderProps.style.backgroundSize}
+                                  backgroundPosition={row.children[0].renderProps.style.backgroundPosition}
+                                >
+                                  {
+                                    row.children[0].children.map((col: IColumnComponent) => (
+                                      <MjmlColumn
+                                        key={col.id}
+                                        paddingTop={col.renderProps.style.paddingTop || '0px'}
+                                        paddingBottom={col.renderProps.style.paddingBottom || '0px'}
+                                        paddingLeft={col.renderProps.style.paddingLeft || '4px'}
+                                        paddingRight={col.renderProps.style.paddingRight || '4px'}
+                                        width={col.renderProps.style.flexBasis}
+                                        verticalAlign={col.renderProps.style.alignSelf === 'flex-start' ? 'top' : col.renderProps.style.alignSelf === 'flex-end' ? 'bottom' : 'middle'}
+                                      >
+                                        {
+                                          col.children.map((component: any) => {
+                                            const { type } = component;
+                                            switch (type) {
+                                              case SIDEBAR_TEXT_ITEM:
+                                                return (
+                                                  <MjmlText
+                                                    key={component.id}
+                                                    dangerouslySetInnerHTML={{ __html: component.renderProps.render }}
+                                                    paddingLeft={0}
+                                                    paddingRight={0}
+                                                    paddingTop={'0.5rem'}
+                                                    paddingBottom={'6px'}
+                                                    lineHeight={component.renderProps.style.lineHeight || '1.5'}
+                                                    fontSize={component.renderProps.style.fontSize || '16px'}
+                                                  />
+                                                );
+                                              case SIDEBAR_IMAGE_ITEM:
+                                                return (
+                                                  <MjmlImage
+                                                    key={component.id}
+                                                    src={component.renderProps.style.backgroundUrl}
+                                                    height={`${component.renderProps.style.height}px`}
+                                                    paddingTop={component.renderProps.style.paddingTop}
+                                                    paddingBottom={component.renderProps.style.paddingBottom}
+                                                    paddingLeft={component.renderProps.style.paddingLeft}
+                                                    paddingRight={component.renderProps.style.paddingRight}
+                                                    cssClass={'fluidOnMobile'}
+                                                  />
+                                                );
+                                              case SIDEBAR_SOCIAL_ITEM:
+                                                return (
+                                                  <MjmlSocial
+                                                    key={component.id}
+                                                    mode="horizontal"
+                                                    paddingTop={component.renderProps.style.paddingTop || '0px'}
+                                                    paddingBottom={component.renderProps.style.paddingBottom || '0px'}
+                                                    paddingLeft={component.renderProps.style.paddingLeft || '8px'}
+                                                    paddingRight={component.renderProps.style.paddingRight || '8px'}
+                                                    align={component.renderProps.style.justifyContent === 'flex-start' ? 'left' : component.renderProps.style.justifyContent === 'flex-end' ? 'right' : 'center'}
+                                                  >
+                                                    {
+                                                      component.children.map((social: ISocialItem) => (
+                                                        <MjmlSocialElement
+                                                          key={social.id}
+                                                          href={social.renderProps.style.href}
+                                                          iconSize={`${component.renderProps.style.width}px`}
+                                                          src={social.renderProps.style.src}
+                                                        />
+                                                      ))
+                                                    }
+                                                  </MjmlSocial>
+                                                );
+                                              case SIDEBAR_BUTTON_ITEM:
+                                                return (
+                                                  <MjmlButton
+                                                    key={component.id}
+                                                    backgroundColor={component.renderProps.style.backgroundColor}
+                                                    color={component.renderProps.style.color}
+                                                    fontFamily={`${component.renderProps.style.fontFamily}, sans-serif`}
+                                                    fontSize={`${component.renderProps.style.fontSize}px`}
+                                                    fontWeight={component.renderProps.style.fontWeight}
+                                                    lineHeight={'16px'}
+                                                    innerPadding={`${component.renderProps.style.innerPaddingTop}px ${component.renderProps.style.innerPaddingRight}px ${component.renderProps.style.innerPaddingBottom}px ${component.renderProps.style.innerPaddingLeft}px`}
+                                                    padding={`${component.renderProps.style.paddingTop}px ${component.renderProps.style.paddingRight}px ${component.renderProps.style.paddingBottom}px ${component.renderProps.style.paddingLeft}px`}
+                                                    href={component.renderProps.style.href}
+                                                    cssClass={'button'}
+                                                    align={component.renderProps.style.justifyContent === 'flex-start' ? 'left' : component.renderProps.style.justifyContent === 'flex-end' ? 'right' : 'center'}
+                                                    borderRadius={`${component.renderProps.style.borderRadius}px`}
+                                                    textTransform={component.renderProps.style.textTransform}
+                                                  >
+                                                    {component.renderProps.text}
+                                                  </MjmlButton>
+                                                );
+                                              default:
+                                                return null;
+                                            }
+                                          })
+                                        }
+                                      </MjmlColumn>
+                                    ))
+                                  }
+                                </MjmlSection>
+                              ))
+                            }
                           </MjmlBody>
                         </Mjml>,
                       );
@@ -579,7 +602,7 @@ export default function HomeBuilder() {
               </Box>
 
             </Stack>
-            <LayoutBuilder />
+            <LayoutBuilder handleAddModule={handleAddModule} />
           </Box>
           <Box
             component={'div'}
