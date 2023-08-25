@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { useLazyQuery, useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import {
   Accordion,
   AccordionDetails,
@@ -15,12 +15,13 @@ import {
   Typography,
 } from '@mui/material';
 import { useDispatch } from 'react-redux';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { DeleteForeverOutlined } from '@mui/icons-material';
 import Header from '../Main/Header';
 import { setLayout } from '../../features/layout/layoutSlice';
 import { setSelectedLayout } from '../../features/layout/selectedComponent';
 import { AuthContext } from '../../AuthContext/Authcontext';
-import { NEW_COMPANY, NEW_LAYOUT } from '../../graphql/Mutations';
+import { DELETE_LAYOUT, NEW_COMPANY, NEW_LAYOUT } from '../../graphql/Mutations';
 import { GET_COMPANIES_WITH_LAYOUTS } from '../../graphql/Queries';
 import { Company } from '../../typeDefs/TypeDefs';
 import CompaniesForm from '../../Components/CompaniesForm/CompaniesForm';
@@ -34,21 +35,33 @@ const style = {
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
-  maxWidth: '800px',
+  maxWidth: '90dvw',
+  width: '90dvw',
+  maxHeight: '80dvh',
+  overflow: 'scroll',
   p: 4,
 };
 
 const Dashboard = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const [userLayouts, setUserLayouts] = React.useState<any>([]);
   const [layoutSelected, setLayoutSelected] = React.useState<any>(false);
   const [openModalCompanies, setOpenModalCompanies] = React.useState(false);
   const [openModalLayouts, setOpenModalLayouts] = React.useState(false);
   const [selectedCompany, setSelectedCompany] = React.useState<any>(null);
-  const [getLayouts] = useLazyQuery(GET_COMPANIES_WITH_LAYOUTS, {
-    onCompleted: (data: any) => {
-      setUserLayouts(data.getCompaniesWithLayouts);
+  const [isSubscribed, setIsSubscribed] = React.useState(false);
+  const { data, refetch } = useQuery(GET_COMPANIES_WITH_LAYOUTS, {
+    variables: {
+      userId: user.id,
+    },
+    fetchPolicy: 'network-only',
+    onCompleted(data) {
+      if (data.getCompaniesWithLayouts[0].userId.subscriptionId !== null && data.getCompaniesWithLayouts[0].userId.subscriptionId.subscriptionEnd > new Date().toISOString()
+      ) {
+        setIsSubscribed(true);
+      }
     },
   });
   const [createCompany] = useMutation(NEW_COMPANY, {
@@ -79,7 +92,12 @@ const Dashboard = () => {
         return company;
       }));
     },
+    onError: () => {
+      navigate('/subscription');
+    },
   });
+
+  const [deleteLayout] = useMutation(DELETE_LAYOUT);
 
   const handleSubmitFormCompany = (values: Company) => {
     createCompany({
@@ -107,6 +125,24 @@ const Dashboard = () => {
     setOpenModalCompanies(false);
   };
 
+  const handleRemoveLayout = async (layoutId: number) => {
+    await deleteLayout({
+      variables: {
+        deleteLayoutId: layoutId,
+      },
+    });
+
+    setUserLayouts((prev: any) => prev.map((company: any) => {
+      if (company.id === selectedCompany) {
+        return {
+          ...company,
+          layouts: company.layouts.filter((layout: any) => layout.id !== layoutId),
+        };
+      }
+      return company;
+    }));
+  };
+
   const handleSubmitFormLayouts = (values: any) => {
     createLayout(
       {
@@ -123,82 +159,99 @@ const Dashboard = () => {
     );
   };
 
-  /*
-  Récupération des layouts de l'utilisateur au montage du composant
-   */
   useEffect(() => {
-    (async () => getLayouts({
-      variables: {
-        userId: user.id,
-      },
-    }))();
-  }, [user]);
+    if (data) {
+      setUserLayouts(data.getCompaniesWithLayouts);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    refetch();
+  }, [layoutSelected, refetch]);
 
   return (
     <>
       <Header />
       {
-          layoutSelected ? (
-            <Outlet />
-          ) : (
-            <Container
-              maxWidth={'lg'}
-              sx={{
-                marginTop: 'calc(88px + 32px)',
-              }}
-            >
-              <Typography
-                variant="h1"
-              >
-                Mes layouts
-              </Typography>
-              <Button
-                variant="contained"
-                size={'small'}
-                onClick={handleOpenModalCompanies}
-              >
-                Enregistrer votre société
-              </Button>
+        layoutSelected ? (
+          <Outlet
+            context={
               {
-                openModalCompanies && (
+                setLayoutSelected,
+              }
+            }
+          />
+        ) : (
+          <Container
+            maxWidth={'lg'}
+            sx={{
+              marginTop: 'calc(88px + 32px)',
+            }}
+          >
+            <Typography
+              variant="h1"
+            >
+              Mes layouts
+            </Typography>
+            <Button
+              variant="contained"
+              size={'small'}
+              onClick={handleOpenModalCompanies}
+            >
+              Enregistrer votre société
+            </Button>
+            {
+              openModalCompanies && (
+                <Modal
+                  aria-labelledby="transition-modal-title"
+                  aria-describedby="transition-modal-description"
+                  open={openModalCompanies}
+                  onClose={handleCloseModalCompanies}
+                  closeAfterTransition
+                  slots={{ backdrop: Backdrop }}
+                >
+                  <Fade in={openModalCompanies}>
+                    <Box sx={{
+                      ...style,
+                      '@media (min-width: 768px)': {
+                        width: '60dvw',
+                      },
+                    }}
+                    >
+                      <CompaniesForm handleSubmit={handleSubmitFormCompany} />
+                    </Box>
+                  </Fade>
+                </Modal>
+              )
+            }
+            <Box
+              my={5}
+            >
+              {
+                openModalLayouts && (
                   <Modal
                     aria-labelledby="transition-modal-title"
                     aria-describedby="transition-modal-description"
-                    open={openModalCompanies}
-                    onClose={handleCloseModalCompanies}
+                    open={openModalLayouts}
+                    onClose={handleCloseModalLayouts}
                     closeAfterTransition
                     slots={{ backdrop: Backdrop }}
                   >
-                    <Fade in={openModalCompanies}>
-                      <Box sx={style}>
-                        <CompaniesForm handleSubmit={handleSubmitFormCompany} />
+                    <Fade in={openModalLayouts}>
+                      <Box sx={{
+                        ...style,
+                        '@media (min-width: 768px)': {
+                          width: '40dvw',
+                        },
+                      }}
+                      >
+                        <LayoutsForm handleSubmit={handleSubmitFormLayouts} companiesId={selectedCompany} />
                       </Box>
                     </Fade>
                   </Modal>
                 )
               }
-              <Box
-                my={5}
-              >
-                {
-                  openModalLayouts && (
-                    <Modal
-                      aria-labelledby="transition-modal-title"
-                      aria-describedby="transition-modal-description"
-                      open={openModalLayouts}
-                      onClose={handleCloseModalLayouts}
-                      closeAfterTransition
-                      slots={{ backdrop: Backdrop }}
-                    >
-                      <Fade in={openModalLayouts}>
-                        <Box sx={style}>
-                          <LayoutsForm handleSubmit={handleSubmitFormLayouts} companiesId={selectedCompany} />
-                        </Box>
-                      </Fade>
-                    </Modal>
-                  )
-                }
-                {
+              {
                 userLayouts?.map((companies: any) => (
                   <Box
                     key={companies.id}
@@ -252,12 +305,13 @@ const Dashboard = () => {
                         <Stack
                           direction="row"
                           alignItems={'center'}
-                          spacing={2}
                           sx={{
                             my: 5,
                           }}
+                          flexWrap={'wrap'}
+                          gap={2}
                         >
-                          {companies.layouts.length > 0 ? companies?.layouts.map((companie: any) => (
+                          {companies.layouts.length > 0 ? companies?.layouts.map((companie: any, index: number) => (
                             <Box
                               key={companie.id}
                             >
@@ -267,7 +321,6 @@ const Dashboard = () => {
                                 style={{
                                   width: '100%',
                                   height: '180px',
-                                  maxWidth: '180px',
                                   objectFit: 'cover',
                                   border: '1px solid #000',
                                   borderRadius: '5px',
@@ -278,23 +331,59 @@ const Dashboard = () => {
                               >
                                 {companie.name}
                               </Typography>
-                              <Button
-                                variant={'contained'}
-                                size={'small'}
+                              <Box
+                                component={'div'}
                                 sx={{
-                                  mt: 1,
-                                }}
-                                onClick={() => {
-                                  dispatch(setLayout({
-                                    layout: companie.children,
-                                    layoutId: companie.id,
-                                  }));
-                                  dispatch(setSelectedLayout({ layoutId: companie.id }));
-                                  setLayoutSelected(true);
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  gap: '8px',
                                 }}
                               >
-                                Choisir ce layout
-                              </Button>
+                                {
+                                  isSubscribed || (!isSubscribed && index === 0) ? (
+                                    <>
+                                      <Button
+                                        variant={'contained'}
+                                        size={'small'}
+                                        sx={{
+                                          mt: 1,
+                                        }}
+                                        onClick={() => {
+                                          dispatch(setLayout({
+                                            layout: companie.children,
+                                            layoutId: companie.id,
+                                          }));
+                                          dispatch(setSelectedLayout({ layoutId: companie.id }));
+                                          setLayoutSelected(true);
+                                        }}
+                                      >
+                                        Choisir ce layout
+                                      </Button>
+                                      <Button
+                                        variant={'contained'}
+                                        size={'small'}
+                                        sx={{
+                                          mt: 1,
+                                        }}
+                                        onClick={() => handleRemoveLayout(companie.id)}
+                                      >
+                                        <DeleteForeverOutlined />
+                                      </Button>
+                                    </>
+                                  ) : (
+                                    <Button
+                                      variant={'contained'}
+                                      size={'small'}
+                                      sx={{
+                                        mt: 1,
+                                      }}
+                                      disabled
+                                    >
+                                      Abonnement requis
+                                    </Button>
+                                  )
+                                }
+                              </Box>
                             </Box>
                           )) : (
                             <Typography
@@ -310,10 +399,10 @@ const Dashboard = () => {
                   </Box>
                 ))
               }
-              </Box>
-            </Container>
-          )
-        }
+            </Box>
+          </Container>
+        )
+      }
     </>
   );
 };

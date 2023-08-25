@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Box, Button, FormGroup, Grid, InputLabel, TextField, Typography } from '@mui/material';
+import { Box, Button, FormGroup, Grid, TextField, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { AuthContext } from '../../AuthContext/Authcontext';
@@ -82,26 +82,19 @@ const CompaniesForm = ({ handleSubmit }: { handleSubmit: (values: any) => void }
       </Typography>
       <Box component={'form'} onSubmit={formik.handleSubmit} sx={{ mt: 4 }}>
         <Grid container spacing={2}>
-          <Grid item md={6}>
+          <Grid item xs={12} sm={6} lg={3}>
             <FormGroup
               sx={{
                 marginBottom: '16px',
               }}
             >
-              <InputLabel
-                htmlFor="name"
-                sx={{
-                  fontSize: '1.2rem',
-                  fontWeight: 'bold',
-                  color: 'black',
-                }}
-              >
-                Nom de la société
-              </InputLabel>
               <TextField
                 id="name"
+                label="Nom d'utilisateur"
+                InputLabelProps={{
+                  shrink: true,
+                }}
                 name="name"
-                type="text"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.name}
@@ -115,23 +108,17 @@ const CompaniesForm = ({ handleSubmit }: { handleSubmit: (values: any) => void }
             </FormGroup>
           </Grid>
 
-          <Grid item md={6}>
+          <Grid item xs={12} sm={6} lg={3}>
             <FormGroup
               sx={{
                 marginBottom: '16px',
               }}
             >
-              <InputLabel
-                htmlFor="siret"
-                sx={{
-                  fontSize: '1.2rem',
-                  fontWeight: 'bold',
-                  color: 'black',
-                }}
-              >
-                N° de SIRET
-              </InputLabel>
               <TextField
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                label="Siret"
                 id="siret"
                 name="siret"
                 type="text"
@@ -148,26 +135,20 @@ const CompaniesForm = ({ handleSubmit }: { handleSubmit: (values: any) => void }
             </FormGroup>
           </Grid>
 
-          <Grid item md={6}>
+          <Grid item xs={12} sm={6} lg={3}>
             <FormGroup
               sx={{
                 marginBottom: '16px',
               }}
             >
-              <InputLabel
-                htmlFor="address"
-                sx={{
-                  fontSize: '1.2rem',
-                  fontWeight: 'bold',
-                  color: 'black',
-                }}
-              >
-                Adresse
-              </InputLabel>
               <TextField
                 id="address"
                 name="address"
                 type="text"
+                label="Adresse"
+                InputLabelProps={{
+                  shrink: true,
+                }}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.address}
@@ -182,26 +163,17 @@ const CompaniesForm = ({ handleSubmit }: { handleSubmit: (values: any) => void }
             </FormGroup>
           </Grid>
 
-          <Grid item md={6}>
+          <Grid item xs={12} sm={6} lg={3}>
             <FormGroup
               sx={{
                 marginBottom: '16px',
               }}
             >
-              <InputLabel
-                htmlFor="phone"
-                sx={{
-                  fontSize: '1.2rem',
-                  fontWeight: 'bold',
-                  color: 'black',
-                }}
-              >
-                Téléphone
-              </InputLabel>
               <TextField
                 id="phone"
                 name="phone"
                 type="text"
+                label="Téléphone"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.phone}
@@ -210,31 +182,25 @@ const CompaniesForm = ({ handleSubmit }: { handleSubmit: (values: any) => void }
                   width: '100%',
                   fontSize: '1rem',
                 }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
                 error={!!(formik.touched.phone && formik.errors.phone)}
               />
             </FormGroup>
           </Grid>
 
-          <Grid item md={6}>
+          <Grid item xs={12} sm={6} lg={3}>
             <FormGroup
               sx={{
                 marginBottom: '16px',
               }}
             >
-              <InputLabel
-                htmlFor="email"
-                sx={{
-                  fontSize: '1.2rem',
-                  fontWeight: 'bold',
-                  color: 'black',
-                }}
-              >
-                Email
-              </InputLabel>
               <TextField
                 id="email"
                 name="email"
                 type="text"
+                label="Email"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.email}
@@ -243,31 +209,25 @@ const CompaniesForm = ({ handleSubmit }: { handleSubmit: (values: any) => void }
                   width: '100%',
                   fontSize: '1rem',
                 }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
                 error={!!(formik.touched.email && formik.errors.email)}
               />
             </FormGroup>
           </Grid>
 
-          <Grid item md={6}>
+          <Grid item xs={12} sm={6} lg={3}>
             <FormGroup
               sx={{
                 marginBottom: '16px',
               }}
             >
-              <InputLabel
-                htmlFor="website"
-                sx={{
-                  fontSize: '1.2rem',
-                  fontWeight: 'bold',
-                  color: 'black',
-                }}
-              >
-                Site internet
-              </InputLabel>
               <TextField
                 id="website"
                 name="website"
                 type="text"
+                label="Site web"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.website}
@@ -276,31 +236,25 @@ const CompaniesForm = ({ handleSubmit }: { handleSubmit: (values: any) => void }
                   width: '100%',
                   fontSize: '1rem',
                 }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
                 error={!!(formik.touched.website && formik.errors.website)}
               />
             </FormGroup>
           </Grid>
 
-          <Grid item md={6}>
+          <Grid item xs={12} sm={6} lg={3}>
             <FormGroup
               sx={{
                 marginBottom: '16px',
               }}
             >
-              <InputLabel
-                htmlFor="facebook"
-                sx={{
-                  fontSize: '1.2rem',
-                  fontWeight: 'bold',
-                  color: 'black',
-                }}
-              >
-                Facebook
-              </InputLabel>
               <TextField
                 id="facebook"
                 name="facebook"
                 type="text"
+                label="Facebook"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.facebook}
@@ -309,31 +263,25 @@ const CompaniesForm = ({ handleSubmit }: { handleSubmit: (values: any) => void }
                   width: '100%',
                   fontSize: '1rem',
                 }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
                 error={!!(formik.touched.facebook && formik.errors.facebook)}
               />
             </FormGroup>
           </Grid>
 
-          <Grid item md={6}>
+          <Grid item xs={12} sm={6} lg={3}>
             <FormGroup
               sx={{
                 marginBottom: '16px',
               }}
             >
-              <InputLabel
-                htmlFor="instagram"
-                sx={{
-                  fontSize: '1.2rem',
-                  fontWeight: 'bold',
-                  color: 'black',
-                }}
-              >
-                Instagram
-              </InputLabel>
               <TextField
                 id="instagram"
                 name="instagram"
                 type="text"
+                label="Instagram"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.instagram}
@@ -342,31 +290,25 @@ const CompaniesForm = ({ handleSubmit }: { handleSubmit: (values: any) => void }
                   width: '100%',
                   fontSize: '1rem',
                 }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
                 error={!!(formik.touched.instagram && formik.errors.instagram)}
               />
             </FormGroup>
           </Grid>
 
-          <Grid item md={6}>
+          <Grid item xs={12} sm={6} lg={3}>
             <FormGroup
               sx={{
                 marginBottom: '16px',
               }}
             >
-              <InputLabel
-                htmlFor="twitter"
-                sx={{
-                  fontSize: '1.2rem',
-                  fontWeight: 'bold',
-                  color: 'black',
-                }}
-              >
-                Twitter
-              </InputLabel>
               <TextField
                 id="twitter"
                 name="twitter"
                 type="text"
+                label="Twitter"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.twitter}
@@ -375,31 +317,25 @@ const CompaniesForm = ({ handleSubmit }: { handleSubmit: (values: any) => void }
                   width: '100%',
                   fontSize: '1rem',
                 }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
                 error={!!(formik.touched.twitter && formik.errors.twitter)}
               />
             </FormGroup>
           </Grid>
 
-          <Grid item md={6}>
+          <Grid item xs={12} sm={6} lg={3}>
             <FormGroup
               sx={{
                 marginBottom: '16px',
               }}
             >
-              <InputLabel
-                htmlFor="description"
-                sx={{
-                  fontSize: '1.2rem',
-                  fontWeight: 'bold',
-                  color: 'black',
-                }}
-              >
-                Description
-              </InputLabel>
               <TextField
                 id="description"
                 name="description"
                 type="text"
+                label="Description"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.description}
@@ -408,31 +344,25 @@ const CompaniesForm = ({ handleSubmit }: { handleSubmit: (values: any) => void }
                   width: '100%',
                   fontSize: '1rem',
                 }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
                 error={!!(formik.touched.description && formik.errors.description)}
               />
             </FormGroup>
           </Grid>
 
-          <Grid item md={6}>
+          <Grid item xs={12} sm={6} lg={3}>
             <FormGroup
               sx={{
                 marginBottom: '16px',
               }}
             >
-              <InputLabel
-                htmlFor="logo"
-                sx={{
-                  fontSize: '1.2rem',
-                  fontWeight: 'bold',
-                  color: 'black',
-                }}
-              >
-                Logo
-              </InputLabel>
               <TextField
                 id="logo"
                 name="logo"
                 type="text"
+                label="Logo"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.logo}
@@ -440,6 +370,9 @@ const CompaniesForm = ({ handleSubmit }: { handleSubmit: (values: any) => void }
                 sx={{
                   width: '100%',
                   fontSize: '1rem',
+                }}
+                InputLabelProps={{
+                  shrink: true,
                 }}
                 error={!!(formik.touched.logo && formik.errors.logo)}
               />

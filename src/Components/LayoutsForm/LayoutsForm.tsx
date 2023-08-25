@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, FormGroup, Grid, InputLabel, TextField, Typography } from '@mui/material';
+import { Box, Button, FormGroup, Grid, TextField, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
@@ -41,20 +41,11 @@ const LayoutsForm = ({ handleSubmit, companiesId }: { handleSubmit: (values: any
                 marginBottom: '16px',
               }}
             >
-              <InputLabel
-                htmlFor="name"
-                sx={{
-                  fontSize: '1.2rem',
-                  fontWeight: 'bold',
-                  color: 'black',
-                }}
-              >
-                Nom du template
-              </InputLabel>
               <TextField
                 id="name"
                 name="name"
                 type="text"
+                label="Nom du layout"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.name}
@@ -62,6 +53,9 @@ const LayoutsForm = ({ handleSubmit, companiesId }: { handleSubmit: (values: any
                 sx={{
                   width: '100%',
                   fontSize: '1rem',
+                }}
+                InputLabelProps={{
+                  shrink: true,
                 }}
                 error={!!(formik.touched.name && formik.errors.name)}
               />
@@ -74,20 +68,10 @@ const LayoutsForm = ({ handleSubmit, companiesId }: { handleSubmit: (values: any
                 marginBottom: '16px',
               }}
             >
-              <InputLabel
-                htmlFor="siret"
-                sx={{
-                  fontSize: '1.2rem',
-                  fontWeight: 'bold',
-                  color: 'black',
-                }}
-              >
-                Description du layout
-              </InputLabel>
               <TextField
                 id="description"
                 name="description"
-                type="te"
+                label="Description du layout"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.description}
@@ -98,6 +82,9 @@ const LayoutsForm = ({ handleSubmit, companiesId }: { handleSubmit: (values: any
                 }}
                 multiline
                 rows={4}
+                InputLabelProps={{
+                  shrink: true,
+                }}
                 error={!!(formik.touched.description && formik.errors.description)}
               />
             </FormGroup>
