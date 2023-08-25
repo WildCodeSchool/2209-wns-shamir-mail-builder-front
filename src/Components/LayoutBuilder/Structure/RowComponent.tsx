@@ -222,7 +222,6 @@ const RowComponent = ({ data, path, handleAddModule }: IRowComponentProps) => {
         formData.append('file', image);
         formData.append('upload_preset', 'zqtvcfio');
         formData.append('folder', 'layout-builder');
-        formData.append('api_key', `${process.env.REACT_APP_CLOUDINARY_API_KEY}`);
         formData.append('timestamp', (Date.now() / 1000).toString());
         fetch(`https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload`, {
           method: 'POST',

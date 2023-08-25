@@ -45,7 +45,6 @@ const LayoutBuilder = ({ handleAddModule }: ILayoutBuilderProps) => {
     formData.append('file', canvas.toDataURL('image/png', 1.0));
     formData.append('upload_preset', 'zqtvcfio');
     formData.append('folder', 'layout-builder');
-    formData.append('api_key', `${process.env.REACT_APP_CLOUDINARY_API_KEY}`);
     formData.append('timestamp', (Date.now() / 1000).toString());
     return fetch(`https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload`, {
       method: 'POST',
