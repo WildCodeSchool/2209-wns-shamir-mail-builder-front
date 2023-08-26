@@ -8,7 +8,7 @@ import reportWebVitals from './reportWebVitals';
 import './index.css';
 
 const httpLink = createHttpLink({
-  uri: 'https://api-mailbuilder.brandon-seveste.fr/graphql',
+  uri: `${process.env.REACT_APP_API_URL}/graphql`,
 });
 
 const authLink = setContext((_, { headers }) => {
