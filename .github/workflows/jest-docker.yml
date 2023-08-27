@@ -31,13 +31,8 @@ jobs:
         run: |
           echo "${{secrets.DOT_ENV}}" > .env
       - name: BUILD AND PUSH
-        uses: docker/build-push-action@v4
-        with:
-          push: true
-          file: Dockerfile.prod
-          build-args: |
-            NODE_ENV=production
-            REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }}
-            REACT_APP_CLOUDINARY_API_KEY=${{ secrets.REACT_APP_CLOUDINARY_API_KEY }}
-            REACT_APP_CLOUDINARY_CLOUD_NAME=${{ secrets.REACT_APP_CLOUDINARY_CLOUD_NAME }}
-          tags: ${{ secrets.DOCKER_USERNAME }}/mailsaw:latest
+        if: ${{ success() }}
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/mailsaw:latest -f Dockerfile.prod .
+          docker push ${{ secrets.DOCKER_USERNAME }}/mailsaw:latest
+          
