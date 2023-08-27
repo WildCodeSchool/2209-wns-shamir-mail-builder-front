@@ -29,7 +29,7 @@ jobs:
       - name: dot env creation
         if: ${{ success() }}
         run: |
-          echo "${{secrets.DOT_ENV}}" > .env.production
+          echo "${{secrets.DOT_ENV}}" > .env
       - name: BUILD AND PUSH
         uses: docker/build-push-action@v4
         with:
