@@ -30,12 +30,16 @@ jobs:
         if: ${{ success() }}
         run: |
           echo "${{secrets.DOT_ENV}}" > .env
+      - name: echo
+        if: ${{ success() }}
+        run: |
+          ls -a
+          cat .env
       - name: BUILD AND PUSH
         uses: docker/build-push-action@v4
         with:
           push: true
           file: Dockerfile.prod
-          context: .
           secrets: |
             REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }}
             REACT_APP_CLOUDINARY_API_KEY=${{ secrets.REACT_APP_CLOUDINARY_API_KEY }}
