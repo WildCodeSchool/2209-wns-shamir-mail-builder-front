@@ -40,32 +40,22 @@ const CompaniesForm = ({ handleSubmit }: { handleSubmit: (values: any) => void }
       });
     },
     validationSchema: Yup.object({
-      name: Yup.string()
-        .required('Champ requis'),
+      name: Yup.string().required('Champ requis'),
       siret: Yup.string()
         .length(14, '14 chiffres maximum')
         .matches(/^[0-9]{14}$/, 'Siret Invalide')
         .required('Champ requis'),
-      address: Yup.string()
-        .required('Champ requis'),
+      address: Yup.string().required('Champ requis'),
       phone: Yup.string()
         .matches(/^[0]{1}[1-7]{1}[0-9]{8}$/, 'Numéro invalide')
         .required('Champ requis'),
-      email: Yup.string()
-        .email('Email invalide')
-        .required('Champ requis'),
-      website: Yup.string()
-        .required('Champ requis'),
-      facebook: Yup.string()
-        .required('Champ requis'),
-      instagram: Yup.string()
-        .required('Champ requis'),
-      twitter: Yup.string()
-        .required('Champ requis'),
-      description: Yup.string()
-        .required('Champ requis'),
-      logo: Yup.string()
-        .required('Champ requis'),
+      email: Yup.string().email('Email invalide').required('Champ requis'),
+      website: Yup.string().required('Champ requis'),
+      facebook: Yup.string().required('Champ requis'),
+      instagram: Yup.string().required('Champ requis'),
+      twitter: Yup.string().required('Champ requis'),
+      description: Yup.string().required('Champ requis'),
+      logo: Yup.string().required('Champ requis'),
     }),
   });
   return (
@@ -90,7 +80,7 @@ const CompaniesForm = ({ handleSubmit }: { handleSubmit: (values: any) => void }
             >
               <TextField
                 id="name"
-                label="Nom d'utilisateur"
+                label="Nom de la compagnie"
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -125,7 +115,9 @@ const CompaniesForm = ({ handleSubmit }: { handleSubmit: (values: any) => void }
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.siret}
-                helperText={formik.touched.siret && formik.errors.siret ? formik.errors.siret : null}
+                helperText={
+                  formik.touched.siret && formik.errors.siret ? formik.errors.siret : null
+                }
                 sx={{
                   width: '100%',
                   fontSize: '1rem',
@@ -152,7 +144,9 @@ const CompaniesForm = ({ handleSubmit }: { handleSubmit: (values: any) => void }
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.address}
-                helperText={formik.touched.address && formik.errors.address ? formik.errors.address : null}
+                helperText={
+                  formik.touched.address && formik.errors.address ? formik.errors.address : null
+                }
                 sx={{
                   width: '100%',
                   marginBottom: '1rem',
@@ -177,7 +171,9 @@ const CompaniesForm = ({ handleSubmit }: { handleSubmit: (values: any) => void }
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.phone}
-                helperText={formik.touched.phone && formik.errors.phone ? formik.errors.phone : null}
+                helperText={
+                  formik.touched.phone && formik.errors.phone ? formik.errors.phone : null
+                }
                 sx={{
                   width: '100%',
                   fontSize: '1rem',
@@ -204,7 +200,9 @@ const CompaniesForm = ({ handleSubmit }: { handleSubmit: (values: any) => void }
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.email}
-                helperText={formik.touched.email && formik.errors.email ? formik.errors.email : null}
+                helperText={
+                  formik.touched.email && formik.errors.email ? formik.errors.email : null
+                }
                 sx={{
                   width: '100%',
                   fontSize: '1rem',
@@ -231,7 +229,9 @@ const CompaniesForm = ({ handleSubmit }: { handleSubmit: (values: any) => void }
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.website}
-                helperText={formik.touched.website && formik.errors.website ? formik.errors.website : null}
+                helperText={
+                  formik.touched.website && formik.errors.website ? formik.errors.website : null
+                }
                 sx={{
                   width: '100%',
                   fontSize: '1rem',
@@ -258,7 +258,9 @@ const CompaniesForm = ({ handleSubmit }: { handleSubmit: (values: any) => void }
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.facebook}
-                helperText={formik.touched.facebook && formik.errors.facebook ? formik.errors.facebook : null}
+                helperText={
+                  formik.touched.facebook && formik.errors.facebook ? formik.errors.facebook : null
+                }
                 sx={{
                   width: '100%',
                   fontSize: '1rem',
@@ -285,7 +287,11 @@ const CompaniesForm = ({ handleSubmit }: { handleSubmit: (values: any) => void }
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.instagram}
-                helperText={formik.touched.instagram && formik.errors.instagram ? formik.errors.instagram : null}
+                helperText={
+                  formik.touched.instagram && formik.errors.instagram
+                    ? formik.errors.instagram
+                    : null
+                }
                 sx={{
                   width: '100%',
                   fontSize: '1rem',
@@ -312,7 +318,9 @@ const CompaniesForm = ({ handleSubmit }: { handleSubmit: (values: any) => void }
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.twitter}
-                helperText={formik.touched.twitter && formik.errors.twitter ? formik.errors.twitter : null}
+                helperText={
+                  formik.touched.twitter && formik.errors.twitter ? formik.errors.twitter : null
+                }
                 sx={{
                   width: '100%',
                   fontSize: '1rem',
@@ -339,7 +347,11 @@ const CompaniesForm = ({ handleSubmit }: { handleSubmit: (values: any) => void }
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.description}
-                helperText={formik.touched.description && formik.errors.description ? formik.errors.description : null}
+                helperText={
+                  formik.touched.description && formik.errors.description
+                    ? formik.errors.description
+                    : null
+                }
                 sx={{
                   width: '100%',
                   fontSize: '1rem',
@@ -386,10 +398,7 @@ const CompaniesForm = ({ handleSubmit }: { handleSubmit: (values: any) => void }
             justifyContent: 'flex-end',
           }}
         >
-          <Button
-            variant="contained"
-            type="submit"
-          >
+          <Button variant="contained" type="submit">
             Créer
           </Button>
         </Box>
